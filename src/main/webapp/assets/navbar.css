@@ -1,0 +1,113 @@
+@charset "UTF-8";
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    color: white;
+}
+
+.navbar h2 {
+    color: white;
+    margin-right: auto;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    gap: 10px;
+}
+
+.navbar ul li {
+    position: relative;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 15px;
+    display: block;
+    white-space: nowrap;
+}
+
+.navbar a:hover {
+    background-color: #555;
+}
+
+/* Dropdown Menu Styles */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #444;
+    min-width: 150px;
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu a {
+    padding: 10px 15px;
+    color: white;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background-color: #555;
+    min-width: 150px;
+}
+
+.dropdown-submenu:hover .dropdown-submenu-menu {
+    display: block;
+}
+
+/* Button Style */
+.login-button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .navbar ul {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .navbar ul li {
+        width: 100%;
+    }
+}
