@@ -2,7 +2,7 @@
 <faceted-project>
   <runtime name="TomEE"/>
   <fixed facet="wst.jsdt.web"/>
-  <installed facet="java" version="22"/>
   <installed facet="wst.jsdt.web" version="1.0"/>
   <installed facet="jst.web" version="3.1"/>
+  <installed facet="java" version="17"/>
 </faceted-project>
