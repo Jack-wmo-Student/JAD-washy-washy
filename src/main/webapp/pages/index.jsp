@@ -19,6 +19,6 @@ Description:
 	type="image/x-icon">
 </head>
 <body>
-	<div><%@ include file="navbar.html"%></div>
+	<div><%@ include file="navbar.jsp"%></div>
 </body>
 </html>
