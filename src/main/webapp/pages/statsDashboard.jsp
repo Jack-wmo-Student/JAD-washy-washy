@@ -16,7 +16,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>Stats Dashboard</title>
     <style>
         body { font-family: Arial, sans-serif; }
         .container { width: 80%; margin: auto; }
