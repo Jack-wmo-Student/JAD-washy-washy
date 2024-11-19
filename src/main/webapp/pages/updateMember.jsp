@@ -17,13 +17,10 @@
   PreparedStatement preparedStatement = null;
 
   try {
-    // Load JDBC Driver
-    Class.forName("org.postgresql.Driver");
-
-    // Connection URL
-    String connURL = "jdbc:postgresql://ep-empty-poetry-a5gsev0p.us-east-2.aws.neon.tech:5432/neondb";
-    String dbUser = "neondb_owner";
-    String dbPassword = "JhCEdNBG5O6Q";
+	  String dbClass = "org.postgresql.Driver";
+	  String connURL = System.getenv("DB_URL");
+	  String dbPassword = System.getenv("DB_PASSWORD");
+	  String dbUser = System.getenv("DB_USER");
     conn = DriverManager.getConnection(connURL, dbUser, dbPassword);
 
     // Prepare SQL update statement

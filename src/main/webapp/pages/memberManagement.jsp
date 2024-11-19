@@ -8,10 +8,10 @@
 <body>
 <div align="center">
 <%
-	String dbUrl = "jdbc:postgresql://ep-empty-poetry-a5gsev0p.us-east-2.aws.neon.tech:5432/neondb";
-	String dbUser = "neondb_owner";
-	String dbPassword = "JhCEdNBG5O6Q";
 	String dbClass = "org.postgresql.Driver";
+	String dbUrl = System.getenv("DB_URL");
+	String dbPassword = System.getenv("DB_PASSWORD");
+	String dbUser = System.getenv("DB_USER");
 	
 	try {
 		// Step1: Load JDBC Driver
