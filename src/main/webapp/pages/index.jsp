@@ -23,7 +23,7 @@ Description:
         <% 
             String dbUrl = "jdbc:postgresql://ep-empty-poetry-a5gsev0p.us-east-2.aws.neon.tech:5432/neondb";
             String dbUser = "neondb_owner";
-            String dbPassword = "JhCEdNBG506Q";
+            String dbPassword = "JhCEdNBG5O6Q";
             String dbClass = "org.postgresql.Driver";
             
             Connection conn = null;
