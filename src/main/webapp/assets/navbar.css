@@ -1,113 +1,74 @@
 @charset "UTF-8";
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-}
-
-/* Navbar Styles */
+/* Navbar container */
 .navbar {
+    background-color: #333;
+    color: white;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #333;
-    padding: 10px 20px;
-    color: white;
 }
 
+/* Navbar title */
 .navbar h2 {
-    color: white;
-    margin-right: auto;
+    margin: 0;
+    flex: 0 0 auto; /* Prevents title from resizing */
 }
 
+/* Navbar menu */
 .navbar ul {
-    list-style-type: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
-    gap: 10px;
+    gap: 20px;
+    flex: 1; /* Allows menu to take available space */
+    justify-content: flex-end; /* Align menu items to the right */
 }
 
+/* Navbar menu items */
 .navbar ul li {
     position: relative;
 }
 
-.navbar a {
-    text-decoration: none;
+/* Navbar links */
+.navbar ul li a {
     color: white;
-    padding: 10px 15px;
-    display: block;
-    white-space: nowrap;
+    text-decoration: none;
+    padding: 5px 10px;
 }
 
-.navbar a:hover {
+.navbar ul li a:hover {
     background-color: #555;
+    border-radius: 5px;
 }
 
-/* Dropdown Menu Styles */
+/* Dropdown menu */
 .dropdown-menu {
     display: none;
     position: absolute;
+    background-color: #444;
+    padding: 10px;
+    border-radius: 5px;
     top: 100%;
     left: 0;
-    background-color: #444;
-    min-width: 150px;
-    z-index: 1;
 }
 
 .dropdown:hover .dropdown-menu {
     display: block;
 }
 
-.dropdown-menu a {
-    padding: 10px 15px;
-    color: white;
-}
-
-.dropdown-submenu {
-    position: relative;
-}
-
-.dropdown-submenu-menu {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 100%;
-    background-color: #555;
-    min-width: 150px;
-}
-
-.dropdown-submenu:hover .dropdown-submenu-menu {
-    display: block;
-}
-
-/* Button Style */
-.login-button {
-    padding: 10px 15px;
-    background-color: #007bff;
+/* Logout button */
+.logout-button {
+    background-color: #f44336;
     color: white;
     border: none;
+    padding: 10px 15px;
     cursor: pointer;
+    border-radius: 5px;
+    margin-left: 20px; /* Space between the menu and the button */
 }
 
-.login-button:hover {
-    background-color: #0056b3;
-}
-
-@media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .navbar ul {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .navbar ul li {
-        width: 100%;
-    }
+.logout-button:hover {
+    background-color: #d32f2f;
 }

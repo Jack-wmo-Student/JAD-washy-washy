@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
-                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-         version="3.1">
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee 
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+	version="5.0">
 
-    <!-- Welcome file configuration to set index.jsp as the landing page -->
-    <welcome-file-list>
-        <welcome-file>pages/index.jsp</welcome-file>
-    </welcome-file-list>
+	<!-- Welcome file configuration to set index.jsp as the landing page -->
+	<welcome-file-list>
+		<welcome-file>pages/index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- Servlet configuration for landingPage -->
+	<servlet>
+		<servlet-name>landingPage</servlet-name>
+		<servlet-class>backend.landingPage</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>landingPage</servlet-name>
+		<url-pattern>/landingPage</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>categoryService</servlet-name>
+		<servlet-class>backend.categoryService</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>categoryService</servlet-name>
+		<url-pattern>/categoryService</url-pattern>
+	</servlet-mapping>
 
 </web-app>
