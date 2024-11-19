@@ -1,4 +1,4 @@
-package Backend;
+package backend;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -48,7 +48,7 @@ public class landingPage extends HttpServlet {
 			response.addCookie(isAdminCookie);
 
 			// Redirect to homePage.jsp
-			response.sendRedirect("pages/homePage.jsp"); // Correct path to homePage.jsp
+			response.sendRedirect(request.getContextPath() + "/categoryService"); // Correct path to homePage.jsp
 		} else {
 			// Set error message and forward back to index.jsp
 			request.setAttribute("error", "Invalid username or password.");
