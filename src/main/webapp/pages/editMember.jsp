@@ -75,7 +75,6 @@
                     <td>Name:</td>
                     <td><input type="text" name="memberName" value="<%= memberName %>" /></td>
                 </tr>
-                <!-- Add more fields if necessary -->
             </table>
             <br />
             <input type="submit" value="Update">

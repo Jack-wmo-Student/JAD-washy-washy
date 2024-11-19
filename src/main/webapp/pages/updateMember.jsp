@@ -1,60 +1,43 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Update Member</title>
-</head>
-<body>
-<div align="center">
+<%@page import="java.sql.*"%>
 <%
-  // Retrieve parameters
-  String memberId = request.getParameter("id");
-  String name = request.getParameter("memberName");  // Matches form input field name
+    // Retrieve form parameters
+    int userId = Integer.parseInt(request.getParameter("userId"));
+    String action = request.getParameter("action");
+    boolean currentStatus = Boolean.parseBoolean(request.getParameter("currentStatus"));
 
-  Connection conn = null;
-  PreparedStatement preparedStatement = null;
+    // Database credentials
+    String dbClass = "DB_CLASS";
+    String dbUrl = System.getenv("DB_URL");
+    String dbPassword = System.getenv("DB_PASSWORD");
+    String dbUser = System.getenv("DB_USER");
 
-  try {
-	  String dbClass = "org.postgresql.Driver";
-	  String connURL = System.getenv("DB_URL");
-	  String dbPassword = System.getenv("DB_PASSWORD");
-	  String dbUser = System.getenv("DB_USER");
-    conn = DriverManager.getConnection(connURL, dbUser, dbPassword);
-
-    // Prepare SQL update statement
-    String sql = "UPDATE users SET username = ? WHERE user_id = ?";
-    preparedStatement = conn.prepareStatement(sql);
-    preparedStatement.setString(1, name);
-    preparedStatement.setInt(2, Integer.parseInt(memberId));  // Convert ID to integer if necessary
-
-    // Execute update
-    int rowsUpdated = preparedStatement.executeUpdate();
-
-    // Check result and display message
-    if (rowsUpdated > 0) {
-%>
-      <p>Member updated successfully!</p>
-<%
-    } else {
-%>
-      <p>Error: Member not found or update failed.</p>
-<%
-    }
-  } catch (Exception e) {
-    e.printStackTrace();
-    out.println("Error: " + e.getMessage());
-  } finally {
-    // Close resources
     try {
-      if (preparedStatement != null) preparedStatement.close();
-      if (conn != null) conn.close();
-    } catch (SQLException se) {
-      se.printStackTrace();
+        // Step1: Load JDBC Driver
+        Class.forName(dbClass);
+
+        // Step2: Establish connection
+        Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+
+        // Step3: Prepare the SQL Update Query
+        String updateQuery = null;
+        if ("toggleAdmin".equals(action)) {
+            updateQuery = "UPDATE users SET is_admin = ? WHERE user_id = ?";
+        } else if ("toggleBlocked".equals(action)) {
+            updateQuery = "UPDATE users SET is_blocked = ? WHERE user_id = ?";
+        }
+
+        if (updateQuery != null) {
+            PreparedStatement pstmt = conn.prepareStatement(updateQuery);
+            pstmt.setBoolean(1, !currentStatus); // Toggle the current status
+            pstmt.setInt(2, userId);
+            pstmt.executeUpdate();
+            pstmt.close();
+        }
+
+        // Redirect back to the Member List page
+        response.sendRedirect("memberList.jsp");
+    } catch (Exception e) {
+        e.printStackTrace();
+        out.println("Error: " + e.getMessage());
     }
-  }
 %>
-</div>
-</body>
-</html>
