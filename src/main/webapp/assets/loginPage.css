@@ -1,0 +1,99 @@
+@charset "UTF-8";
+    /* General styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: #333;
+    }
+
+    /* Container for the form */
+    .login-container {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        width: 100%;
+    }
+
+    /* Form styles */
+    .login-container h1 {
+        margin-bottom: 1.5rem;
+        color: #2575fc;
+        text-align: center;
+    }
+
+    .login-container .error {
+        color: red;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .login-container label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+        width: 100%;
+        padding: 0.75rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .login-container input[type="text"]:focus,
+    .login-container input[type="password"]:focus {
+        outline: none;
+        border-color: #2575fc;
+        box-shadow: 0 0 5px rgba(37, 117, 252, 0.5);
+    }
+
+    /* Submit button */
+    .login-container button {
+        background: #2575fc;
+        color: #fff;
+        border: none;
+        padding: 0.75rem;
+        width: 100%;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .login-container button:hover {
+        background: #6a11cb;
+    }
+
+    /* Footer text */
+    .login-container .footer {
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    .login-container .footer a {
+        color: #2575fc;
+        text-decoration: none;
+    }
+
+    .login-container .footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+        .login-container {
+            padding: 1.5rem;
+        }
+    }
