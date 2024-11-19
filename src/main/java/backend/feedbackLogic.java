@@ -1,4 +1,4 @@
-package Backend;
+package backend;
 
 import java.util.Enumeration;
 import java.util.Map;
