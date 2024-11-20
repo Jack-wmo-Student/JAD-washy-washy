@@ -74,7 +74,7 @@ public class feedbackLogic extends HttpServlet {
 		    request.setAttribute("questions", questionList);
 
 		    // Forward to the JSP
-		    RequestDispatcher dispatcher = request.getRequestDispatcher("/userFeedback.jsp");
+		    RequestDispatcher dispatcher = request.getRequestDispatcher("/feedbackPage.jsp");
 		    dispatcher.forward(request, response);
 	      
 		} catch(Exception e) {
