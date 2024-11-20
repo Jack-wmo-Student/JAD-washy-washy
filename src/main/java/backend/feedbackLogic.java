@@ -1,5 +1,6 @@
 package backend;
 
+import javax.servlet.RequestDispatcher;
 import java.util.Enumeration;
 import java.util.Map;
 import jakarta.servlet.ServletException;
@@ -12,19 +13,71 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.*;
+
 
 
 
 public class feedbackLogic extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
 	private final String dbClass = System.getenv("DB_CLASS");
 	private final String dbUrl = System.getenv("DB_URL");
 	private final String dbPassword = System.getenv("DB_PASSWORD");
 	private final String dbUser = System.getenv("DB_USER");
 	
+	public feedbackLogic() {
+		super();
+	}
+	
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+		// Get questions, put inside 
 		
+		ResultSet rs = null;
+		int ratingCount = 0;
+        int commentCount = 0;
+	  	String[] questionTypes = {"Rating", "Comments"};
+	  	Connection conn = null;
+	  	Statement stmt = null;
+		
+		// Set Class
+		try {
+			Class.forName(dbClass);
+		} catch(ClassNotFoundException e) {
+			System.out.printf("Connection drive issue.", e);
+			e.printStackTrace();
+		}
+		
+		// Create the query for the database
+		String query = "SELECT * FROM um_user";
+		
+		try {
+	  		// === Connect to Database ===
+	  		Class.forName(dbClass);
+	  		conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+	  		stmt = conn.createStatement();
+	  		
+	  		// --- fetch Data ---
+	  		String sqlStr = "SELECT * FROM question";
+	      	rs = stmt.executeQuery(sqlStr);
+	      	
+	      	// Forward to the JSP
+	        RequestDispatcher dispatcher = request.getRequestDispatcher("/userFeedback.jsp");
+	        dispatcher.forward(request, response);
+	      
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    try {
+		        if (rs != null) rs.close();
+		        if (stmt != null) stmt.close();
+		        if (conn != null) conn.close();
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+		}
     }
 	
 	// Add inside the database
@@ -38,7 +91,7 @@ public class feedbackLogic extends HttpServlet {
 	    try {
 			Class.forName(dbClass);
 		} catch (ClassNotFoundException e) {
-			System.out.printf("Could not find the correct class for the database." , e);
+			System.out.printf("Connection drive issue." , e);
 			e.printStackTrace();
 		}
 	    

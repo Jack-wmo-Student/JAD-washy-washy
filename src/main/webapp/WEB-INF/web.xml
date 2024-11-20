@@ -11,6 +11,7 @@
 	</welcome-file-list>
 
 	<!-- Servlet configuration for landingPage -->
+	
 	<servlet>
 		<servlet-name>landingPage</servlet-name>
 		<servlet-class>backend.landingPage</servlet-class>
@@ -19,6 +20,7 @@
 		<servlet-name>landingPage</servlet-name>
 		<url-pattern>/landingPage</url-pattern>
 	</servlet-mapping>
+	
 	<servlet>
 		<servlet-name>categoryService</servlet-name>
 		<servlet-class>backend.categoryService</servlet-class>
@@ -27,5 +29,15 @@
 		<servlet-name>categoryService</servlet-name>
 		<url-pattern>/categoryService</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+	    <servlet-name>FeedbackLogic</servlet-name>
+	    <servlet-class>backend.FeedbackLogic</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>FeedbackLogic</servlet-name>
+	    <url-pattern>/feedbackLogic</url-pattern>
+	</servlet-mapping>
+
 
 </web-app>

@@ -143,7 +143,7 @@
 	
 	    <!-- Questions -->
 	    <article>
-	      <form action="feedbackLogic.jsp" method="post">
+	      <form action="feedbackLogic" method="post">
 	      
 		<%
 	      	// === Declarations ===
@@ -215,9 +215,9 @@
 		  	        out.println("Error closing resources: " + e);
 		  	    }
 		  	}
-		  	   
+	   
 		%>
-	        
+
 	        <!-- Service Dropdown -->
 	        <!-- <label for="dropdown">Which Service did you choose?</label><br>
 	        <select id="dropdown" name="service" required>
@@ -241,7 +241,7 @@
 	            <button onclick="window.location.href = 'nextPage.jsp';">Continue</button>
 	        </div>
 	    </div>
-	    
+
 	    <!-- Show the overlay if the feedbackSuccess attribute is set -->
         <%
             Boolean feedbackSuccess = (Boolean) request.getAttribute("feedbackSuccess");
