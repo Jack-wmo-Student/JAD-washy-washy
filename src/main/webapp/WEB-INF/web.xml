@@ -27,5 +27,29 @@
 		<servlet-name>categoryService</servlet-name>
 		<url-pattern>/categoryService</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>CreateCategoryServlet</servlet-name>
+		<servlet-class>backend.CreateCategoryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CreateCategoryServlet</servlet-name>
+		<url-pattern>/CreateCategoryServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>ServiceServlet</servlet-name>
+		<servlet-class>backend.ServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServiceServlet</servlet-name>
+		<url-pattern>/ServiceServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>EditServiceServlet</servlet-name>
+		<servlet-class>backend.EditServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EditServiceServlet</servlet-name>
+		<url-pattern>/EditServiceServlet</url-pattern>
+	</servlet-mapping>
 
 </web-app>

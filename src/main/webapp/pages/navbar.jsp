@@ -17,8 +17,9 @@
             <li><a href="<%=request.getContextPath()%>/pages/homePage.jsp">Home</a></li>
 
             <!-- Admin Dashboard Link -->
-            <li><a href="<%=request.getContextPath()%>/adminDashboard.jsp">Admin Dashboard</a></li>
 
+            <li><a href="<%=request.getContextPath()%>/pages/editServiceCategory.jsp">Admin Dashboard</a></li>
+            
             <!-- Categories Dropdown -->
             <li class="dropdown">
                 <a href="#" class="dropdown-btn">Categories</a>

@@ -20,7 +20,7 @@
     String categoryId = request.getParameter("categoryId");
 
     try {
-        Class.forName("org.postgresql.Driver");
+        Class.forName("DB_CLASS");
         conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 
         String deleteSQL = "DELETE FROM service_category WHERE category_id = ?";
