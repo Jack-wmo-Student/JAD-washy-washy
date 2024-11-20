@@ -78,8 +78,8 @@ public class categoryService extends HttpServlet {
                 while (categoryRs.next()) {
                     category cat = new category(
                             categoryRs.getInt("category_id"),
-                            categoryRs.getString("category_name"),
-                            categoryRs.getString("category_description")
+                            categoryRs.getString("category_name") != null ? categoryRs.getString("category_name").trim() : null,
+                            categoryRs.getString("category_description") != null ? categoryRs.getString("category_description").trim() : null
                     );
                     categoryMap.put(cat.getId(), cat); // Store category by ID
                     categoryServiceMap.put(cat, new ArrayList<>()); // Initialize with an empty list
@@ -97,10 +97,10 @@ public class categoryService extends HttpServlet {
                     service serv = new service(
                             serviceRs.getInt("service_id"),
                             serviceRs.getInt("category_id"),
-                            serviceRs.getString("service_name"),
+                            serviceRs.getString("service_name") != null ? serviceRs.getString("service_name").trim() : null,
                             serviceRs.getDouble("price"),
                             serviceRs.getInt("duration_in_hour"),
-                            serviceRs.getString("service_description")
+                            serviceRs.getString("service_description") != null ? serviceRs.getString("service_description").trim() : null
                     );
 
                     // Add service to the corresponding category
