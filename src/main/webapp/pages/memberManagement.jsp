@@ -4,70 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Member List</title>
-    <style>
-        /* General body styling */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
-        }
-        th {
-            background-color: #007BFF;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        a {
-            text-decoration: none;
-            padding: 8px 12px;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        a:hover {
-            background-color: #45a049;
-        }
-        .error-message {
-            color: red;
-            font-weight: bold;
-            margin-top: 20px;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/memberManagement.css">
 </head>
 <body>
     <div class="container">
         <h1>Member List</h1>
         <%
-            String dbClass = "DB_CLASS";
+            String dbClass = System.getenv("DB_CLASS");
             String dbUrl = System.getenv("DB_URL");
             String dbPassword = System.getenv("DB_PASSWORD");
             String dbUser = System.getenv("DB_USER");

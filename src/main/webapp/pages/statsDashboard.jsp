@@ -1,4 +1,4 @@
-<%@ page import="java.util.List" %>
+<%-- <%@ page import="java.util.List" %>
 <%@ page import="ProfitMarginsDAO, BooksPerMonthDAO, FeedbackRatingsDAO" %>
 <%@ page import="ProfitMargin, BooksPerMonth, FeedbackRating" %>
 
@@ -65,4 +65,4 @@
     </div>
 </div>
 </body>
-</html>
+</html> --%>
