@@ -1,7 +1,9 @@
 package backend;
 
 import java.util.Enumeration;
+import java.util.Map;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +11,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 
 public class feedbackLogic extends HttpServlet {
 	private static final long serialVersionUID = 1L;
