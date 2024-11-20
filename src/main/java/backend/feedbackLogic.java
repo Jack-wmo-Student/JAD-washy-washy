@@ -1,8 +1,11 @@
 package backend;
 
-import javax.servlet.RequestDispatcher;
+// All the imports
+import jakarta.servlet.RequestDispatcher;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
@@ -14,8 +17,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.*;
-
-
+import java.util.List;
 
 
 public class feedbackLogic extends HttpServlet {
@@ -36,9 +38,6 @@ public class feedbackLogic extends HttpServlet {
 		// Get questions, put inside 
 		
 		ResultSet rs = null;
-		int ratingCount = 0;
-        int commentCount = 0;
-	  	String[] questionTypes = {"Rating", "Comments"};
 	  	Connection conn = null;
 	  	Statement stmt = null;
 		
@@ -50,9 +49,6 @@ public class feedbackLogic extends HttpServlet {
 			e.printStackTrace();
 		}
 		
-		// Create the query for the database
-		String query = "SELECT * FROM um_user";
-		
 		try {
 	  		// === Connect to Database ===
 	  		Class.forName(dbClass);
@@ -63,9 +59,23 @@ public class feedbackLogic extends HttpServlet {
 	  		String sqlStr = "SELECT * FROM question";
 	      	rs = stmt.executeQuery(sqlStr);
 	      	
-	      	// Forward to the JSP
-	        RequestDispatcher dispatcher = request.getRequestDispatcher("/userFeedback.jsp");
-	        dispatcher.forward(request, response);
+	      	
+		    // Convert ResultSet to a list or array
+	      	List<Map<String, String>> questionList = new ArrayList<>();
+		    while (rs.next()) {
+		    	Map<String, String> question = new HashMap<>();
+		        question.put("question_id", rs.getString("question_id"));
+		        question.put("question_text", rs.getString("question_text"));
+		        question.put("question_type", rs.getString("question_type"));
+		        questionList.add(question);
+		    }
+	      	
+		    // Store the list in the request attribute
+		    request.setAttribute("questions", questionList);
+
+		    // Forward to the JSP
+		    RequestDispatcher dispatcher = request.getRequestDispatcher("/userFeedback.jsp");
+		    dispatcher.forward(request, response);
 	      
 		} catch(Exception e) {
 			e.printStackTrace();
