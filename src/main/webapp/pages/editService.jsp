@@ -1,36 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*, backend.service" %>
+<%@ page import="java.util.*,model.service, model.category" %>
 <!DOCTYPE html>
-
-<%
-    // Cookie-based session management
-    Cookie[] cookies = request.getCookies();
-    boolean isLoggedIn = false;
-    boolean isAdmin = false;
-
-    if (cookies != null) {
-        for (Cookie cookie : cookies) {
-            if ("isLoggedIn".equals(cookie.getName()) && "true".equals(cookie.getValue())) {
-                isLoggedIn = true;
-            }
-            if ("isAdmin".equals(cookie.getName()) && "true".equals(cookie.getValue())) {
-                isAdmin = true;
-            }
-        }
-    }
-
-    // Redirect if not logged in
-    if (!isLoggedIn) {
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
-        return;
-    }
-
-    // Redirect if not an admin
-    if (!isAdmin) {
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
-        return;
-    }
-%>
 
 <html>
 <head>
@@ -40,7 +10,23 @@
 </head>
 <body>
     <div class="container">
-        <h2>Create Service for Category: <%= session.getAttribute("categoryName") %></h2>
+    	<% String requestCategoryId = request.getParameter("categoryId"); 
+	    	Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
+	        		.getAttribute("categoryServiceMap");
+	    	
+	    	int categoryId = Integer.parseInt(requestCategoryId);
+	        category matchingCategory = null;
+
+	        for (category category : sessionCategoryServiceMap.keySet()) {
+	            if (category.getId() == categoryId) {
+	                matchingCategory = category;
+	                break;
+	            }
+	        }
+	    	
+    	%>
+    	
+        <h2>Create Service for Category: <%= matchingCategory.getName() %></h2>
 
         <!-- Display success or error messages -->
         <%
@@ -80,7 +66,7 @@
             </div>
         </form>
 
-        <h3>Available Services for <%= session.getAttribute("categoryName") %></h3>
+        <h3>Available Services for <%= matchingCategory.getName() %></h3>
         <table>
             <thead>
                 <tr>
@@ -94,9 +80,9 @@
             </thead>
             <tbody>
                 <%
-                    List<service> services = (List<service>) request.getAttribute("services");
-                    if (services != null) {
-                        for (service service : services) {
+	           		
+                	List<service> serviceList = sessionCategoryServiceMap.get(matchingCategory);
+                        for (service service : serviceList) {
                 %>
                 <tr>
                     <td><%= service.getId() %></td>
@@ -117,8 +103,7 @@
                     </td>
                 </tr>
                 <%
-                        }
-                    }
+                       }
                 %>
             </tbody>
         </table>

@@ -1,4 +1,4 @@
-package backend;
+package model;
 
 public class user {
 	private int user_id;
