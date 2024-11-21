@@ -1,4 +1,4 @@
-package backend;
+package controller;
 
 import jakarta.servlet.RequestDispatcher;
 import java.util.Enumeration;

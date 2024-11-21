@@ -144,7 +144,7 @@
 		<%		  	
 			// Retrieve the list from the request
 			@SuppressWarnings("unchecked")
-	        List<Map<String, String>> questions = (List<Map<String, String>>) request.getAttribute("questions");
+	        List<Map<String, String>> questions = (List<Map<String, String>>) session.getAttribute("questions");
 		  	
 		  	try {
 			    if (questions != null) {
