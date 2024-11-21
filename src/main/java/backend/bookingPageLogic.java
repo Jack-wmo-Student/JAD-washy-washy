@@ -28,9 +28,9 @@ public class bookingPageLogic extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ResultSet rs = null;
+		ResultSet result1 = null;
 	  	Connection conn = null;
-	  	Statement stmt = null;
+	  	
 		
 		// Set Class
 		try {
@@ -43,15 +43,40 @@ public class bookingPageLogic extends HttpServlet {
 		try {
 	  		// === Connect to Database ===
 	  		conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-	  		stmt = conn.createStatement();
 	  		
+	  		PreparedStatement pstmt1 = conn.prepareStatement(sql1);
 	  		
-	  		// Fetch Data 1. Get the services
-	  		
-	  		// Fetch Data 2. Get the Service Name, Booking Id, Timeslot Id by using user Id
-	  		
+	  		pstmt1.setInt(1, userId);
+		  	
 	  		// Fetch Data 3. Get the timeslots by using booking Ids
-	  		
+	  		while(result1.next()) {
+	  			int bookingId = result1.getInt("booking_id");
+	  			String sql2 = "SELECT \r\n"
+		  					+ "    t.timeslot_id,\r\n"
+		  					+ "    CASE \r\n"
+		  					+ "        WHEN t.\"8am-9am\" = BOOKING_ID THEN '8am-9am'\r\n"
+		  					+ "        WHEN t.\"9am-10am\" = BOOKING_ID THEN '9am-10am'\r\n"
+		  					+ "        WHEN t.\"10am-11am\" = BOOKING_ID THEN '10am-11am'\r\n"
+		  					+ "        WHEN t.\"11am-12pm\" = BOOKING_ID THEN '11am-12pm'\r\n"
+		  					+ "        WHEN t.\"1pm-2pm\" = BOOKING_ID THEN '1pm-2pm'\r\n"
+		  					+ "        WHEN t.\"2pm-3pm\" = BOOKING_ID THEN '2pm-3pm'\r\n"
+		  					+ "        WHEN t.\"3pm-4pm\" = BOOKING_ID THEN '3pm-4pm'\r\n"
+		  					+ "        WHEN t.\"4pm-5pm\" = BOOKING_ID THEN '4pm-5pm'\r\n"
+		  					+ "        WHEN t.\"5pm-6pm\" = BOOKING_ID THEN '5pm-6pm'\r\n"
+		  					+ "        ELSE NULL\r\n"
+		  					+ "    END AS booked_timeslot\r\n"
+		  					+ "FROM \r\n"
+		  					+ "    timeslot t\r\n"
+		  					+ "WHERE \r\n"
+		  					+ "    t.timeslot_id = TIMESLOT_ID\r\n"
+		  					+ "      AND BOOKING_ID IN (\r\n"
+		  					+ "          t.\"8am-9am\", t.\"9am-10am\", t.\"10am-11am\",\r\n"
+		  					+ "          t.\"11am-12pm\", t.\"1pm-2pm\", t.\"2pm-3pm\",\r\n"
+		  					+ "          t.\"3pm-4pm\", t.\"4pm-5pm\", t.\"5pm-6pm\"\r\n"
+		  					+ "      );";
+	  		}
+		  	
+		  	
 	  		
 	  		
 	  		
@@ -74,15 +99,41 @@ public class bookingPageLogic extends HttpServlet {
 	      
 		} catch(Exception e) {
 			e.printStackTrace();
-		} finally {
-		    try {
-		        if (rs != null) rs.close();
-		        if (stmt != null) stmt.close();
-		        if (conn != null) conn.close();
-		    } catch (SQLException e) {
-		        e.printStackTrace();
-		    }
-		}
+		} 
+	}
+	
+	public static List<Map<String, Object>> fetchUserBookings(Connection conn, int userId) throws SQLException {
+		 String query = """
+		            SELECT 
+		                b.booking_id,
+		                b.date,
+		                s.service_name,
+		                b.timeslot_id
+		            FROM 
+		                booking b
+		            JOIN 
+		                service s ON b.service_id = s.service_id
+		            WHERE 
+		                b.user_id = ?;
+		        """;
+		 
+		 List<Map<String, Object>> resultList = new ArrayList<>();
+		 try(PreparedStatement pstmt1 = conn.prepareStatement(query);) {
+			 pstmt1.setInt(1, userId);
+			 
+			 try(ResultSet rs = pstmt1.executeQuery()) {
+				 while(rs.next()) {
+					 Map<String, Object> result = new HashMap<>();
+                     result.put("booking_id", rs.getInt("booking_id"));
+                     result.put("date", rs.getDate("date"));
+                     result.put("service_name", rs.getString("service_name"));
+                     result.put("timeslot_id", rs.getInt("timeslot_id"));
+                     resultList.add(result);
+				 }
+			 }
+		 }
+		
+		return resultList;
 	}
 }
 
