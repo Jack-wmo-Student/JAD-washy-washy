@@ -1,4 +1,4 @@
 # JAD-washy-washy
 JAD assignment
 
-Rafael is gay
+Rafael and Jack are gay
