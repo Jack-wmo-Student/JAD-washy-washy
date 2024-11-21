@@ -51,7 +51,6 @@ public class feedbackLogic extends HttpServlet {
 		
 		try {
 	  		// === Connect to Database ===
-	  		Class.forName(dbClass);
 	  		conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 	  		stmt = conn.createStatement();
 	  		

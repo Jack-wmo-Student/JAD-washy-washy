@@ -150,7 +150,14 @@
 	    
 	    <!-- Your Bookings -->
 	    <div>
-	    	
+	    	<%
+	    		try {
+	    			
+	    		}
+	    		catch(Exception e) {
+	    			out.println("Error :" + e);
+	    		}
+	    	%>
 	    </div>	    
     </div>
 <!--  -------------------------------------- End of Side Bar -------------------------------------------- -->
@@ -186,7 +193,7 @@
                 <%= day %>
             </div>
             <% } %>
-        </div>
+        </div> 
     </div>
 
     <script>
