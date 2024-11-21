@@ -11,8 +11,7 @@ import jakarta.servlet.http.HttpSession;
 
 public class EditServiceServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-	private static final String DB_URL = System.getenv("DB_URL");
+    private static final String DB_URL = System.getenv("DB_URL");
     private static final String DB_USER = System.getenv("DB_USER");
     private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
 
