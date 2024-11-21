@@ -13,7 +13,7 @@
 	<!-- Servlet configuration for landingPage -->
 	<servlet>
 		<servlet-name>landingPage</servlet-name>
-		<servlet-class>backend.landingPage</servlet-class>
+		<servlet-class>controller.landingPage</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>landingPage</servlet-name>
@@ -21,7 +21,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>categoryService</servlet-name>
-		<servlet-class>backend.categoryService</servlet-class>
+		<servlet-class>controller.categoryService</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>categoryService</servlet-name>
@@ -29,7 +29,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>CreateCategoryServlet</servlet-name>
-		<servlet-class>backend.CreateCategoryServlet</servlet-class>
+		<servlet-class>controller.CreateCategoryServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CreateCategoryServlet</servlet-name>
@@ -37,7 +37,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>ServiceServlet</servlet-name>
-		<servlet-class>backend.ServiceServlet</servlet-class>
+		<servlet-class>controller.ServiceServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ServiceServlet</servlet-name>
@@ -45,7 +45,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>EditServiceServlet</servlet-name>
-		<servlet-class>backend.EditServiceServlet</servlet-class>
+		<servlet-class>controller.EditServiceServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>EditServiceServlet</servlet-name>
@@ -53,7 +53,7 @@
 	</servlet-mapping>
 		<servlet>
 		<servlet-name>feedbackLogic</servlet-name>
-		<servlet-class>backend.feedbackLogic</servlet-class>
+		<servlet-class>controller.feedbackLogic</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>feedbackLogic</servlet-name>

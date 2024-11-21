@@ -2,36 +2,6 @@
 <%@ page import="java.util.*,model.category, model.service"%>
 <!DOCTYPE html>
 
-<%
-    // Cookie-based session management
-    Cookie[] cookies = request.getCookies();
-    boolean isLoggedIn = false;
-    boolean isAdmin = false;
-
-    if (cookies != null) {
-        for (Cookie cookie : cookies) {
-            if ("isLoggedIn".equals(cookie.getName()) && "true".equals(cookie.getValue())) {
-                isLoggedIn = true;
-            }
-            if ("isAdmin".equals(cookie.getName()) && "true".equals(cookie.getValue())) {
-                isAdmin = true;
-            }
-        }
-    }
-
-    // Redirect if not logged in
-    if (!isLoggedIn) {
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
-        return;
-    }
-
-    // Redirect if not an admin
-    if (!isAdmin) {
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
-        return;
-    }
-%>
-
 <html>
 <head>
 <meta charset="UTF-8">

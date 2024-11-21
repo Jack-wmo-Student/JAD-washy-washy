@@ -22,6 +22,20 @@ public class ServiceServlet extends HttpServlet {
 	private static final String DB_DRIVER = "org.postgresql.Driver";
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Check if the user is logged in
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+        	// Handle invalid login
+        	request.setAttribute("error", "You must log in first.");
+        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            return;
+        }
+
+        // Optional: Check if the user is an admin
+        if (!sessionUtils.isAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+            return;
+        }
+		
 		String categoryId = request.getParameter("categoryId");
 		request.getSession().setAttribute("categoryId", categoryId);
 
