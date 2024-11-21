@@ -72,11 +72,7 @@ public class ServiceServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		request.getSession().setAttribute("categoryName", categoryName);
-		request.setAttribute("services", services);
-
-		// Forward to the JSP
-		request.getRequestDispatcher("editService.jsp").forward(request, response);
+		response.sendRedirect(request.getContextPath() + "/pages/editService.jsp");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -105,7 +101,7 @@ public class ServiceServlet extends HttpServlet {
 		}
 
 		// Redirect to refresh the service list
-		response.sendRedirect("ServiceServlet?categoryId=" + categoryId);
+		response.sendRedirect(request.getContextPath() + "/ServiceServlet");
 	}
 
 	private Connection getConnection() throws ClassNotFoundException, SQLException {

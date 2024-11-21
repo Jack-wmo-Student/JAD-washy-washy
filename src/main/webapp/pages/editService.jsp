@@ -93,6 +93,11 @@
                     <td>
                         <form action="serviceEditor.jsp" method="get" style="display: inline;">
                             <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
+                            <input type="hidden" name="serviceName" value="<%= service.getName() %>" />
+                            <input type="hidden" name="servicePrice" value="<%= service.getPrice() %>" />
+                            <input type="hidden" name="serviceDuration" value="<%= service.getDurationInHour() %>" />
+                            <input type="hidden" name="serviceDescription" value="<%= service.getDescription() %>" />
+          
                             <button type="submit" class="btn btn-edit">Edit</button>
                         </form>
                         <form action="deleteService.jsp" method="post" style="display: inline;"
