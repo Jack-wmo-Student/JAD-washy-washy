@@ -8,10 +8,11 @@
     <title>JAD-Washy-Washy</title>
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/homePage.css">
+    <link rel="icon" href="<%=request.getContextPath()%>/assets/icons/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <!-- Include the Navbar -->
-    <div><%@ include file="navbar.jsp" %></div>
+    <div><%@ include file="/component/navbar.jsp"%></div>
 
     <!-- Categories Container -->
     <div class="categories-container">
