@@ -10,6 +10,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
@@ -28,7 +30,6 @@ public class bookingPageLogic extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ResultSet result1 = null;
 	  	Connection conn = null;
 	  	
 		
@@ -44,65 +45,53 @@ public class bookingPageLogic extends HttpServlet {
 	  		// === Connect to Database ===
 	  		conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 	  		
-	  		PreparedStatement pstmt1 = conn.prepareStatement(sql1);
-	  		
-	  		pstmt1.setInt(1, userId);
+	  		// Fetch the first data that we need. Booking_id, date, service_name and timeslot_id
+	  		List<Map<String, Object>> results = fetchUserBookings(conn, 1);
 		  	
+//	  		Example result that we want to return to the front end
+//	  		[
+//	  		 	{
+//	  		 		"booking_id": 123,
+//	  		 		"date": "2022-01-25",
+//                  "service_name": "Wash and Wax",
+//                  "timeslot_id": 3,
+//                  "timeSlots": "8am-10am"
+//	  		 	}
+//	  		]
+	  		
 	  		// Fetch Data 3. Get the timeslots by using booking Ids
-	  		while(result1.next()) {
-	  			int bookingId = result1.getInt("booking_id");
-	  			String sql2 = "SELECT \r\n"
-		  					+ "    t.timeslot_id,\r\n"
-		  					+ "    CASE \r\n"
-		  					+ "        WHEN t.\"8am-9am\" = BOOKING_ID THEN '8am-9am'\r\n"
-		  					+ "        WHEN t.\"9am-10am\" = BOOKING_ID THEN '9am-10am'\r\n"
-		  					+ "        WHEN t.\"10am-11am\" = BOOKING_ID THEN '10am-11am'\r\n"
-		  					+ "        WHEN t.\"11am-12pm\" = BOOKING_ID THEN '11am-12pm'\r\n"
-		  					+ "        WHEN t.\"1pm-2pm\" = BOOKING_ID THEN '1pm-2pm'\r\n"
-		  					+ "        WHEN t.\"2pm-3pm\" = BOOKING_ID THEN '2pm-3pm'\r\n"
-		  					+ "        WHEN t.\"3pm-4pm\" = BOOKING_ID THEN '3pm-4pm'\r\n"
-		  					+ "        WHEN t.\"4pm-5pm\" = BOOKING_ID THEN '4pm-5pm'\r\n"
-		  					+ "        WHEN t.\"5pm-6pm\" = BOOKING_ID THEN '5pm-6pm'\r\n"
-		  					+ "        ELSE NULL\r\n"
-		  					+ "    END AS booked_timeslot\r\n"
-		  					+ "FROM \r\n"
-		  					+ "    timeslot t\r\n"
-		  					+ "WHERE \r\n"
-		  					+ "    t.timeslot_id = TIMESLOT_ID\r\n"
-		  					+ "      AND BOOKING_ID IN (\r\n"
-		  					+ "          t.\"8am-9am\", t.\"9am-10am\", t.\"10am-11am\",\r\n"
-		  					+ "          t.\"11am-12pm\", t.\"1pm-2pm\", t.\"2pm-3pm\",\r\n"
-		  					+ "          t.\"3pm-4pm\", t.\"4pm-5pm\", t.\"5pm-6pm\"\r\n"
-		  					+ "      );";
+	  		for(int i = 0; i < results.size(); i++) {
+	  			Map<String, Object> tempMap = results.get(i);
+	  			
+	  			// Fetch the timeslots now
+	  			List<String> timeslots = fetchTimeSlotsForBooking(conn, (int) tempMap.get("booking_id"), (int) tempMap.get(results));
+	  			
+	  			if(timeslots.size() != 1) {
+	  				String[] firstPart = timeslots.get(0).split("-");
+	  				String[] lastPart = timeslots.get(timeslots.size()-1).split("-");
+	  				
+	  				String finalisedTimeSlot = firstPart[0] + "-" + lastPart[1];
+	  				tempMap.put("timeSlots", finalisedTimeSlot);
+	  			}
+	  			else {
+	  				tempMap.put("timeSlots", timeslots.get(0));
+	  			}
 	  		}
-		  	
-		  	
 	  		
-	  		
-	  		
-		    // Convert ResultSet to a list or array
-	      	List<Map<String, String>> questionList = new ArrayList<>();
-		    while (rs.next()) {
-		    	Map<String, String> question = new HashMap<>();
-		        question.put("question_id", rs.getString("question_id"));
-		        question.put("question_text", rs.getString("question_text"));
-		        question.put("question_type", rs.getString("question_type"));
-		        questionList.add(question);
-		    }
-	      	
+		    
 		    // Store the list in the request attribute
-		    request.setAttribute("questions", questionList);
+	  		HttpSession session = request.getSession();
+		    session.setAttribute("bookingInfos", results);
 
 		    // Forward to the JSP
-		    RequestDispatcher dispatcher = request.getRequestDispatcher("/feedbackPage.jsp");
-		    dispatcher.forward(request, response);
+		    request.getRequestDispatcher("/pages/bookingPage.jsp").forward(request, response);
 	      
 		} catch(Exception e) {
 			e.printStackTrace();
 		} 
 	}
 	
-	public static List<Map<String, Object>> fetchUserBookings(Connection conn, int userId) throws SQLException {
+	private static List<Map<String, Object>> fetchUserBookings(Connection conn, int userId) throws SQLException {
 		 String query = """
 		            SELECT 
 		                b.booking_id,
@@ -135,4 +124,52 @@ public class bookingPageLogic extends HttpServlet {
 		
 		return resultList;
 	}
+
+	private static List<String> fetchTimeSlotsForBooking(Connection conn, int bookingId, int timeSlotId) throws SQLException {
+		String query = """
+		        SELECT 
+	            t.timeslot_id,
+	            CASE 
+	                WHEN t."8am-9am" = ? THEN '8am-9am'
+	                WHEN t."9am-10am" = ? THEN '9am-10am'
+	                WHEN t."10am-11am" = ? THEN '10am-11am'
+	                WHEN t."11am-12pm" = ? THEN '11am-12pm'
+	                WHEN t."1pm-2pm" = ? THEN '1pm-2pm'
+	                WHEN t."2pm-3pm" = ? THEN '2pm-3pm'
+	                WHEN t."3pm-4pm" = ? THEN '3pm-4pm'
+	                WHEN t."4pm-5pm" = ? THEN '4pm-5pm'
+	                WHEN t."5pm-6pm" = ? THEN '5pm-6pm'
+	                ELSE NULL
+	            END AS booked_timeslot
+	        FROM 
+	            timeslot t
+	        WHERE 
+	            t.timeslot_id = ?;
+	    """;
+		
+		List<String> resultList = new ArrayList<>();
+		try(PreparedStatement pstmt = conn.prepareStatement(query)) {
+			for(int i = 1; i <= 9; i++) {
+				pstmt.setInt(i, bookingId);
+			}
+			pstmt.setInt(10, timeSlotId);
+			
+			try(ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+	                String bookedTimeslot = rs.getString("booked_timeslot");
+	                if (bookedTimeslot != null) {
+	                	resultList.add(bookedTimeslot);
+	                }
+	            }
+			}
+		}
+		
+		return resultList;
+	}
+
+
+
+
+
+
 }
