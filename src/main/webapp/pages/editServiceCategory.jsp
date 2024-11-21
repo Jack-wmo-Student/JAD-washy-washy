@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ page import="java.util.*, backend.category "%>
+<%@ page import="java.util.*,model.category, model.service"%>
 <!DOCTYPE html>
 
 <%
@@ -79,8 +79,10 @@
 
 		<h3>Existing Categories</h3>
 		<%
-    List<category> categories = (List<category>) request.getAttribute("categories");
-    if (categories == null || categories.isEmpty()) {
+		Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
+		.getAttribute("categoryServiceMap");
+		
+    if (sessionCategoryServiceMap == null && sessionCategoryServiceMap.isEmpty()) {
 %>
 		<p>No categories found. Please add a new category.</p>
 		<%
@@ -93,24 +95,26 @@
 				<th>Category Description</th>
 				<th>Actions</th>
 			</tr>
-			<% for (category category : categories) { %>
+			<% for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) { 
+				category cat = entry.getKey();
+			%>
 			<tr>
-				<td><%= category.getId() %></td>
-				<td><%= category.getName() %></td>
-				<td><%= category.getDescription() %></td>
+				<td><%= cat.getId() %></td>
+				<td><%= cat.getName() %></td>
+				<td><%= cat.getDescription() %></td>
 				<td>
 					<div class="actions">
 						<form action="editService.jsp" method="get"
 							style="display: inline;">
 							<input type="hidden" name="categoryId"
-								value="<%= category.getId() %>" />
+								value="<%= cat.getId() %>" />
 							<button type="submit" class="btn-edit">Edit</button>
 						</form>
 						<form action="deleteServiceCategory.jsp" method="get"
 							style="display: inline;"
 							onsubmit="return confirm('Are you sure you want to delete this category?');">
 							<input type="hidden" name="categoryId"
-								value="<%= category.getId() %>" />
+								value="<%= cat.getId() %>" />
 							<button type="submit" class="btn-delete">Delete</button>
 						</form>
 					</div>

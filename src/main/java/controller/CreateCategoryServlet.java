@@ -1,4 +1,4 @@
-package backend;
+package controller;
 
 import java.io.IOException;
 import java.sql.*;
@@ -7,6 +7,7 @@ import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import model.category;
 
 public class CreateCategoryServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

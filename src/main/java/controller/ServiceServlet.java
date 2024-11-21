@@ -1,10 +1,12 @@
-package backend;
+package controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.service;
+
 import java.io.IOException;
 import java.util.*;
 import java.sql.*;
