@@ -1,0 +1,105 @@
+body {
+	padding-top: 100px !important; /* 60px navbar height + 40px spacing */
+	margin: 0;
+}
+/* Navbar container */
+.navbar {
+	background-color: #333;
+	color: white;
+	padding: 15px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-family: Arial, sans-serif;
+	position: fixed !important; /* Fix navbar to the top */
+	top: 0; /* Align to the top of the viewport */
+	left: 0;
+	width: 100%; /* Full width */
+	z-index: 1000; /* Ensure it stays above other elements */
+	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+	height: 60px; /* Explicit height to avoid overflow issues */
+}
+
+/* Adjust body to prevent content from hiding behind the fixed navbar */
+body {
+	padding-top: 60px; /* Matches the navbar height */
+	margin: 0;
+}
+
+/* Navbar title */
+.navbar h2 {
+	margin: 0;
+	margin-left: 20px;
+	padding-left: 20px;
+	color: white;
+	flex: 0 0 auto;
+}
+
+/* Navbar links container */
+.nav-links {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	flex: 1;
+	justify-content: flex-end; /* Align items to the right */
+}
+
+/* Navbar links */
+.nav-links li {
+	position: relative;
+	margin: 0;
+	padding: 0;
+}
+
+.nav-links a {
+	color: white;
+	text-decoration: none;
+	padding: 5px 10px;
+	border-radius: 5px;
+}
+
+.nav-links a:hover {
+	background-color: #555;
+}
+
+/* Select dropdown styling */
+.category-dropdown {
+	background-color: #333;
+	color: white;
+	padding: 5px 10px;
+	border: none;
+	border-radius: 5px;
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.category-dropdown:hover {
+	background-color: #444;
+}
+
+.category-dropdown option {
+	background-color: #333; /* Dropdown options background */
+	color: white; /* Dropdown options text color */
+}
+
+/* Logout button */
+.logout-button {
+	background-color: #f44336;
+	color: white;
+	border: none;
+	padding: 10px 15px;
+	cursor: pointer;
+	border-radius: 5px;
+	margin-left: 20px;
+	margin-right: 20px;
+	align-self: center; /* Ensure the logout button aligns vertically */
+}
+
+.logout-button:hover {
+	background-color: #d32f2f;
+}

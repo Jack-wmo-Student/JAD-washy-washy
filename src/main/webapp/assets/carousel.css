@@ -1,0 +1,33 @@
+/* Carousel Container */
+.carousel-container {
+    margin-top: 20px; /* Ensure spacing under the navbar */
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* Adjust carousel images */
+.carousel-inner img {
+    height: 300px; /* Consistent height for all images */
+    object-fit: cover; /* Maintain aspect ratio */
+}
+
+/* Customize the indicators (dots) */
+.carousel-indicators button {
+    background-color: rgba(0, 0, 0, 0.5); /* Change indicator color */
+}
+
+.carousel-indicators .active {
+    background-color: rgba(255, 255, 255, 0.9); /* Change active indicator color */
+}
+
+/* Customize navigation arrows */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Add background color to arrows */
+    border-radius: 50%; /* Round arrow buttons */
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Change color on hover */
+}

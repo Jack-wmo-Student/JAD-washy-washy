@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee 
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+	version="5.0">
+
+	<!-- Welcome file configuration to set index.jsp as the landing page -->
+	<welcome-file-list>
+		<welcome-file>pages/index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- Servlet configuration for landingPage -->
+	<servlet>
+		<servlet-name>landingPage</servlet-name>
+		<servlet-class>controller.landingPage</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>landingPage</servlet-name>
+		<url-pattern>/landingPage</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>categoryService</servlet-name>
+		<servlet-class>controller.categoryService</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>categoryService</servlet-name>
+		<url-pattern>/categoryService</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>CreateCategoryServlet</servlet-name>
+		<servlet-class>controller.CreateCategoryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CreateCategoryServlet</servlet-name>
+		<url-pattern>/CreateCategoryServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>ServiceServlet</servlet-name>
+		<servlet-class>controller.ServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServiceServlet</servlet-name>
+		<url-pattern>/ServiceServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>EditServiceServlet</servlet-name>
+		<servlet-class>controller.EditServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EditServiceServlet</servlet-name>
+		<url-pattern>/EditServiceServlet</url-pattern>
+	</servlet-mapping>
+		<servlet>
+		<servlet-name>feedbackLogic</servlet-name>
+		<servlet-class>controller.feedbackLogic</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>feedbackLogic</servlet-name>
+		<url-pattern>/feedbackLogic</url-pattern>
+	</servlet-mapping>
+
+</web-app>
