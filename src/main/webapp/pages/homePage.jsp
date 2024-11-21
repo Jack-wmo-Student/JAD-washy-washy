@@ -12,7 +12,18 @@
 </head>
 <body>
     <!-- Include the Navbar -->
-    <div><%@ include file="/component/navbar.jsp"%></div>
+    <div><%@ include file="/component/navbar.jsp" %></div>
+
+    <!-- Carousel Section -->
+    <div class="carousel">
+        <div class="carousel-images">
+            <img src="<%=request.getContextPath()%>/assets/images/cleaningImage.jpg" alt="Cleaning Service 1">
+            <img src="<%=request.getContextPath()%>/assets/images/cleaningImage2.jpg" alt="Cleaning Service 2">
+            <img src="<%=request.getContextPath()%>/assets/images/cleaningImage3.jpg" alt="Cleaning Service 3">
+        </div>
+        <button class="carousel-arrow left" id="prevArrow">&#10094;</button>
+        <button class="carousel-arrow right" id="nextArrow">&#10095;</button>
+    </div>
 
     <!-- Categories Container -->
     <div class="categories-container">
@@ -47,11 +58,11 @@
                 </div>
                 <% 
                         }
-                    } else {
+                    } else { 
                 %>
                 <p>No services available under this category.</p>
                 <% 
-                    }
+                    } 
                 %>
             </div>
         </div>
@@ -64,5 +75,6 @@
             } 
         %>
     </div>
+        <script src="<%=request.getContextPath()%>/assets/carousel.js"></script> <!-- Carousel-specific JS -->
 </body>
 </html>
