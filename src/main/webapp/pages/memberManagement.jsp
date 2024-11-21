@@ -19,7 +19,7 @@
             </div>
         <%
             } else {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked");
                 /* List<user> members = (List<userr>) request.getAttribute("members"); */
 
                 if (members == null || members.isEmpty()) {
