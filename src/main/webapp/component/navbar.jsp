@@ -18,12 +18,15 @@
 			<li><a href="<%=request.getContextPath()%>/pages/homePage.jsp">Home</a></li>
 
 			<!-- Admin Dashboard Link -->
-			<li><a href="/JAD-washy-washy/CreateCategoryServlet">Admin Dashboard</a></li>
+			<li><a href="<%=request.getContextPath()%>/CreateCategoryServlet">Admin Dashboard</a></li>
+			
+			<!-- Feedback Tab for testing -->
+			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li>
 
 			<!-- Categories Dropdown using <select> -->
 			<li>
 				<select class="category-dropdown" onchange="navigateToCategory(this.value)">
-					<option value="" disabled selected>Categories</option>
+					<option value="" disabled selected hidden>Categories</option>
 					<%
 					// Retrieve category-service map from the session
 					Map<category, List<category>> categoryServiceMap = (Map<category, List<category>>) session

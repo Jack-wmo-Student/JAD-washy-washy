@@ -29,8 +29,10 @@ body {
 /* Navbar title */
 .navbar h2 {
 	margin: 0;
-	flex: 0 0 auto;
+	margin-left: 20px;
+	padding-left: 20px;
 	color: white;
+	flex: 0 0 auto;
 }
 
 /* Navbar links container */
@@ -65,7 +67,7 @@ body {
 
 /* Select dropdown styling */
 .category-dropdown {
-	background-color: #444;
+	background-color: #333;
 	color: white;
 	padding: 5px 10px;
 	border: none;
@@ -77,11 +79,11 @@ body {
 }
 
 .category-dropdown:hover {
-	background-color: #555;
+	background-color: #444;
 }
 
 .category-dropdown option {
-	background-color: #444; /* Dropdown options background */
+	background-color: #333; /* Dropdown options background */
 	color: white; /* Dropdown options text color */
 }
 
