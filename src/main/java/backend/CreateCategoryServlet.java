@@ -63,8 +63,8 @@ public class CreateCategoryServlet extends HttpServlet {
 			}
 		}
 
-		// Forward to JSP
-		request.getRequestDispatcher("/pages/editServiceCategory.jsp").forward(request, response);
+		// Redirect to JSP
+		response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
 	}
 
 	@Override
