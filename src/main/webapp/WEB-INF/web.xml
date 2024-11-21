@@ -52,5 +52,13 @@
 		<servlet-name>EditServiceServlet</servlet-name>
 		<url-pattern>/EditServiceServlet</url-pattern>
 	</servlet-mapping>
+		<servlet>
+		<servlet-name>feedbackLogic</servlet-name>
+		<servlet-class>backend.feedbackLogic</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>feedbackLogic</servlet-name>
+		<url-pattern>/feedbackLogic</url-pattern>
+	</servlet-mapping>
 
 </web-app>

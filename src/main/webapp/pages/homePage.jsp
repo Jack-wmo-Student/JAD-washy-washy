@@ -29,7 +29,6 @@
     <div class="categories-container">
         <% 
             // Retrieve the category-service map from the session
-            @SuppressWarnings("unchecked")
             Map<category, List<service>> sessionCategoryServiceMap = 
                 (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
 

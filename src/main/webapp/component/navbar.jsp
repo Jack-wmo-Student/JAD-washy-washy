@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<%--     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css"> --%>
+<%-- <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css"> --%>
 <title>JAD-Washy-Washy Navbar</title>
 </head>
 <body>
@@ -18,40 +18,51 @@
 			<li><a href="<%=request.getContextPath()%>/pages/homePage.jsp">Home</a></li>
 
 			<!-- Admin Dashboard Link -->
+			<li><a href="<%=request.getContextPath()%>/CreateCategoryServlet">Admin Dashboard</a></li>
+			
+			<!-- Feedback Tab for testing -->
+			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li>
 
-			<li><a href="/JAD-washy-washy/CreateCategoryServlet">Admin Dashboard</a></li>
-
-
-			<!-- Categories Dropdown -->
-			<li class="dropdown"><a href="#" class="dropdown-btn">Categories</a>
-				<div class="dropdown-menu">
+			<!-- Categories Dropdown using <select> -->
+			<li>
+				<select class="category-dropdown" onchange="navigateToCategory(this.value)">
+					<option value="" disabled selected hidden>Categories</option>
 					<%
 					// Retrieve category-service map from the session
 					Map<category, List<category>> categoryServiceMap = (Map<category, List<category>>) session
 							.getAttribute("categoryServiceMap");
 
-					// Dynamically render category links or show fallback message
+					// Dynamically render category options or show fallback message
 					if (categoryServiceMap != null && !categoryServiceMap.isEmpty()) {
 						for (category cat : categoryServiceMap.keySet()) {
 							String categoryName = (cat.getName() != null) ? cat.getName().trim() : "Unknown Category";
 					%>
-					<a href="#category-<%=cat.getId()%>"><%=categoryName%></a>
+					<option value="#category-<%=cat.getId()%>"><%=categoryName%></option>
 					<%
-					}
+						}
 					} else {
 					%>
-					<p class="no-categories">No categories available.</p>
+					<option value="">No categories available</option>
 					<%
 					}
 					%>
-				</div></li>
+				</select>
+			</li>
 		</ul>
 
 		<!-- Logout Button -->
-		<form action="<%=request.getContextPath()%>/logout" method="POST"
-			class="logout-form">
+		<form action="<%=request.getContextPath()%>/logout" method="POST" class="logout-form">
 			<button type="submit" class="logout-button">Log Out</button>
 		</form>
 	</div>
+
+	<script>
+		// JavaScript function to navigate to selected category
+		function navigateToCategory(categoryId) {
+			if (categoryId) {
+				window.location.href = categoryId;
+			}
+		}
+	</script>
 </body>
 </html>
