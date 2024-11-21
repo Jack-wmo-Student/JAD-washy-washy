@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/editService")
 public class EditServiceServlet extends HttpServlet {
 
     private static final String DB_URL = System.getenv("DB_URL");

@@ -10,7 +10,6 @@ import java.util.*;
 import java.sql.*;
 
 
-@WebServlet("/ServiceServlet")
 public class ServiceServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
