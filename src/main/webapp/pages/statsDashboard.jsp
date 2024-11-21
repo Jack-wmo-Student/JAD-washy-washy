@@ -1,4 +1,4 @@
-<%@ page import="java.util.List" %>
+<%-- <%@ page import="java.util.List" %>
 <%@ page import="ProfitMarginsDAO, BooksPerMonthDAO, FeedbackRatingsDAO" %>
 <%@ page import="ProfitMargin, BooksPerMonth, FeedbackRating" %>
 
@@ -16,7 +16,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>Stats Dashboard</title>
     <style>
         body { font-family: Arial, sans-serif; }
         .container { width: 80%; margin: auto; }
@@ -65,4 +65,4 @@
     </div>
 </div>
 </body>
-</html>
+</html> --%>

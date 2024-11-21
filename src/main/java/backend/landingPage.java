@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Servlet implementation class landingPage
@@ -84,7 +83,6 @@ public class landingPage extends HttpServlet {
 			System.out.println("Executing query: " + query);
 			System.out.println("Parameters: Username = " + username + ", Password = " + password);
 
-			
 			try (ResultSet rs = stmt.executeQuery()) {
 				if (rs.next()) {
 					System.out.println("User found in database: " + rs.getString("username"));
@@ -93,7 +91,7 @@ public class landingPage extends HttpServlet {
 				} else {
 					System.out.println("No matching user found in database.");
 				}
-			} 
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

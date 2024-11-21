@@ -19,10 +19,9 @@ import java.sql.ResultSet;
 import java.sql.*;
 import java.util.List;
 
-
 public class feedbackLogic extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+
 	private final String dbClass = System.getenv("DB_CLASS");
 	private final String dbUrl = System.getenv("DB_URL");
 	private final String dbPassword = System.getenv("DB_PASSWORD");

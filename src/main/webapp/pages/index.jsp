@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login</title>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/loginPage.css">
-<link rel="icon" href="<%=request.getContextPath()%>/assets/favicon.ico" type="image/x-icon">
+<link rel="icon" href="<%=request.getContextPath()%>/assets/icons/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="login-container">
