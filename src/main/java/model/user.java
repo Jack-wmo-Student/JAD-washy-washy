@@ -29,7 +29,7 @@ public class user {
         return user_id;
     }
     
-    public int isBlocked() {
-        return user_id;
+    public boolean isBlocked() {
+        return isBlocked;
     }
 }
