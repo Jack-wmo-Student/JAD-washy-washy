@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,16 +28,33 @@ public class categoryService extends HttpServlet {
     }
 
     @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response); // Delegate POST handling to doGet
+    }
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Check for null environment variables
+        // Check if the user is logged in
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+        	// Handle invalid login
+        	request.setAttribute("error", "You must log in first.");
+        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            return;
+        }
+
+        // Optional: Check if the user is an admin
+        if (!sessionUtils.isAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+            return;
+        }
+
+        // Database credentials check
         if (DB_URL == null || DB_USER == null || DB_PASSWORD == null) {
             System.err.println("Database credentials are missing!");
             throw new ServletException("Database credentials are not set in the environment variables.");
         }
-
-        System.out.println("DB_URL: " + DB_URL);
-        System.out.println("DB_USER: " + DB_USER);
 
         HttpSession session = request.getSession();
 
@@ -47,34 +64,29 @@ public class categoryService extends HttpServlet {
                 (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
 
         if (categoryServiceMap == null) {
-            // If not available, fetch from the database and store in session
             categoryServiceMap = fetchCategoriesAndServices();
             session.setAttribute("categoryServiceMap", categoryServiceMap);
-            System.out.println("Categories and services stored in session.");
-        } else {
-            System.out.println("Using categories and services from session.");
         }
 
-        // Redirect to homePage.jsp
-        response.sendRedirect(request.getContextPath() + "/pages/homePage.jsp");
+        // Forward to homePage.jsp
+        request.getRequestDispatcher("/pages/homePage.jsp").forward(request, response);
     }
 
     private Map<category, List<service>> fetchCategoriesAndServices() {
         String categoryQuery = "SELECT category_id, category_name, category_description FROM category";
         String serviceQuery = "SELECT service_id, category_id, service_name, price, duration_in_hour, service_description FROM service";
-        Map<category, List<service>> categoryServiceMap = new HashMap<>();
+        Map<category, List<service>> categoryServiceMap = new LinkedHashMap<>();
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             System.out.println("Connected to the database successfully.");
 
             // Map to hold categories by ID
-            Map<Integer, category> categoryMap = new HashMap<>();
+            Map<Integer, category> categoryMap = new LinkedHashMap<>();
 
             // Fetch all categories
             try (PreparedStatement categoryStmt = conn.prepareStatement(categoryQuery);
                  ResultSet categoryRs = categoryStmt.executeQuery()) {
 
-                System.out.println("Fetching categories...");
                 while (categoryRs.next()) {
                     category cat = new category(
                             categoryRs.getInt("category_id"),
@@ -84,15 +96,12 @@ public class categoryService extends HttpServlet {
                     categoryMap.put(cat.getId(), cat); // Store category by ID
                     categoryServiceMap.put(cat, new ArrayList<>()); // Initialize with an empty list
                 }
-                System.out.println("Total categories fetched: " + categoryMap.size());
             }
 
             // Fetch all services and link to their categories
             try (PreparedStatement serviceStmt = conn.prepareStatement(serviceQuery);
                  ResultSet serviceRs = serviceStmt.executeQuery()) {
 
-                System.out.println("Fetching services...");
-                int serviceCount = 0;
                 while (serviceRs.next()) {
                     service serv = new service(
                             serviceRs.getInt("service_id"),
@@ -107,15 +116,10 @@ public class categoryService extends HttpServlet {
                     category cat = categoryMap.get(serv.getCategoryId());
                     if (cat != null) {
                         categoryServiceMap.get(cat).add(serv);
-                        serviceCount++;
-                    } else {
-                        System.err.println("No matching category found for service: " + serv.getName());
                     }
                 }
-                System.out.println("Total services fetched: " + serviceCount);
             }
         } catch (Exception e) {
-            System.err.println("An error occurred while fetching categories and services.");
             e.printStackTrace();
         }
 
