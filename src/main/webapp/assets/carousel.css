@@ -1,46 +1,33 @@
-@charset "UTF-8";
-/* Carousel Styling */
-.carousel {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    margin: auto;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+/* Carousel Container */
+.carousel-container {
+    margin-top: 20px; /* Ensure spacing under the navbar */
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* Adjust carousel images */
+.carousel-inner img {
+    height: 300px; /* Consistent height for all images */
+    object-fit: cover; /* Maintain aspect ratio */
 }
 
-.carousel-images {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
+/* Customize the indicators (dots) */
+.carousel-indicators button {
+    background-color: rgba(0, 0, 0, 0.5); /* Change indicator color */
 }
 
-.carousel-images img {
-    width: 100%;
-    flex-shrink: 0;
+.carousel-indicators .active {
+    background-color: rgba(255, 255, 255, 0.9); /* Change active indicator color */
 }
 
-.carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 50%;
+/* Customize navigation arrows */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Add background color to arrows */
+    border-radius: 50%; /* Round arrow buttons */
 }
 
-.carousel-arrow.left {
-    left: 10px;
-}
-
-.carousel-arrow.right {
-    right: 10px;
-}
-
-.carousel-arrow:hover {
-    background: rgba(0, 0, 0, 0.8);
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Change color on hover */
 }
