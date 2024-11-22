@@ -39,7 +39,7 @@
 </head>
 <body>
     <div class="sidebar">
-        <h2>Admin Dashboard</h2>
+        <h2>Admin Dashboards</h2>
         <a href="services.jsp">Services</a>
         <a href="members.jsp">Members</a>
         <a href="stats.jsp">Stats</a>

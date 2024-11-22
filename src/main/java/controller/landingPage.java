@@ -1,4 +1,4 @@
-package backend;
+package controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.user;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,7 +35,7 @@ public class landingPage extends HttpServlet {
 		// Validate the user
 		user validatedUser = validateUser(username, password);
 
-		if (validatedUser != null) {
+		if (!(validatedUser == null || validatedUser.isBlocked())) {
 			// Set a lightweight cookie for session validation
 			Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
 			isLoggedInCookie.setHttpOnly(true); // Prevent JavaScript access
@@ -65,7 +67,7 @@ public class landingPage extends HttpServlet {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		String query = "SELECT user_id, username, password, is_admin FROM users WHERE LOWER(username) = LOWER(?) AND password = ?";
+		String query = "SELECT user_id, username, password, is_admin, is_blocked FROM users WHERE LOWER(username) = LOWER(?) AND password = ?";
 		user user = null;
 
 		try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -81,8 +83,9 @@ public class landingPage extends HttpServlet {
 				if (rs.next()) {
 					System.out.println("User found in database: " + rs.getString("username"));
 					int userId = rs.getInt("user_id");
-					boolean isAdmin = rs.getBoolean("is_admin");
-					user = new user(userId, username, isAdmin);
+					boolean isAdmin = rs.getBoolean("is_admin") || !rs.wasNull();
+					boolean isBlocked = rs.getBoolean("is_blocked") || rs.wasNull();
+					user = new user(userId, username, isAdmin, isBlocked);
 				} else {
 					System.out.println("No matching user found in database.");
 				}

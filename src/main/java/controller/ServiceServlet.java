@@ -1,10 +1,12 @@
-package backend;
+package controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.service;
+
 import java.io.IOException;
 import java.util.*;
 import java.sql.*;
@@ -20,6 +22,20 @@ public class ServiceServlet extends HttpServlet {
 	private static final String DB_DRIVER = "org.postgresql.Driver";
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Check if the user is logged in
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+        	// Handle invalid login
+        	request.setAttribute("error", "You must log in first.");
+        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            return;
+        }
+
+        // Optional: Check if the user is an admin
+        if (!sessionUtils.isAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+            return;
+        }
+		
 		String categoryId = request.getParameter("categoryId");
 		request.getSession().setAttribute("categoryId", categoryId);
 
@@ -56,11 +72,7 @@ public class ServiceServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		request.getSession().setAttribute("categoryName", categoryName);
-		request.setAttribute("services", services);
-
-		// Forward to the JSP
-		request.getRequestDispatcher("editService.jsp").forward(request, response);
+		response.sendRedirect(request.getContextPath() + "/pages/editService.jsp");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -89,7 +101,7 @@ public class ServiceServlet extends HttpServlet {
 		}
 
 		// Redirect to refresh the service list
-		response.sendRedirect("ServiceServlet?categoryId=" + categoryId);
+		response.sendRedirect(request.getContextPath() + "/ServiceServlet");
 	}
 
 	private Connection getConnection() throws ClassNotFoundException, SQLException {

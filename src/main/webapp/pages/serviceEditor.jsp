@@ -1,35 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-
-<%
-    // Cookie-based session management
-    Cookie[] cookies = request.getCookies();
-    boolean isLoggedIn = false;
-    boolean isAdmin = false;
-
-    if (cookies != null) {
-        for (Cookie cookie : cookies) {
-            if ("isLoggedIn".equals(cookie.getName()) && "true".equals(cookie.getValue())) {
-                isLoggedIn = true;
-            }
-            if ("isAdmin".equals(cookie.getName()) && "true".equals(cookie.getValue())) {
-                isAdmin = true;
-            }
-        }
-    }
-
-    // Redirect if not logged in
-    if (!isLoggedIn) {
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
-        return;
-    }
-
-    // Redirect if not an admin
-    if (!isAdmin) {
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
-        return;
-    }
-%>
+<%@ page import="java.util.*,model.service, model.category" %>
 
 <html>
 <head>
@@ -42,13 +13,13 @@
         <h2>Edit Service</h2>
 
         <!-- Display error message if any -->
-        <%
+        <%     
         String errorMessage = (String) request.getAttribute("errorMessage");
         if (errorMessage != null) {
         %>
             <div class="alert alert-error"><%= errorMessage %></div>
         <%
-        }
+        }  
         %>
 
         <form action="<%=request.getContextPath()%>/editService" method="post">
@@ -58,19 +29,19 @@
 
             <div>
                 <label for="serviceName">Service Name:</label>
-                <input type="text" name="serviceName" value="<%=session.getAttribute("serviceName") != null ? session.getAttribute("serviceName") : ""%>" required />
+                <input type="text" name="serviceName" value="<%=request.getParameter("serviceName")%>" required />
             </div>
             <div>
                 <label for="servicePrice">Service Price:</label>
-                <input type="number" name="servicePrice" value="<%=session.getAttribute("servicePrice") != null ? session.getAttribute("servicePrice") : 0.0%>" step="0.01" required />
+                <input type="number" name="servicePrice" value="<%=request.getParameter("servicePrice")%>" step="0.01" required />
             </div>
             <div>
                 <label for="serviceDuration">Service Duration (in hours):</label>
-                <input type="number" name="serviceDuration" value="<%=session.getAttribute("serviceDuration") != null ? session.getAttribute("serviceDuration") : 0%>" required />
+                <input type="number" name="serviceDuration" value="<%=request.getParameter("serviceDuration")%>" required />
             </div>
             <div>
                 <label for="serviceDescription">Service Description:</label>
-                <input type="text" name="serviceDescription" value="<%=session.getAttribute("serviceDescription") != null ? session.getAttribute("serviceDescription") : ""%>" required />
+                <input type="text" name="serviceDescription" value="<%=request.getParameter("serviceDescription")%>" required />
             </div>
             <div>
                 <input type="submit" value="Update Service" />

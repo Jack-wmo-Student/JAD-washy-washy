@@ -1,4 +1,4 @@
-package backend;
+package model;
 
 public class category {
     private int id;

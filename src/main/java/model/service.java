@@ -1,4 +1,4 @@
-package backend;
+package model;
 
 public class service {
     private int id;
