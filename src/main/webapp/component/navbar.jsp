@@ -1,12 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="java.util.List, java.util.Map, model.category"%>
+<%@ page import="java.util.List, java.util.Map, model.category, controller.sessionUtils"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<%-- <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css"> --%>
 <title>JAD-Washy-Washy Navbar</title>
 </head>
 <body>
@@ -19,25 +18,24 @@
 
 			<!-- Admin Dashboard Link -->
 			<%
+			// Check if user is an admin from the session
 			Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
 			if (isAdmin != null && isAdmin) { // Check if user is an admin
 			%>
-			<li><a
-				href="<%=request.getContextPath()%>/CreateCategoryServlet">Admin Dashboard</a></li>
+			<li><a href="<%=request.getContextPath()%>/CreateCategoryServlet">Admin Dashboard</a></li>
 			<%
 			}
 			%>
-			<!-- Feedback Tab for testing -->
+			<!-- Feedback Tab -->
 			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li>
 
 			<!-- Categories Dropdown using <select> -->
-			<li><select class="category-dropdown"
-				onchange="navigateToCategory(this.value)">
+			<li>
+				<select class="category-dropdown" onchange="navigateToCategory(this.value)">
 					<option value="" disabled selected hidden>Categories</option>
 					<%
 					// Retrieve category-service map from the session
-					Map<category, List<category>> categoryServiceMap = (Map<category, List<category>>) session
-							.getAttribute("categoryServiceMap");
+					Map<category, List<category>> categoryServiceMap = (Map<category, List<category>>) session.getAttribute("categoryServiceMap");
 
 					// Dynamically render category options or show fallback message
 					if (categoryServiceMap != null && !categoryServiceMap.isEmpty()) {
@@ -53,14 +51,27 @@
 					<%
 					}
 					%>
-			</select></li>
+				</select>
+			</li>
 		</ul>
 
-		<!-- Logout Button -->
-		<form action="<%=request.getContextPath()%>/logout" method="POST"
-			class="logout-form">
+		<!-- Login/Logout Button -->
+		<%
+		// Use sessionUtils.isLoggedIn to check login status
+		if (sessionUtils.isLoggedIn(request, "isLoggedIn")) { // Assuming "isLoggedIn" is the cookie name
+		%>
+		<form action="<%=request.getContextPath()%>/logout" method="POST" class="logout-form">
 			<button type="submit" class="logout-button">Log Out</button>
 		</form>
+		<%
+		} else {
+		%>
+		<form action="<%=request.getContextPath()%>/pages/login.jsp" method="GET" class="login-form">
+			<button type="submit" class="login-button">Log In</button>
+		</form>
+		<%
+		}
+		%>
 	</div>
 
 	<script>

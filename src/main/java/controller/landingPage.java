@@ -39,7 +39,7 @@ public class landingPage extends HttpServlet {
             if (validatedUser.isBlocked()) {
                 // Handle blocked user
                 request.setAttribute("error", "Your account is blocked. Please contact support.");
-                request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+                request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
             } else {
                 // Set a lightweight cookie for session validation
                 Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
@@ -61,7 +61,7 @@ public class landingPage extends HttpServlet {
         } else {
             // Handle invalid login
             request.setAttribute("error", "Invalid username or password.");
-            request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
         }
     }
 
