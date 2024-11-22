@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import utils.passwordUtils;
 
 public class landingPage extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -31,15 +32,16 @@ public class landingPage extends HttpServlet {
             throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
+        
+        String hashedPassword = passwordUtils.hashPassword(password);
         // Validate the user
-        user validatedUser = validateUser(username, password);
+        user validatedUser = validateUser(username, hashedPassword);
 
         if (validatedUser != null) {
             if (validatedUser.isBlocked()) {
                 // Handle blocked user
                 request.setAttribute("error", "Your account is blocked. Please contact support.");
-                request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+                request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
             } else {
                 // Set a lightweight cookie for session validation
                 Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
@@ -61,7 +63,7 @@ public class landingPage extends HttpServlet {
         } else {
             // Handle invalid login
             request.setAttribute("error", "Invalid username or password.");
-            request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
         }
     }
 

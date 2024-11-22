@@ -88,7 +88,7 @@ body {
 }
 
 /* Logout button */
-.logout-button {
+.logout-button, .login-button {
 	background-color: #f44336;
 	color: white;
 	border: none;
@@ -100,6 +100,6 @@ body {
 	align-self: center; /* Ensure the logout button aligns vertically */
 }
 
-.logout-button:hover {
+.logout-button:hover, .login-button:hover {
 	background-color: #d32f2f;
 }
