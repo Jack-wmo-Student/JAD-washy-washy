@@ -59,5 +59,22 @@
 		<servlet-name>feedbackLogic</servlet-name>
 		<url-pattern>/feedbackLogic</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>DeleteCategoryServlet</servlet-name>
+		<servlet-class>controller.DeleteCategoryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteCategoryServlet</servlet-name>
+		<url-pattern>/DeleteCategoryServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>DeleteServiceServlet</servlet-name>
+		<servlet-class>controller.DeleteServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteServiceServlet</servlet-name>
+		<url-pattern>/DeleteServiceServlet</url-pattern>
+	</servlet-mapping>
+	
 
 </web-app>
