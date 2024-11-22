@@ -7,7 +7,7 @@
 
 	<!-- Welcome file configuration to set index.jsp as the landing page -->
 	<welcome-file-list>
-		<welcome-file>pages/index.jsp</welcome-file>
+		<welcome-file>categoryService</welcome-file>
 	</welcome-file-list>
 
 	<!-- Servlet configuration for landingPage -->
@@ -59,6 +59,7 @@
 		<servlet-name>feedbackLogic</servlet-name>
 		<url-pattern>/feedbackLogic</url-pattern>
 	</servlet-mapping>
+<<<<<<< HEAD
 	<servlet>
 		<servlet-name>bookingPageLogic</servlet-name>
 		<servlet-class>controller.bookingPageLogic</servlet-class>
@@ -66,6 +67,15 @@
 	<servlet-mapping>
 		<servlet-name>bookingPageLogic</servlet-name>
 		<url-pattern>/bookingPage</url-pattern>
+=======
+			<servlet>
+		<servlet-name>handleRegisterUser</servlet-name>
+		<servlet-class>controller.handleRegisterUser</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>handleRegisterUser</servlet-name>
+		<url-pattern>/handleRegisterUser</url-pattern>
+>>>>>>> branch 'main' of https://github.com/Jack-wmo-std/JAD-washy-washy.git
 	</servlet-mapping>
 
 </web-app>

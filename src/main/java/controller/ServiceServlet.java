@@ -10,7 +10,7 @@ import model.service;
 import java.io.IOException;
 import java.util.*;
 import java.sql.*;
-
+import utils.sessionUtils;
 
 public class ServiceServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -21,21 +21,22 @@ public class ServiceServlet extends HttpServlet {
 	private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
 	private static final String DB_DRIVER = "org.postgresql.Driver";
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// Check if the user is logged in
-        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
-        	// Handle invalid login
-        	request.setAttribute("error", "You must log in first.");
-        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
-            return;
-        }
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+			// Handle invalid login
+			request.setAttribute("error", "You must log in first.");
+			request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+			return;
+		}
 
-        // Optional: Check if the user is an admin
-        if (!sessionUtils.isAdmin(request)) {
-            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
-            return;
-        }
-		
+		// Optional: Check if the user is an admin
+		if (!sessionUtils.isAdmin(request)) {
+			response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+			return;
+		}
+
 		String categoryId = request.getParameter("categoryId");
 		request.getSession().setAttribute("categoryId", categoryId);
 
@@ -43,7 +44,8 @@ public class ServiceServlet extends HttpServlet {
 		String categoryName = null;
 
 		try (Connection conn = getConnection();
-				PreparedStatement psCategory = conn.prepareStatement("SELECT category_name FROM service_categories WHERE category_id = ?");
+				PreparedStatement psCategory = conn
+						.prepareStatement("SELECT category_name FROM service_categories WHERE category_id = ?");
 				PreparedStatement psServices = conn.prepareStatement("SELECT * FROM service WHERE category_id = ?")) {
 
 			psCategory.setInt(1, Integer.parseInt(categoryId));
@@ -56,14 +58,9 @@ public class ServiceServlet extends HttpServlet {
 			psServices.setInt(1, Integer.parseInt(categoryId));
 			try (ResultSet rsServices = psServices.executeQuery()) {
 				while (rsServices.next()) {
-					service service = new service(
-							rsServices.getInt("service_id"),
-							rsServices.getInt("category_id"), 
-							rsServices.getString("service_name"),
-							rsServices.getDouble("price"),
-							rsServices.getInt("duration_in_hour"),
-							rsServices.getString("service_description")
-							);
+					service service = new service(rsServices.getInt("service_id"), rsServices.getInt("category_id"),
+							rsServices.getString("service_name"), rsServices.getDouble("price"),
+							rsServices.getInt("duration_in_hour"), rsServices.getString("service_description"));
 					services.add(service);
 				}
 			}
@@ -72,14 +69,11 @@ public class ServiceServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		request.getSession().setAttribute("categoryName", categoryName);
-		request.setAttribute("services", services);
-
-		// Forward to the JSP
-		request.getRequestDispatcher("editService.jsp").forward(request, response);
+		response.sendRedirect(request.getContextPath() + "/pages/editService.jsp");
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String serviceName = request.getParameter("serviceName");
 		String servicePrice = request.getParameter("servicePrice");
 		String serviceDuration = request.getParameter("serviceDuration");
@@ -105,7 +99,7 @@ public class ServiceServlet extends HttpServlet {
 		}
 
 		// Redirect to refresh the service list
-		response.sendRedirect("ServiceServlet?categoryId=" + categoryId);
+		response.sendRedirect(request.getContextPath() + "/ServiceServlet");
 	}
 
 	private Connection getConnection() throws ClassNotFoundException, SQLException {
