@@ -58,7 +58,7 @@ public class landingPage extends HttpServlet {
                 session.setAttribute("isAdmin", validatedUser.isAdmin());
 
                 // Redirect to categoryService
-                request.getRequestDispatcher("/categoryService").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/pages/homePage.jsp");
             }
         } else {
             // Handle invalid login
