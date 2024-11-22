@@ -44,11 +44,11 @@ public class categoryService extends HttpServlet {
             return;
         }
 
-        // Optional: Check if the user is an admin
-        if (!sessionUtils.isAdmin(request)) {
-            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
-            return;
-        }
+//        // Optional: Check if the user is an admin
+//        if (!sessionUtils.isAdmin(request)) {
+//            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+//            return;
+//        }
 
         // Database credentials check
         if (DB_URL == null || DB_USER == null || DB_PASSWORD == null) {
