@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.category;
+import utils.sessionUtils;
 
 public class CreateCategoryServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
