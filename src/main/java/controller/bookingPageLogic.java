@@ -105,7 +105,9 @@ public class bookingPageLogic extends HttpServlet {
 			e.printStackTrace();
 		}
 		
+		// Get the data from front end. Specific date, service id, user id
 		
+		// Need to get all the available time slots from the specific date and service id. 
 		
 		
 		

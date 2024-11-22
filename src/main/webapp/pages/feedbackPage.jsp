@@ -208,7 +208,7 @@
 	    <div id="thankYouOverlay" class="overlay">
 	    	<div class="popup">
 	        	<h2>Thank You for Your Feedback!</h2>
-	            <button onclick="window.location.href = 'nextPage.jsp';">Continue</button>
+	            <button onclick="window.location.href = 'homePage.jsp';">Continue</button>
 	        </div>
 	    </div>
 

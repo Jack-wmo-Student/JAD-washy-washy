@@ -90,6 +90,7 @@
 	    Calendar calendar = Calendar.getInstance();
 	    int currentMonth = calendar.get(Calendar.MONTH); // 0-based
 	    int currentYear = calendar.get(Calendar.YEAR);
+	    boolean isCurrentMonth = (currentMonth == Calendar.getInstance().get(Calendar.MONTH)) && (currentYear == Calendar.getInstance().get(Calendar.YEAR));
 	
 	    String paramMonth = request.getParameter("month");
 	    String paramYear = request.getParameter("year");
@@ -178,28 +179,31 @@
             <div class="header">Saturday</div>
 
             <!-- Days of the Month -->
-            <% 
-                // Add empty slots for days before the first day of the month
-                for (int i = 1; i < firstDayOfWeek; i++) {
-            %>
-            <div class="day empty"></div>
-            <% } %>
-
-            <% 
-                // Render days of the month
-                for (int day = 1; day <= daysInMonth; day++) {
-            %>
-            <div class="day" onclick="bookSlot(<%= day %>, <%= currentMonth + 1 %>, <%= currentYear %>)">
-                <%= day %>
-            </div>
-            <% } %>
-        </div> 
+		    <% 
+		        // Add empty slots for days before the first day of the month
+		        for (int i = 1; i < firstDayOfWeek; i++) {
+		    %>
+		    <div class="day empty"></div>
+		    <% } %>
+		
+		    <% 
+		        // Render days of the month
+		        for (int day = 1; day <= daysInMonth; day++) {
+		            String dayClass = isCurrentMonth ? "day" : "day disabled";
+		    %>
+		    <div class="<%= dayClass %>" <%= isCurrentMonth ? "onclick='bookSlot(" + day + ", " + (currentMonth + 1) + ", " + currentYear + ")'" : "" %>>
+		        <%= day %>
+		    </div>
+		    <% } %>
+		</div>
     </div>
 
     <script>
         function bookSlot(day, month, year) {
             alert(`You selected ${day}/${month}/${year} for booking.`);
             // Add additional booking logic here
+            
+            
         }
     </script>
 
