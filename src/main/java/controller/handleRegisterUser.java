@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import utils.passwordUtils;
 
 /**
  * Servlet implementation class handleRegisterUser
@@ -103,9 +104,9 @@ public class handleRegisterUser extends HttpServlet {
 			request.getRequestDispatcher("/pages/register.jsp").forward(request, response);
 			return;
 		}
-
+		String hashedPassword = passwordUtils.hashPassword(password);
 		// Save user to the database
-		boolean isRegistered = registerUser(username, password);
+		boolean isRegistered = registerUser(username, hashedPassword);
 
 		if (isRegistered) {
 			// Redirect to login.jsp after successful registration

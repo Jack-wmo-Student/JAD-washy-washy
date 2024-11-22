@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import utils.passwordUtils;
 
 public class landingPage extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -31,9 +32,10 @@ public class landingPage extends HttpServlet {
             throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
+        
+        String hashedPassword = passwordUtils.hashPassword(password);
         // Validate the user
-        user validatedUser = validateUser(username, password);
+        user validatedUser = validateUser(username, hashedPassword);
 
         if (validatedUser != null) {
             if (validatedUser.isBlocked()) {
