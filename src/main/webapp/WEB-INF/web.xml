@@ -59,5 +59,13 @@
 		<servlet-name>feedbackLogic</servlet-name>
 		<url-pattern>/feedbackLogic</url-pattern>
 	</servlet-mapping>
+			<servlet>
+		<servlet-name>handleRegisterUser</servlet-name>
+		<servlet-class>controller.handleRegisterUser</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>handleRegisterUser</servlet-name>
+		<url-pattern>/handleRegisterUser</url-pattern>
+	</servlet-mapping>
 
 </web-app>
