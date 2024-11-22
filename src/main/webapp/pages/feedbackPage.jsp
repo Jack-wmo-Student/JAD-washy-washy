@@ -113,11 +113,8 @@
 	        out.println("No cookies found!");
 	    }
 	
-	
-		String dbClass = System.getenv("DB_CLASS");
-	    String dbUrl = System.getenv("DB_URL");
-	    String dbPassword = System.getenv("DB_PASSWORD");
-	    String dbUser = System.getenv("DB_USER");
+
+		
 	%>
 </head>
 <body>
@@ -142,81 +139,55 @@
 	
 	    <!-- Questions -->
 	    <article>
-	      <form action="feedbackLogic.jsp" method="post">
+	      <form action="feedbackLogic" method="post">
 	      
-		<%
-	      	// === Declarations ===
-	     	int ratingCount = 0;
-	        int commentCount = 0;
-		  	String[] questionTypes = {"Rating", "Comments"};
-		  	Connection conn = null;
-		  	Statement stmt = null;
-		  	ResultSet rs = null;
+		<%		  	
+			// Retrieve the list from the request
+			@SuppressWarnings("unchecked")
+	        List<Map<String, String>> questions = (List<Map<String, String>>) session.getAttribute("questions");
 		  	
 		  	try {
-		  		// === Connect to Database ===
-		  		Class.forName(dbClass);
-		  		conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-		  		stmt = conn.createStatement();
-		  		
-		  		// --- fetch Data ---
-		  		String sqlStr = "SELECT * FROM question";
-		      	rs = stmt.executeQuery(sqlStr);
-		      	
-		      	// --- loop questions and create dynamic form ---
-		      	while (rs.next()) {
-		      		String dbQuestionType = rs.getString("question_type");
-		      		String dbQuestionText = rs.getString("question_text");
-		      		int dbQuestionId = rs.getInt("question_id");
-		      		
-					if(questionTypes[0].equals(dbQuestionType)) {
-						// if the question type is Rating, do this...
-						ratingCount++;
-						
-						// Start building the rating
+			    if (questions != null) {
+			    	// --- loop questions and create dynamic form ---
+			        for (Map<String, String> question : questions) {
+			            String questionType = (String) question.get("question_type");
+			            String questionText = (String) question.get("question_text");
+			            String strQuestionId = (String) question.get("question_id");
+			            int questionId = Integer.parseInt(strQuestionId);
+			
+			            if ("Rating".equals(questionType)) { // Replace "Rating" with your actual type
 		%>
-						<label for="<%= dbQuestionType + ratingCount %>"><%= dbQuestionText %></label><br>
+						<label for="<%= questionId %>"><%= questionText %></label><br>
 					    <span class="most-least">Very unsatisfied</span>
-					<%		
-						for(int i = 0; i < 5; i++) { // generate 5 radio buttons
-					%>
+						<%		
+							for(int i = 0; i < 5; i++) { // generate 5 radio buttons
+						%>
 	
-							<input type="radio" name="<%= dbQuestionId %>" value="<%= i + 1 %>" required> <!-- name = Rating1 -->
-					<%
-						}
-					%>
+								<input type="radio" name="<%= questionId %>" value="<%= i + 1 %>" required> <!-- name = Rating1 -->
+						<%
+							}
+						%>
 						<span class="most-least">Very satisfied</span>
 	        			<br><br><br>
-	    		<%
-					}
-					else { // else this is a open ended question
-						commentCount++;
-						
-						// Start building question forms for the questions
-				%>
-						<label for="<%= dbQuestionType + commentCount %>"><%= dbQuestionText %></label><br>
-				        <input type="text" name="<%= dbQuestionId %>" placeholder="Type here..." required>
-				        <br><br>
+	    			<%
+						}
+						else { // else this is a open ended question						
+							// Start building question forms for the questions
+					%>
+							<label for="<%= questionId %>"><%= questionText %></label><br>
+					        <input type="text" name="<%= questionId %>" placeholder="Type here..." required>
+					        <br><br>
 		<%
-					}
-			 	}
+						}
+			 		}
+		  		}
 		  	}
 		  	catch(Exception e) {
 		  		out.println("Error :" + e);
 		  	}
-		  	finally {
-		  	    // Close resources in reverse order of their creation
-		  	    try {
-		  	    	if (rs != null) rs.close();
-		  	        if (stmt != null) stmt.close();
-		  	        if (conn != null) conn.close();
-		  	    } catch (Exception e) {
-		  	        out.println("Error closing resources: " + e);
-		  	    }
-		  	}
-		  	   
+	   
 		%>
-	        
+
 	        <!-- Service Dropdown -->
 	        <!-- <label for="dropdown">Which Service did you choose?</label><br>
 	        <select id="dropdown" name="service" required>
@@ -233,14 +204,14 @@
 	        <button type="submit" id="submit-feedback-btn" >Submit</button>
 	      </form>
 	    </article>
-    <!-- Thank you overlay -->
+    	<!-- Thank you overlay -->
 	    <div id="thankYouOverlay" class="overlay">
 	    	<div class="popup">
 	        	<h2>Thank You for Your Feedback!</h2>
 	            <button onclick="window.location.href = 'nextPage.jsp';">Continue</button>
 	        </div>
 	    </div>
-	    
+
 	    <!-- Show the overlay if the feedbackSuccess attribute is set -->
         <%
             Boolean feedbackSuccess = (Boolean) request.getAttribute("feedbackSuccess");

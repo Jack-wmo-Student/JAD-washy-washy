@@ -84,7 +84,8 @@ public class landingPage extends HttpServlet {
 					System.out.println("User found in database: " + rs.getString("username"));
 					int userId = rs.getInt("user_id");
 					boolean isAdmin = rs.getBoolean("is_admin");
-					user = new user(userId, username, isAdmin);
+					boolean isBlocked = rs.getBoolean("is_blocked");
+					user = new user(userId, username, isAdmin, isBlocked);
 				} else {
 					System.out.println("No matching user found in database.");
 				}

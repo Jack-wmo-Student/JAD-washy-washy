@@ -54,7 +54,7 @@ public class EditServiceServlet extends HttpServlet {
         }
 
         // Forward to the JSP
-        request.getRequestDispatcher("/editService.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/pages/serviceEditor.jsp");
     }
 
     @Override
@@ -80,6 +80,6 @@ public class EditServiceServlet extends HttpServlet {
         }
 
         // Redirect after successful update
-        response.sendRedirect(returnUrl != null ? returnUrl : "/serviceList?categoryId=" + request.getParameter("categoryId"));
+        response.sendRedirect(request.getContextPath() + "/EditServiceServlet");
     }
 }
