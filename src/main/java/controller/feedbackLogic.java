@@ -153,7 +153,7 @@ public class feedbackLogic extends HttpServlet {
 	    	System.out.println("Form uploaded, redirecting...");
 	    	// show a thank you message, redirect to next page
 	        request.setAttribute("feedbackSuccess", true);
-	        request.getRequestDispatcher("/pages/feedback.jsp").forward(request, response);
+	        request.getRequestDispatcher("/pages/feedbackPage.jsp").forward(request, response);
 	    	
 	    } catch(Exception e) {
 	    	e.printStackTrace();

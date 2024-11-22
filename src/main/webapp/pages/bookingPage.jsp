@@ -198,11 +198,18 @@
 		</div>
     </div>
 
+	<!-- Hidden form to submit date data to the servlet -->
+	<form id="bookingForm" action="YourServletURL" method="POST" style="display: none;">
+	    <input type="hidden" name="booking_date" id="selectedDate">
+	</form>
+
     <script>
         function bookSlot(day, month, year) {
             alert(`You selected ${day}/${month}/${year} for booking.`);
             // Add additional booking logic here
+            const formattedDate = year + '-' + month + '-' + day;
             
+            document.getElementById("selectedDate").value = formattedDate;
             
         }
     </script>
