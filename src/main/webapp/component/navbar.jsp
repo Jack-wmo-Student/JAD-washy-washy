@@ -22,6 +22,8 @@
 			
 			<!-- Feedback Tab for testing -->
 			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li>
+			
+			<li><a href="<%=request.getContextPath()%>/bookingPage">Book now</a></li>
 
 			<!-- Categories Dropdown using <select> -->
 			<li>

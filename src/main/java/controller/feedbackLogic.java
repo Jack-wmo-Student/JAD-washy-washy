@@ -108,27 +108,46 @@ public class feedbackLogic extends HttpServlet {
 			e.printStackTrace();
 		}
 	    
-	    // Create the query for the database
-	    String query = "INSERT INTO response(feedback_id, question_id, response_value) VALUES (?, ?, ?)";
+//	    // Create the feedback first with the booking Id
+//	    String createFeedbackQuery = "INSERT INTO feedback (booking_id) VALUES (?)";
+//	    
+//	    try(Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+//	    		PreparedStatement pstmt = conn.prepareStatement(createFeedbackQuery);) {
+//	    	
+//	    	// Process each parameter
+//	    	pstmt.setInt(1, bookingId);
+//	    	
+//	    	// Execute the query
+//	    	pstmt.executeUpdate();
+//	    }catch(Exception e) {
+//	    	e.printStackTrace();
+//	    } 
+//	    
 	    
-	    // Set connection with database and query
+	    // Create the query for the database
+	    String createResponsequery = "INSERT INTO response(feedback_id, question_id, response_value) VALUES (?, ?, ?)";
+	    
+	    
+	    // Set connection with database and query the response
 	    try(Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-	    		PreparedStatement stmt = conn.prepareStatement(query);) {
+	    		PreparedStatement pstmt = conn.prepareStatement(createResponsequery);) {
 	    	
 	    	// Loop through the map and send query
 	    	while (parameterNames.hasMoreElements()) {
 	            String paramName = parameterNames.nextElement();
 	            String paramValue = request.getParameter(paramName); // Get the value of the parameter
 	            
-	            int questionId = Integer.parseInt(paramName);
+	            if(paramName != "Booking Id") {
+	            	int questionId = Integer.parseInt(paramName);
 
-	            // Process each parameter
-	            stmt.setInt(1, 2);
-	            stmt.setInt(2, questionId);
-	            stmt.setString(3, paramValue);
-	            
-	            // Execute Data
-	            stmt.executeUpdate();
+		            // Process each parameter
+		            pstmt.setInt(1, 2);
+		            pstmt.setInt(2, questionId);
+		            pstmt.setString(3, paramValue);
+		            
+		            // Execute Data
+		            pstmt.executeUpdate();
+	            }	           
 	        }
 	    	
 	    	System.out.println("Form uploaded, redirecting...");
