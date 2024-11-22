@@ -88,7 +88,7 @@ public class landingPage extends HttpServlet {
                 if (rs.next()) {
                     System.out.println("User found in database: " + rs.getString("username"));
                     int userId = rs.getInt("user_id");
-                    boolean isAdmin = rs.getBoolean("is_admin") || !rs.wasNull();
+                    boolean isAdmin = rs.getBoolean("is_admin") && !rs.wasNull();
                     boolean isBlocked = rs.getBoolean("is_blocked") || rs.wasNull();
                     user = new user(userId, username, isAdmin, isBlocked);
 
