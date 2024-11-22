@@ -67,7 +67,7 @@
 		} else {
 		%>
 		<form action="<%=request.getContextPath()%>/pages/login.jsp" method="GET" class="login-form">
-			<button type="submit" class="login-button">Log In</button>
+			<button type="submit" class="login-button">Log In / Sign Up</button>
 		</form>
 		<%
 		}
