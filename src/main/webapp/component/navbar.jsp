@@ -18,14 +18,21 @@
 			<li><a href="<%=request.getContextPath()%>/pages/homePage.jsp">Home</a></li>
 
 			<!-- Admin Dashboard Link -->
-			<li><a href="<%=request.getContextPath()%>/CreateCategoryServlet">Admin Dashboard</a></li>
-			
+			<%
+			Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
+			if (isAdmin != null && isAdmin) { // Check if user is an admin
+			%>
+			<li><a
+				href="<%=request.getContextPath()%>/CreateCategoryServlet">Admin Dashboard</a></li>
+			<%
+			}
+			%>
 			<!-- Feedback Tab for testing -->
 			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li>
 
 			<!-- Categories Dropdown using <select> -->
-			<li>
-				<select class="category-dropdown" onchange="navigateToCategory(this.value)">
+			<li><select class="category-dropdown"
+				onchange="navigateToCategory(this.value)">
 					<option value="" disabled selected hidden>Categories</option>
 					<%
 					// Retrieve category-service map from the session
@@ -39,19 +46,19 @@
 					%>
 					<option value="#category-<%=cat.getId()%>"><%=categoryName%></option>
 					<%
-						}
+					}
 					} else {
 					%>
 					<option value="">No categories available</option>
 					<%
 					}
 					%>
-				</select>
-			</li>
+			</select></li>
 		</ul>
 
 		<!-- Logout Button -->
-		<form action="<%=request.getContextPath()%>/logout" method="POST" class="logout-form">
+		<form action="<%=request.getContextPath()%>/logout" method="POST"
+			class="logout-form">
 			<button type="submit" class="logout-button">Log Out</button>
 		</form>
 	</div>
