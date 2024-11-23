@@ -60,6 +60,13 @@
 		<url-pattern>/feedbackLogic</url-pattern>
 	</servlet-mapping>
 	<servlet>
+		<servlet-name>bookingPageLogic</servlet-name>
+		<servlet-class>controller.bookingPageLogic</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>bookingPageLogic</servlet-name>
+		<url-pattern>/bookingPage</url-pattern>
+	</servlet-mapping>
 		<servlet-name>DeleteCategoryServlet</servlet-name>
 		<servlet-class>controller.DeleteCategoryServlet</servlet-class>
 	</servlet>

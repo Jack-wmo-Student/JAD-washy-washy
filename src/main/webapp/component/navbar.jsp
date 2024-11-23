@@ -28,12 +28,15 @@
 			%>
 			<!-- Feedback Tab -->
 			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li>
+			
+			<li><a href="<%=request.getContextPath()%>/bookingPage">Book now</a></li>
 
 			<!-- Categories Dropdown using <select> -->
 			<li>
 				<select class="category-dropdown" onchange="navigateToCategory(this.value)">
 					<option value="" disabled selected hidden>Categories</option>
 					<%
+					@SuppressWarnings("unchecked")
 					// Retrieve category-service map from the session
 					Map<category, List<category>> categoryServiceMap = (Map<category, List<category>>) session.getAttribute("categoryServiceMap");
 
