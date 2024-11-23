@@ -7,7 +7,7 @@
 
 	<!-- Welcome file configuration to set index.jsp as the landing page -->
 	<welcome-file-list>
-		<welcome-file>pages/index.jsp</welcome-file>
+		<welcome-file>categoryService</welcome-file>
 	</welcome-file-list>
 
 	<!-- Servlet configuration for landingPage -->
@@ -74,6 +74,14 @@
 	<servlet-mapping>
 		<servlet-name>DeleteServiceServlet</servlet-name>
 		<url-pattern>/DeleteServiceServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>handleRegisterUser</servlet-name>
+		<servlet-class>controller.handleRegisterUser</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>handleRegisterUser</servlet-name>
+		<url-pattern>/handleRegisterUser</url-pattern>
 	</servlet-mapping>
 	
 

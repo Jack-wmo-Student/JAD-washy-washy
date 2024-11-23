@@ -19,16 +19,17 @@ public class EditServiceServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String serviceId = request.getParameter("serviceId");
         HttpSession session = request.getSession();
-
-        // Check if the user is logged in
-        if (session.getAttribute("isLoggedIn") == null) {
-            request.setAttribute("error", "You must log in first.");
-            request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+        
+     // Check if the user is logged in
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+        	// Handle invalid login
+        	request.setAttribute("error", "You must log in first.");
+        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
             return;
         }
 
         // Optional: Check if the user is an admin
-        if (!"admin".equals(session.getAttribute("userRole"))) {
+        if (!sessionUtils.isAdmin(request)) {
             response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
             return;
         }
@@ -40,13 +41,10 @@ public class EditServiceServlet extends HttpServlet {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         // Store service details in session attributes
-                        session.setAttribute("serviceId", serviceId);
                         session.setAttribute("serviceName", rs.getString("service_name"));
                         session.setAttribute("servicePrice", rs.getDouble("price"));
                         session.setAttribute("serviceDuration", rs.getInt("duration_in_hour"));
                         session.setAttribute("serviceDescription", rs.getString("service_description"));
-                    } else {
-                        request.setAttribute("errorMessage", "Service not found.");
                     }
                 }
             }
@@ -56,7 +54,7 @@ public class EditServiceServlet extends HttpServlet {
         }
 
         // Forward to the JSP
-        request.getRequestDispatcher("/pages/serviceEditor.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/pages/serviceEditor.jsp");
     }
 
     @Override
@@ -77,11 +75,11 @@ public class EditServiceServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error updating service details.");
-            request.getRequestDispatcher("/pages/serviceEditor.jsp").forward(request, response);
+            request.getRequestDispatcher("/editService.jsp").forward(request, response);
             return;
         }
 
         // Redirect after successful update
-        response.sendRedirect(returnUrl != null ? returnUrl : request.getContextPath() + "/serviceList?categoryId=" + request.getParameter("categoryId"));
+        response.sendRedirect(request.getContextPath() + "/EditServiceServlet");
     }
 }
