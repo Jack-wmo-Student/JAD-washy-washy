@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
+import model.booking;
+import model.timeslot;
 
 public class bookingPageLogic extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -30,7 +32,10 @@ public class bookingPageLogic extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Declarations
 	  	Connection conn = null;
+	  	List<booking> bookingList = new ArrayList<>();
+	  	
 	  	
 		System.out.println("I am in booking Logic");
 		// Set Class
@@ -46,13 +51,13 @@ public class bookingPageLogic extends HttpServlet {
 	  		conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 	  		
 	  		// Fetch the first data that we need. Booking_id, date, service_name and timeslot_id
-	  		List<Map<String, Object>> results = fetchUserBookings(conn, 1);
+	  		List<Map<String, Object>> resultLists = fetchUserBookings(conn, 1);
 		  	
 //	  		Example result that we want to return to the front end
 //	  		[
 //	  		 	{
 //	  		 		"booking_id": 123,
-//	  		 		"date": "2022-01-25",
+//	  		 		"booked_date": "2022-01-25",
 //                  "service_name": "Wash and Wax",
 //                  "timeslot_id": 3,
 //                  "timeSlots": "8am-10am"
@@ -60,30 +65,40 @@ public class bookingPageLogic extends HttpServlet {
 //	  		]
 	  		
 	  		// Fetch Data 3. Get the timeslots by using booking Ids
-	  		for(int i = 0; i < results.size(); i++) {
-	  			Map<String, Object> tempMap = results.get(i);
+	  		for(int i = 0; i < resultLists.size(); i++) {
+	  			// Declare stuffs
+	  			timeslot timeslot = new timeslot();  			
+	  			Map<String, Object> eachBooking = resultLists.get(i);
+	  			int bookingId = (int) eachBooking.get("booking_id");
+	  			int timeslotId = (int) eachBooking.get("timeslot_id");
 	  			
 	  			// Fetch the timeslots now
-	  			List<String> timeslots = fetchBookedTimeSlots(conn, (int) tempMap.get("booking_id"), (int) tempMap.get("timeslot_id"));
+	  			List<String> timeslots = fetchBookedTimeSlots(conn, bookingId, timeslotId);
 	  			
 	  			if(timeslots.size() != 1) {
 	  				String[] firstPart = timeslots.get(0).split("-");
 	  				String[] lastPart = timeslots.get(timeslots.size()-1).split("-");
 	  				
 	  				String finalisedTimeSlot = firstPart[0] + "-" + lastPart[1];
-	  				tempMap.put("timeSlots", finalisedTimeSlot);
+	  				
+	  				// Create the timeslot class
+	  				timeslot.setTimeSlotId(timeslotId);
+	  				timeslot.setTimeRange(finalisedTimeSlot);
 	  			}
 	  			else {
-	  				tempMap.put("timeSlots", timeslots.get(0));
+	  				timeslot.setTimeSlotId(timeslotId);
+	  				timeslot.setTimeRange((String) timeslots.get(0));
 	  			}
+	  			
+	  			// Create the booking object and add to the list
+	  			booking bookingObj = new booking(bookingId, (String) eachBooking.get("service_name"), timeslot, eachBooking.get("booked_date").toString());
+	  			bookingList.add(bookingObj);
 	  		}
 	  		
 		    
-	  		
 		    // Store the list in the request attribute
 	  		HttpSession session = request.getSession();
-		    session.setAttribute("bookingInfos", results);
-		    System.out.printf("This is the results: ", results);
+		    session.setAttribute("bookingLists", bookingList);
 		    
 		    // Forward to the JSP
 		    request.getRequestDispatcher("/pages/bookingPage.jsp").forward(request, response);
@@ -93,10 +108,11 @@ public class bookingPageLogic extends HttpServlet {
 		} 
 	}
 	
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Connection conn = null;
 		
-		System.out.println("I am in booking Logic");
+		System.out.println("I am in booking Post Logic");
 		// Set Class
 		try {
 			Class.forName(dbClass);
@@ -108,7 +124,7 @@ public class bookingPageLogic extends HttpServlet {
 		// Get the data from front end. Specific date, service id, user id
 		
 		// Need to get all the available time slots from the specific date and service id. 
-		
+		 
 		
 		
 	}
@@ -127,7 +143,9 @@ public class bookingPageLogic extends HttpServlet {
 		            JOIN 
 		                service s ON b.service_id = s.service_id
 		            WHERE 
-		                b.user_id = ?;
+		                b.user_id = ?
+		            ORDER BY
+		 		    	b.booked_date DESC;
 		        """;
 		 
 		 List<Map<String, Object>> resultList = new ArrayList<>();

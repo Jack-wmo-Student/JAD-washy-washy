@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.Calendar, java.text.DateFormatSymbols" %>
+<%@ page import="java.util.Calendar, java.text.DateFormatSymbols, java.util.List, jakarta.servlet.http.HttpSession" %>
+<%@ page import="model.booking, model.timeslot" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +17,7 @@
             background-color: #f4f4f4;
             padding: 10px;
             box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
+            height: 100%;
         }
         .calendar-container {
             width: 80%;
@@ -84,6 +86,105 @@
         .empty {
             background-color: #f0f0f0;
         }
+        .bookings-container {
+		    width: 80%;
+		    margin: 0 auto;
+		    font-family: Arial, sans-serif;
+		}
+		
+		.booking-item {
+		    background-color: #f9f9f9;
+		    border: 1px solid #ddd;
+		    border-radius: 8px;
+		    padding: 15px;
+		    margin-bottom: 10px;
+		    cursor: pointer;
+		    transition: background-color 0.3s ease;
+		}
+		
+		.booking-item:hover {
+		    background-color: #f0f0f0;
+		}
+		
+		.booking-item h3 {
+		    margin: 0;
+		    font-size: 1.2em;
+		    color: #333;
+		}
+		
+		.booking-item p {
+		    margin: 5px 0;
+		    color: #666;
+		}
+		
+		/* Modal overlay styles */
+		#bookingModal {
+		    display: none;
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: 100%;
+		    background-color: rgba(0, 0, 0, 0.5);
+		    z-index: 1;
+		}
+		
+		/* Modal content box */
+		.modal-content {
+		    background-color: white;
+		    padding: 20px;
+		    border-radius: 8px;
+		    width: 400px;
+		    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		    margin: 275px auto;
+		}
+		
+		.modal-content h2 {
+		    margin-top: 0;
+		    font-size: 1.5em;
+		    color: #333;
+		}
+		
+		.modal-content p {
+		    font-size: 1.1em;
+		    color: #666;
+		}
+		
+		.modal-content button {
+		    background-color: #007bff;
+		    color: white;
+		    border: none;
+		    padding: 10px 15px;
+		    border-radius: 5px;
+		    cursor: pointer;
+		    font-size: 1em;
+		    margin-top: 15px;
+		    display: block;
+		    width: 100%;
+		}
+	
+		.close-btn {
+		    color: #aaa;
+		    float: right;
+		    font-size: 28px;
+		    font-weight: bold;
+		}
+		
+		.close-btn:hover,
+		.close-btn:focus {
+		    color: black;
+		    text-decoration: none;
+		    cursor: pointer;
+		}
+		.day.disabled {
+		    background-color: #e0e0e0; /* Gray background */
+		    color: #999; /* Dimmed text color */
+		    pointer-events: none; /* Disable clicking */
+		}
+		
+		.day.empty {
+		    background-color: #f0f0f0;
+		}
     </style>
 	<%
 	    // Get current month and year dynamically or from request parameters for navigation
@@ -153,10 +254,42 @@
 	    <div>
 	    	<%
 	    		try {
+	    			// Retrieve the session stuffs
+	    			@SuppressWarnings("unchecked")
+	    			List<booking> bookingLists = (List<booking>) session.getAttribute("bookingLists");
 	    			
+	    			if (bookingLists != null && !bookingLists.isEmpty()) {
+	    				for(booking booking : bookingLists) {
+	    					// Extract the booking details
+	                        String serviceName = booking.getServiceName();
+	                        String bookedDate = booking.getBookedDate().toString();
+	                        String timeRange = booking.getTimeslot().getTimeRange();
+	                        int bookingId = booking.getBookingId();
+	        %>
+	    					<!-- Display if have -->
+	 						<div class="booking-item" 
+		                         data-booking-id="<%= bookingId %>" 
+		                         data-service-name="<%= serviceName %>" 
+		                         data-booked-date="<%= bookedDate %>" 
+		                         data-time-range="<%= timeRange %>"
+		                         onclick="openModal(this)">
+		                        <h3><%= serviceName %></h3>
+		                        <p>Date: <%= bookedDate %></p>
+		                        <p>Time: <%= timeRange %></p>
+		                    </div>
+		    <%
+	    				}
+	    			}
+	    			else {
+	    	%>
+		    			<!-- No bookings message -->
+	               		<p>You have no bookings at the moment.</p>
+	    	<%
+	    			}
+
 	    		}
 	    		catch(Exception e) {
-	    			out.println("Error :" + e);
+	    			out.println("Error :" + e.getMessage());
 	    		}
 	    	%>
 	    </div>	    
@@ -194,24 +327,89 @@
 		    <div class="<%= dayClass %>" <%= isCurrentMonth ? "onclick='bookSlot(" + day + ", " + (currentMonth + 1) + ", " + currentYear + ")'" : "" %>>
 		        <%= day %>
 		    </div>
-		    <% } %>
+		    <% } 
+		        // Calculate and add empty slots after the last day to complete the week
+		        int totalCells = firstDayOfWeek - 1 + daysInMonth; // Total cells filled so far
+		        int remainingCells = 7 - (totalCells % 7); // Remaining cells to complete the last week
+		
+		        if (remainingCells < 7) { // Add empty cells only if they are needed
+		            for (int i = 0; i < remainingCells; i++) {
+		    %>
+		                <div class="day empty"></div>
+		    <% 
+		            }
+		        }
+		    %>
 		</div>
     </div>
+    
+    <!-- ----------------------- Model for showing booking details -------------------------- -->
+	<div id="bookingModal" style="display:none;">
+	    <div class="modal-content">
+	    	<span class="close-btn" onclick="closeModal()">&times;</span>
+	        <h2 id="modalServiceName"></h2>
+	        <p id="modalBookedDate"></p>
+	        <p id="modalTimeRange"></p>
+	    </div>
+	</div>
+    
 
 	<!-- Hidden form to submit date data to the servlet -->
-	<form id="bookingForm" action="YourServletURL" method="POST" style="display: none;">
+	<form id="bookingForm" action="<%=request.getContextPath()%>/bookingPage" method="POST" style="display: none;">
 	    <input type="hidden" name="booking_date" id="selectedDate">
 	</form>
 
     <script>
+    	// ===== Funciton to redirect to booking slot =====
         function bookSlot(day, month, year) {
-            alert(`You selected ${day}/${month}/${year} for booking.`);
-            // Add additional booking logic here
-            const formattedDate = year + '-' + month + '-' + day;
-            
-            document.getElementById("selectedDate").value = formattedDate;
-            
+			if(<%= isCurrentMonth %>) {
+				// Add additional booking logic here
+	            const formattedDate = year + '-' + month + '-' + day;
+				console.log('This is the formatted date that u have chosen: ', formattedDate);
+				
+				// Set the date as soon as it has been formatted
+	            document.getElementById("selectedDate").value = formattedDate;
+	            
+	        	// Submit the form programmatically
+	            document.getElementById("bookingForm").submit();
+			}
+			else return;
         }
+        
+        // ===== Funtions for the booking details =====
+       	function openModal(bookingElement) {
+       	// Retrieve the data attributes from the clicked booking element
+       	    var bookingId = bookingElement.getAttribute("data-booking-id");
+       	    var serviceName = bookingElement.getAttribute("data-service-name");
+       	    var bookedDate = bookingElement.getAttribute("data-booked-date");
+       	    var timeRange = bookingElement.getAttribute("data-time-range");
+
+       	    // Populate the modal with booking details
+       	    document.getElementById("modalServiceName").innerText = "Service: " + serviceName;
+       	    document.getElementById("modalBookedDate").innerText = "Date: " + bookedDate;
+       	    document.getElementById("modalTimeRange").innerText = "Time: " + timeRange;
+	
+	        // Show the modal
+	        document.getElementById("bookingModal").style.display = "block";
+	    }
+	
+	    function closeModal() {
+	        // Hide the modal
+	        document.getElementById("bookingModal").style.display = "none";
+	    }
+	
+	    // Placeholder function to simulate fetching booking details
+	    function getBookingDetails(bookingId) {
+	        // This is a mock of the data you would fetch
+	        // You can replace this with an AJAX call or another method to get actual data
+	        return {
+	            serviceName: "Service Name " + bookingId,
+	            bookedDate: "2024-11-25", // Example date
+	            timeRange: "10am-11am",  // Example time slot
+	            additionalInfo: "Some additional details about the booking."
+	        };
+	    }
+        	
     </script>
 
 </body>

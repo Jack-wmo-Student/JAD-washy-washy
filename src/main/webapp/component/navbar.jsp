@@ -36,6 +36,7 @@
 				<select class="category-dropdown" onchange="navigateToCategory(this.value)">
 					<option value="" disabled selected hidden>Categories</option>
 					<%
+					@SuppressWarnings("unchecked")
 					// Retrieve category-service map from the session
 					Map<category, List<category>> categoryServiceMap = (Map<category, List<category>>) session.getAttribute("categoryServiceMap");
 
