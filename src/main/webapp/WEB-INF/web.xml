@@ -67,6 +67,21 @@
 		<servlet-name>bookingPageLogic</servlet-name>
 		<url-pattern>/bookingPage</url-pattern>
 	</servlet-mapping>
+		<servlet-name>DeleteCategoryServlet</servlet-name>
+		<servlet-class>controller.DeleteCategoryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteCategoryServlet</servlet-name>
+		<url-pattern>/DeleteCategoryServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>DeleteServiceServlet</servlet-name>
+		<servlet-class>controller.DeleteServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteServiceServlet</servlet-name>
+		<url-pattern>/DeleteServiceServlet</url-pattern>
+	</servlet-mapping>
 	<servlet>
 		<servlet-name>handleRegisterUser</servlet-name>
 		<servlet-class>controller.handleRegisterUser</servlet-class>
@@ -75,5 +90,6 @@
 		<servlet-name>handleRegisterUser</servlet-name>
 		<url-pattern>/handleRegisterUser</url-pattern>
 	</servlet-mapping>
+	
 
 </web-app>

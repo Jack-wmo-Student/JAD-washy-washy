@@ -2,12 +2,13 @@ package controller;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.category;
+import model.service;
 import utils.sessionUtils;
 
 public class CreateCategoryServlet extends HttpServlet {
@@ -36,44 +37,92 @@ public class CreateCategoryServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		Connection conn = null;
-		PreparedStatement ps = null;
+	        throws ServletException, IOException {
+		// Check if the user is logged in
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+        	// Handle invalid login
+        	request.setAttribute("error", "You must log in first.");
+        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            return;
+        }
 
-		try {
-			// Database setup
-			String dbClass = System.getenv("DB_CLASS");
-			String dbUrl = System.getenv("DB_URL");
-			String dbUser = System.getenv("DB_USER");
-			String dbPassword = System.getenv("DB_PASSWORD");
+        // Optional: Check if the user is an admin
+        if (!sessionUtils.isAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+            return;
+        }
+		
+	    Connection conn = null;
+	    PreparedStatement ps = null;
+	    HttpSession session = request.getSession();
+	    int generatedId = 0;
 
-			String categoryName = request.getParameter("categoryName");
-			String categoryDescription = request.getParameter("categoryDescription");
+	    try {
+	        // Database setup
+	        String dbClass = System.getenv("DB_CLASS");
+	        String dbUrl = System.getenv("DB_URL");
+	        String dbUser = System.getenv("DB_USER");
+	        String dbPassword = System.getenv("DB_PASSWORD");
 
-			Class.forName(dbClass);
-			conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+	        String categoryName = request.getParameter("categoryName");
+	        String categoryDescription = request.getParameter("categoryDescription");
 
-			String insertSQL = "INSERT INTO category (category_name, category_description) VALUES (?, ?)";
-			ps = conn.prepareStatement(insertSQL);
-			ps.setString(1, categoryName);
-			ps.setString(2, categoryDescription);
-			ps.executeUpdate();
+	        // Load database driver and establish connection
+	        Class.forName(dbClass);
+	        conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 
-			// Add success message
-			request.getSession().setAttribute("successMessage", "Category added successfully!");
+	        // Prepare the SQL query with RETURN_GENERATED_KEYS
+	        String insertSQL = "INSERT INTO category (category_name, category_description) VALUES (?, ?)";
+	        ps = conn.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
+	        ps.setString(1, categoryName);
+	        ps.setString(2, categoryDescription);
 
-		} catch (Exception e) {
-			request.getSession().setAttribute("errorMessage", "Error adding category: " + e.getMessage());
-		} finally {
-			try {
-				if (ps != null) ps.close();
-				if (conn != null) conn.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+	        // Execute insert
+	        int rowsAffected = ps.executeUpdate();
 
-		// Redirect to fetch categories again
-		response.sendRedirect(request.getContextPath() + "/CreateCategoryServlet");
-	}
-}
+	        if (rowsAffected > 0) {
+	            // Retrieve the generated key
+	            try (ResultSet rs = ps.getGeneratedKeys()) {
+	                if (rs.next()) {
+	                    generatedId = rs.getInt(1); // Get the generated ID
+	                    System.out.println("Inserted row ID: " + generatedId);
+	                }
+	            }
+	        } else {
+	            System.out.println("Insert failed, no rows affected.");
+	        }
+
+	        // Retrieve the existing category-service map from the session
+	        Map<category, List<service>> sessionCategoryServiceMap = 
+	                (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+
+	        if (sessionCategoryServiceMap == null) {
+	            // Initialize a new map if it doesn't exist
+	            sessionCategoryServiceMap = new HashMap<>();
+	        }
+
+	        // Create a new category object and add it to the map
+	        category newCategory = new category(generatedId, categoryName, categoryDescription);
+	        sessionCategoryServiceMap.put(newCategory, new ArrayList<>());
+
+	        // Update the session attribute
+	        session.setAttribute("categoryServiceMap", sessionCategoryServiceMap);
+
+	        // Add success message
+	        session.setAttribute("successMessage", "Category added successfully!");
+
+	    } catch (Exception e) {
+	        session.setAttribute("errorMessage", "Error adding category: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (ps != null) ps.close();
+	            if (conn != null) conn.close();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    // Redirect to the category page
+	    response.sendRedirect(request.getContextPath() + "/CreateCategoryServlet");
+	}}
