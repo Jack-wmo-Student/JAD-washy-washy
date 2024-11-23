@@ -11,25 +11,24 @@
 </head>
 <body>
 	<div class="container">
+		<%@ include file="../component/adminSidebar.jsp"%>
 		<h2>Create Service Category</h2>
-
 
 		<!-- Display success or error messages -->
 		<%
-        	
-            String successMessage = (String) request.getAttribute("successMessage");
-            String errorMessage = (String) request.getAttribute("errorMessage");
-            if (successMessage != null) {
-        %>
-		<p style="color: green;"><%= successMessage %></p>
+		String successMessage = (String) request.getAttribute("successMessage");
+		String errorMessage = (String) request.getAttribute("errorMessage");
+		if (successMessage != null) {
+		%>
+		<p style="color: green;"><%=successMessage%></p>
 		<%
-            }
-            if (errorMessage != null) {
-        %>
-		<p style="color: red;"><%= errorMessage %></p>
+		}
+		if (errorMessage != null) {
+		%>
+		<p style="color: red;"><%=errorMessage%></p>
 		<%
-            }
-        %>
+		}
+		%>
 
 		<!-- Category form -->
 		<form action="<%=request.getContextPath()%>/CreateCategoryServlet"
@@ -50,14 +49,14 @@
 		<h3>Existing Categories</h3>
 		<%
 		Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
-		.getAttribute("categoryServiceMap");
-		
-    if (sessionCategoryServiceMap == null && sessionCategoryServiceMap.isEmpty()) {
-%>
+				.getAttribute("categoryServiceMap");
+
+		if (sessionCategoryServiceMap == null && sessionCategoryServiceMap.isEmpty()) {
+		%>
 		<p>No categories found. Please add a new category.</p>
 		<%
-    } else {
-%>
+		} else {
+		%>
 		<table>
 			<tr>
 				<th>Category ID</th>
@@ -65,36 +64,37 @@
 				<th>Category Description</th>
 				<th>Actions</th>
 			</tr>
-			<% for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) { 
+			<%
+			for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
 				category cat = entry.getKey();
 			%>
 			<tr>
-				<td><%= cat.getId() %></td>
-				<td><%= cat.getName() %></td>
-				<td><%= cat.getDescription() %></td>
+				<td><%=cat.getId()%></td>
+				<td><%=cat.getName()%></td>
+				<td><%=cat.getDescription()%></td>
 				<td>
 					<div class="actions">
 						<form action="editService.jsp" method="get"
 							style="display: inline;">
-							<input type="hidden" name="categoryId"
-								value="<%= cat.getId() %>" />
+							<input type="hidden" name="categoryId" value="<%=cat.getId()%>" />
 							<button type="submit" class="btn-edit">Edit</button>
 						</form>
-						<form action="deleteServiceCategory.jsp" method="get"
-							style="display: inline;"
-							onsubmit="return confirm('Are you sure you want to delete this category?');">
+						<form action="<%=request.getContextPath()%>/DeleteCategoryServlet"
+							method="post">
 							<input type="hidden" name="categoryId"
-								value="<%= cat.getId() %>" />
-							<button type="submit" class="btn-delete">Delete</button>
+								value="<%=cat.getId()%>" />
+							<button type="submit">Delete Category</button>
 						</form>
 					</div>
 				</td>
 			</tr>
-			<% } %>
+			<%
+			}
+			%>
 		</table>
 		<%
-    }
-%>
+		}
+		%>
 	</div>
 </body>
 </html>
