@@ -3,8 +3,8 @@ package controller;
 import java.io.IOException;
 import java.sql.*;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import utils.sessionUtils;
 
 public class DeleteServiceServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -14,10 +14,25 @@ public class DeleteServiceServlet extends HttpServlet {
     private static final String DB_USER = System.getenv("DB_USER");
     private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
     private static final String DB_CLASS = System.getenv("DB_CLASS");
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	
+    	// Check if the user is logged in
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+        	// Handle invalid login
+        	request.setAttribute("error", "You must log in first.");
+        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            return;
+        }
+
+        // Optional: Check if the user is an admin
+        if (!sessionUtils.isAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+            return;
+        }
+       
         String serviceId = request.getParameter("serviceId");
 
         if (serviceId == null || serviceId.isEmpty()) {
@@ -36,7 +51,7 @@ public class DeleteServiceServlet extends HttpServlet {
             conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
             // SQL query to delete the service
-            String deleteSQL = "DELETE FROM services WHERE service_id = ?";
+            String deleteSQL = "DELETE FROM service WHERE service_id = ?";
             ps = conn.prepareStatement(deleteSQL);
             ps.setInt(1, Integer.parseInt(serviceId));
 
@@ -61,6 +76,6 @@ public class DeleteServiceServlet extends HttpServlet {
         }
 
         // Redirect or forward to a response page
-        request.getRequestDispatcher("editServices.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/pages/editService.jsp?categoryId=" + request.getParameter("categoryId"));
     }
 }

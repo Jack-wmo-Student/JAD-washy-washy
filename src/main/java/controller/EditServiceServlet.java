@@ -3,11 +3,13 @@ package controller;
 import java.io.IOException;
 import java.sql.*;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import utils.sessionUtils;
+import model.service;
+import java.util.*;
 
 public class EditServiceServlet extends HttpServlet {
 
@@ -17,14 +19,13 @@ public class EditServiceServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String serviceId = request.getParameter("serviceId");
+        String categoryId = request.getParameter("categoryId"); // Get the dynamic categoryId
         HttpSession session = request.getSession();
-        
-     // Check if the user is logged in
+
+        // Check if the user is logged in
         if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
-        	// Handle invalid login
-        	request.setAttribute("error", "You must log in first.");
-        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            request.setAttribute("error", "You must log in first.");
+            request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
             return;
         }
 
@@ -34,27 +35,33 @@ public class EditServiceServlet extends HttpServlet {
             return;
         }
 
+        // Fetch services for the given categoryId
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String query = "SELECT * FROM service WHERE service_id = ?";
+            String query = "SELECT * FROM service WHERE category_id = ?";
             try (PreparedStatement ps = conn.prepareStatement(query)) {
-                ps.setInt(1, Integer.parseInt(serviceId));
+                ps.setInt(1, Integer.parseInt(categoryId));
                 try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        // Store service details in session attributes
-                        session.setAttribute("serviceName", rs.getString("service_name"));
-                        session.setAttribute("servicePrice", rs.getDouble("price"));
-                        session.setAttribute("serviceDuration", rs.getInt("duration_in_hour"));
-                        session.setAttribute("serviceDescription", rs.getString("service_description"));
+                    List<service> services = new ArrayList<>();
+                    while (rs.next()) {
+                        services.add(new service(
+                                rs.getInt("service_id"),
+                                rs.getInt("category_id"),
+                                rs.getString("service_name"),
+                                rs.getDouble("price"),
+                                rs.getInt("duration_in_hour"),
+                                rs.getString("service_description")
+                        ));
                     }
+                    session.setAttribute("services", services); // Store services in the session
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Error fetching service details.");
+            request.setAttribute("errorMessage", "Error fetching services for category.");
         }
-
-        // Forward to the JSP
-        response.sendRedirect(request.getContextPath() + "/pages/serviceEditor.jsp");
+        System.out.println("Category ID: " + categoryId);
+        // Forward to the editService page with the categoryId
+        response.sendRedirect(request.getContextPath() + "/pages/editService.jsp?categoryId=" + categoryId);
     }
 
     @Override

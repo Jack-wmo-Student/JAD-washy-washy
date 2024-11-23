@@ -9,40 +9,86 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.category;
+import model.service;
+import utils.sessionUtils;
+import java.util.Map;
+import java.util.List;
 
 public class DeleteCategoryServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    private static final String DB_CLASS = System.getenv("DB_CLASS"); 
+    private static final String DB_URL = System.getenv("DB_URL");
+    private static final String DB_USER = System.getenv("DB_USER");
+    private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String dbClass = "DB_CLASS"; // Replace with your database driver class
-        String dbUrl = System.getenv("DB_URL");
-        String dbUser = System.getenv("DB_USER");
-        String dbPassword = System.getenv("DB_PASSWORD");
+    	
+    	// Check if the user is logged in
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+        	// Handle invalid login
+        	request.setAttribute("error", "You must log in first.");
+        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            return;
+        }
 
+        // Optional: Check if the user is an admin
+        if (!sessionUtils.isAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+            return;
+        }
+    	
         Connection conn = null;
         PreparedStatement ps = null;
 
         // Get the category ID from the request
         String categoryId = request.getParameter("categoryId");
 
+        HttpSession session = request.getSession();
+
         try {
             // Load database driver
-            Class.forName(dbClass);
+            Class.forName(DB_CLASS);
 
             // Establish connection
-            conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
             // SQL to delete the category
-            String deleteSQL = "DELETE FROM service_category WHERE category_id = ?";
+            String deleteSQL = "DELETE FROM category WHERE category_id = ?";
             ps = conn.prepareStatement(deleteSQL);
             ps.setInt(1, Integer.parseInt(categoryId));
             
             // Execute the delete query
             int rowsDeleted = ps.executeUpdate();
 
-            // Set a success or error message as a request attribute
             if (rowsDeleted > 0) {
+                // Update the session attribute to reflect the deletion
+                @SuppressWarnings("unchecked")
+                Map<category, List<service>> sessionCategoryServiceMap = 
+                        (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+
+                if (sessionCategoryServiceMap != null) {
+                    // Locate and remove the category
+                    category toRemove = null;
+                    for (category cat : sessionCategoryServiceMap.keySet()) {
+                        if (cat.getId() == Integer.parseInt(categoryId)) {
+                            toRemove = cat;
+                            break;
+                        }
+                    }
+
+                    if (toRemove != null) {
+                        sessionCategoryServiceMap.remove(toRemove);
+                    }
+
+                    // Update the session attribute
+                    session.setAttribute("categoryServiceMap", sessionCategoryServiceMap);
+                }
+
+                // Set a success message
                 request.setAttribute("message", "Category deleted successfully!");
             } else {
                 request.setAttribute("message", "Category not found or could not be deleted.");
@@ -61,6 +107,6 @@ public class DeleteCategoryServlet extends HttpServlet {
         }
 
         // Forward the request back to the categories page with a message
-        request.getRequestDispatcher("editServiceCategory.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/CreateCategoryServlet");
     }
 }

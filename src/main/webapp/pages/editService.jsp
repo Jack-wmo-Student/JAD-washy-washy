@@ -49,7 +49,8 @@
 		}
 		%>
 
-		<form action="ServiceServlet" method="post">
+		<form action="<%=request.getContextPath()%>/ServiceServlet" method="post">
+			
 			<div>
 				<label for="serviceName">Service Name:</label> <input type="text"
 					name="serviceName" placeholder="Enter service name" required />
@@ -118,6 +119,9 @@
 							method="post">
 							<input type="hidden" name="serviceId"
 								value="<%=service.getId()%>" />
+								<input
+								type="hidden" name="categoryId"
+								value="<%=categoryId%>" />
 							<button type="submit">Delete Service</button>
 						</form>
 					</td>

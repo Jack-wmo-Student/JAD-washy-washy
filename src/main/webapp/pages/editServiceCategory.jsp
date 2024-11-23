@@ -14,7 +14,6 @@
 		<%@ include file="../component/adminSidebar.jsp"%>
 		<h2>Create Service Category</h2>
 
-
 		<!-- Display success or error messages -->
 		<%
 		String successMessage = (String) request.getAttribute("successMessage");
