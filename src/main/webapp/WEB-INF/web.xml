@@ -67,6 +67,7 @@
 		<servlet-name>bookingPageLogic</servlet-name>
 		<url-pattern>/bookingPage</url-pattern>
 	</servlet-mapping>
+	<servlet>
 		<servlet-name>DeleteCategoryServlet</servlet-name>
 		<servlet-class>controller.DeleteCategoryServlet</servlet-class>
 	</servlet>

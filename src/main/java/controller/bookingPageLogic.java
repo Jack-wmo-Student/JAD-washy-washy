@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
 
 import java.io.IOException;
 import java.sql.*;
@@ -96,7 +97,7 @@ public class bookingPageLogic extends HttpServlet {
 	  		}
 	  		
 		    
-		    // Store the list in the request attribute
+		    // Store the list in the sessions
 	  		HttpSession session = request.getSession();
 		    session.setAttribute("bookingLists", bookingList);
 		    
@@ -122,11 +123,19 @@ public class bookingPageLogic extends HttpServlet {
 		}
 		
 		// Get the data from front end. Specific date, service id, user id
+		String date = request.getParameter("booking_date");
+		String serviceId = request.getParameter("service_booked_id");
 		
-		// Need to get all the available time slots from the specific date and service id. 
-		 
 		
-		
+		// validate if the data is valid, if not, error, otherwise redirect to timeslot page
+		if(date == null || date.trim().isEmpty() || serviceId == null || serviceId.trim().isEmpty()) {
+			request.setAttribute("errorMessage", "Please choose a valid date or service!");
+			
+			response.sendRedirect(request.getContextPath() + "/pages/bookingPage.jsp");;
+		}
+		else { // send them to the timeslot page already
+			response.sendRedirect(request.getContextPath() + "/pages/timeslotPage.jsp?date=" + URLEncoder.encode(date, "UTF-8") + "&serviceId=" + serviceId);
+		}
 	}
 		
 	
