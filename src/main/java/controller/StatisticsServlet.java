@@ -12,14 +12,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class StatisticsServlet extends HttpServlet {
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/your_database";
-    private static final String DB_USER = "your_user";
-    private static final String DB_PASSWORD = "your_password";
+	 private static final long serialVersionUID = 1L;
+	 String dbClass = System.getenv("DB_CLASS");
+     String dbUrl = System.getenv("DB_URL");
+     String dbUser = System.getenv("DB_USER");
+     String dbPassword = System.getenv("DB_PASSWORD");
+   
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
             // Fetch total services
             int totalServices = getTotalServices(connection);
 
@@ -43,7 +46,7 @@ public class StatisticsServlet extends HttpServlet {
             request.setAttribute("bookingsByDate", bookingsByDate);
 
             // Forward to JSP
-            request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/pages/statsDashboard.jsp").forward(request, response);
         } catch (SQLException e) {
             throw new ServletException("Database error", e);
         }

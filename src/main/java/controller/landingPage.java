@@ -53,7 +53,7 @@ public class landingPage extends HttpServlet {
 
                 // Use session attributes for sensitive user data
                 HttpSession session = request.getSession();
-                session.setAttribute("userId", validatedUser.getUser_id());
+                session.setAttribute("userId", validatedUser.getId());
                 session.setAttribute("username", validatedUser.getUsername());
                 session.setAttribute("isAdmin", validatedUser.isAdmin());
 

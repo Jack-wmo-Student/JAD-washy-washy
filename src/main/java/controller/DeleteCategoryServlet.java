@@ -46,8 +46,15 @@ public class DeleteCategoryServlet extends HttpServlet {
 
         // Get the category ID from the request
         String categoryId = request.getParameter("categoryId");
-
-        HttpSession session = request.getSession();
+        
+		HttpSession session = request.getSession(false);
+        
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null || session.getAttribute("userId") == null) {
+        	// Handle invalid login
+        	request.setAttribute("error", "You must log in first.");
+        	request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+            return;
+        }
 
         try {
             // Load database driver
