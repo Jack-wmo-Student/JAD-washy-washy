@@ -15,7 +15,7 @@
             position: fixed; /* Stay in place */
             top: 0;
             left: 0;
-            background-color: #526D82; /* Dark background */
+            background-color: #333333; /* Dark background */
             padding-top: 20px;
             overflow-y: auto; /* Enable vertical scroll if needed */
         }
@@ -40,7 +40,7 @@
     <div class="sidebar">
         <a href="<%=request.getContextPath()%>/pages/editServiceCategory.jsp">Edit Categories/Services</a>
         <a href="<%=request.getContextPath()%>/pages/memberManagement.jsp">Manage Members</a>
-        <a href="<%=request.getContextPath()%>/pages/statsDashboard.jsp">Statistics Dashboard</a>
+        <a href="<%=request.getContextPath()%>/UserServlet">Statistics Dashboard</a>
     </div>
 </body>
 </html>

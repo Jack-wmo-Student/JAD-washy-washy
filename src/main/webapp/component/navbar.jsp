@@ -1,5 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
 <%@ page
 	import="java.util.List, java.util.Map, model.category, utils.sessionUtils"%>
 <!DOCTYPE html>
@@ -23,7 +21,8 @@
 			Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
 			if (isAdmin != null && isAdmin) { // Check if user is an admin
 			%>
-			<li><a href="<%=request.getContextPath()%>/washyUsers">Admin Dashboard</a></li>
+			<li><a href="<%=request.getContextPath()%>/UserServlet">Admin
+					Dashboard</a></li>
 
 			<%
 			}

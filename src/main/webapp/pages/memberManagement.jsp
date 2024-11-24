@@ -1,120 +1,146 @@
-<%@page import="java.util.List"%>
-<%@page import="model.user"%>
-<%@page import="java.util.Map"%>
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.*,model.user, model.category, utils.sessionUtils"%>
+
+
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Member List</title>
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/memberManagement.css">
-    <script>
-        // Embed user data into JavaScript
-        <%Map<String, List<user>> userStatusMap = (Map<String, List<user>>) session.getAttribute("userStatusMap"); %>
-        const userMap = {
-            adminUsers: <%
-                List<user> adminUsers = userStatusMap.get("adminUsers");
-                if (adminUsers != null) {
-                    out.print("[");
-                    for (int i = 0; i < adminUsers.size(); i++) {
-                        user u = adminUsers.get(i);
-                        out.print("{id:" + u.getId() + ", username:'" + u.getUsername() + "', isAdmin:" + u.isAdmin() + ", isBlocked:" + u.isBlocked() + "}");
-                        if (i < adminUsers.size() - 1) {
-                            out.print(",");
-                        }
-                    }
-                    out.print("]");
-                } else {
-                    out.print("[]");
-                }
-            %>,
-            blockedUsers: <%
-                List<user> blockedUsers = userStatusMap.get("blockedUsers");
-                if (blockedUsers != null) {
-                    out.print("[");
-                    for (int i = 0; i < blockedUsers.size(); i++) {
-                        user u = blockedUsers.get(i);
-                        out.print("{id:" + u.getId() + ", username:'" + u.getUsername() + "', isAdmin:" + u.isAdmin() + ", isBlocked:" + u.isBlocked() + "}");
-                        if (i < blockedUsers.size() - 1) {
-                            out.print(",");
-                        }
-                    }
-                    out.print("]");
-                } else {
-                    out.print("[]");
-                }
-            %>,
-            regularUsers: <%
-                List<user> regularUsers = userStatusMap.get("regularUsers");
-                if (regularUsers != null) {
-                    out.print("[");
-                    for (int i = 0; i < regularUsers.size(); i++) {
-                        user u = regularUsers.get(i);
-                        out.print("{id:" + u.getId() + ", username:'" + u.getUsername() + "', isAdmin:" + u.isAdmin() + ", isBlocked:" + u.isBlocked() + "}");
-                        if (i < regularUsers.size() - 1) {
-                            out.print(",");
-                        }
-                    }
-                    out.print("]");
-                } else {
-                    out.print("[]");
-                }
-            %>
-        };
-
-        // Function to update the table based on selected user type
-        function updateTable(userType) {
-            const tableBody = document.getElementById('userTableBody');
-            tableBody.innerHTML = ""; // Clear existing rows
-
-            const users = userMap[userType];
-            if (users && users.length > 0) {
-                users.forEach(user => {
-                    const row = `<tr>
-                        <td>${user.id}</td>
-                        <td>${user.username}</td>
-                        <td>${user.isAdmin}</td>
-                        <td>${user.isBlocked}</td>
-                        <td>
-                            <form action="memberManagement.jsp" method="get" style="display: inline;">
-                                <button type="submit" class="btn btn-edit">Edit</button>
-                            </form>
-                        </td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
-                });
-            } else {
-                tableBody.innerHTML = "<tr><td colspan='5'>No users found for this category.</td></tr>";
-            }
+    <title>User Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 20px;
         }
-    </script>
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .block-button {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .unblock-button {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .promote-button {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .demote-button {
+            background-color: #8e44ad;
+            color: white;
+        }
+
+        .actions-form {
+            display: inline;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Member List</h1>
+	<% if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+        request.setAttribute("error", "You must log in first.");
+        request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+        return;
+    }
 
-        <!-- Dropdown to select user type -->
-        <label for="userType">Select User Type:</label>
-        <select id="userType" onchange="updateTable(this.value)">
-            <option value="adminUsers">Admin Users</option>
-            <option value="blockedUsers">Blocked Users</option>
-            <option value="regularUsers">Regular Users</option>
-        </select>
+    // Optional: Check if the user is an admin
+    if (!sessionUtils.isAdmin(request)) {
+        response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+        return;
+    } %>
 
-        <!-- Table to display user list -->
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Admin</th>
-                    <th>Blocked</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="userTableBody">
-                <tr><td colspan="5">Select a user type to display the list.</td></tr>
-            </tbody>
-        </table>
-    </div>
+    <h1>User Management</h1>
+    <%@ include file="../component/navbar.jsp"%>
+    <%@ include file="../component/adminSidebar.jsp"%>
+    <table>
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Is Admin</th>
+                <th>Is Blocked</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% 
+            ArrayList<user> users = (ArrayList<user>) request.getAttribute("users");
+            for (user user : users) {
+        %>
+            <tr>
+                <td><%= user.getUser_id() %></td>
+                <td><%= user.getUsername() %></td>
+                <td><%= user.isAdmin() ? "Yes" : "No" %></td>
+                <td><%= user.isBlocked() ? "Yes" : "No" %></td>
+                <td>
+                    <!-- Block/Unblock Form -->
+                    <form action="BlockUserServlet" method="post" class="actions-form">
+                        <input type="hidden" name="userId" value="<%= user.getUser_id() %>">
+                        <button type="submit" class="<%= user.isBlocked() ? "unblock-button" : "block-button" %>">
+                            <%= user.isBlocked() ? "Unblock" : "Block" %>
+                        </button>
+                    </form>
+                    
+                    <!-- Promote/Demote Form -->
+                    <form action="PromoteUserServlet" method="post" class="actions-form">
+                        <input type="hidden" name="userId" value="<%= user.getUser_id() %>">
+                        <button type="submit" class="<%= user.isAdmin() ? "demote-button" : "promote-button" %>">
+                            <%= user.isAdmin() ? "Demote from Admin" : "Promote to Admin" %>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
 </body>
 </html>
