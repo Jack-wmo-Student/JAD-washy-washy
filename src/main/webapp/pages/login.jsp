@@ -16,7 +16,7 @@
         <% if (error != null) { %>
             <p class="error"><%= error %></p>
         <% } %>
-        <form action="landingPage" method="POST">
+        <form action="<%=request.getContextPath()%>/landingPage" method="POST">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required>
             
@@ -26,7 +26,7 @@
             <button type="submit">Login</button>
         </form>
         <div class="footer">
-            <p>Don't have an account? <a href="register.jsp">Register here</a></p>
+            <p>Don't have an account? <a href="<%=request.getContextPath()%>/pages/register.jsp">Register here</a></p>
         </div>
     </div>
 </body>

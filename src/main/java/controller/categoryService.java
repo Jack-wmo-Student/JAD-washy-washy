@@ -25,6 +25,7 @@ public class categoryService extends HttpServlet {
     private static final String DB_URL = System.getenv("DB_URL");
     private static final String DB_USER = System.getenv("DB_USER");
     private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
+    private static final String DB_CLASS = System.getenv("DB_CLASS"); // Add DB_CLASS here
 
     public categoryService() {
         super();
@@ -39,24 +40,20 @@ public class categoryService extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Check if the user is logged in
-        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
-        	// Handle invalid login
-        	request.setAttribute("error", "You must log in first.");
-        	request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
-            return;
-        }
-
-        // Optional: Check if the user is an admin
-        if (!sessionUtils.isAdmin(request)) {
-            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
-            return;
-        }
 
         // Database credentials check
-        if (DB_URL == null || DB_USER == null || DB_PASSWORD == null) {
-            System.err.println("Database credentials are missing!");
-            throw new ServletException("Database credentials are not set in the environment variables.");
+        if (DB_URL == null || DB_USER == null || DB_PASSWORD == null || DB_CLASS == null) {
+            System.err.println("Database credentials or DB_CLASS are missing!");
+            throw new ServletException("Database credentials or DB_CLASS are not set in the environment variables.");
+        }
+
+        // Load database driver
+        try {
+            Class.forName(DB_CLASS); // Load the database driver
+            System.out.println("Database driver loaded successfully: " + DB_CLASS);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Failed to load database driver: " + DB_CLASS);
+            throw new ServletException("Database driver not found.", e);
         }
 
         HttpSession session = request.getSession();
@@ -67,11 +64,12 @@ public class categoryService extends HttpServlet {
                 (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
 
         if (categoryServiceMap == null) {
+            // Fetch categories and services if not already in session
             categoryServiceMap = fetchCategoriesAndServices();
             session.setAttribute("categoryServiceMap", categoryServiceMap);
         }
 
-        // Forward to homePage.jsp
+        // Forward to homePage.jsp to display the data
         request.getRequestDispatcher("/pages/homePage.jsp").forward(request, response);
     }
 

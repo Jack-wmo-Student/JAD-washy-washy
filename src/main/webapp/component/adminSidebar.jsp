@@ -1,48 +1,46 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Dashboard Sidebar</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar Navigation</title>
     <style>
-        /* Basic styling for sidebar */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
         }
         .sidebar {
-            width: 250px;
-            height: 100vh;
-            background-color: #333;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-        }
-        .sidebar h2 {
-            margin: 0 0 20px;
-            font-size: 20px;
-            text-align: center;
+            height: 100vh; /* Full height */
+            width: 250px; /* Sidebar width */
+            position: fixed; /* Stay in place */
+            top: 0;
+            left: 0;
+            background-color: #526D82; /* Dark background */
+            padding-top: 20px;
+            overflow-y: auto; /* Enable vertical scroll if needed */
         }
         .sidebar a {
-            color: #fff;
+            padding: 10px 15px;
             text-decoration: none;
-            padding: 10px;
-            margin: 5px 0;
-            text-align: center;
-            border-radius: 5px;
-            background-color: #444;
+            font-size: 18px;
+            color: #fff; /* White text */
+            display: block; /* Make links block elements */
         }
         .sidebar a:hover {
-            background-color: #555;
+            background-color: #575757; /* Add a hover effect */
+        }
+        .content {
+            margin-left: 260px; /* Same as the width of the sidebar */
+            padding: 20px;
         }
     </style>
 </head>
 <body>
+    <!-- Sidebar -->
     <div class="sidebar">
-        <h2>Admin Dashboards</h2>
-        <a href="services.jsp">Services</a>
-        <a href="members.jsp">Members</a>
-        <a href="stats.jsp">Stats</a>
+        <a href="<%=request.getContextPath()%>/pages/editServiceCategory.jsp">Edit Categories/Services</a>
+        <a href="<%=request.getContextPath()%>/pages/memberManagement.jsp">Manage Members</a>
+        <a href="<%=request.getContextPath()%>/pages/statsDashboard.jsp">Statistics Dashboard</a>
     </div>
 </body>
 </html>
