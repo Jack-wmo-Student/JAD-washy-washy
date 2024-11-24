@@ -112,6 +112,10 @@
     <servlet-class>controller.StatisticsServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
+		<servlet-name>StatisticsServlet</servlet-name>
+		<url-pattern>/StatisticsServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>timeSlotLogic</servlet-name>
 		<url-pattern>/timeSlotLogicPage</url-pattern>
 	</servlet-mapping>
@@ -130,13 +134,5 @@
 	<servlet-mapping>
 		<servlet-name>logout</servlet-name>
 		<url-pattern>/logout</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>StatisticsServlet</servlet-name>
-		<servlet-class>controller.StatisticsServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>StatisticsServlet</servlet-name>
-		<url-pattern>/statistics</url-pattern>
 	</servlet-mapping>
 </web-app>
