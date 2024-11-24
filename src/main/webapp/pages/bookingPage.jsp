@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.Calendar, java.text.DateFormatSymbols, java.util.List, jakarta.servlet.http.HttpSession" %>
-<%@ page import="model.booking, model.timeslot" %>
+<%@ page import="java.util.Calendar, java.text.DateFormatSymbols, java.util.List, jakarta.servlet.http.HttpSession, java.util.Map, java.util.ArrayList, java.util.HashMap" %>
+<%@ page import="model.booking, model.timeslot, model.category, model.service" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monthly Booking Calendar</title>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css">
     <style>
         body {
             display: flex;
@@ -192,10 +193,32 @@
 	    int currentMonth = calendar.get(Calendar.MONTH); // 0-based
 	    int currentYear = calendar.get(Calendar.YEAR);
 	    boolean isCurrentMonth = (currentMonth == Calendar.getInstance().get(Calendar.MONTH)) && (currentYear == Calendar.getInstance().get(Calendar.YEAR));
+	    String selectedService = request.getParameter("selectedService");
 	
 	    String paramMonth = request.getParameter("month");
 	    String paramYear = request.getParameter("year");
 	
+	    // Get the Category service map
+	    @SuppressWarnings("unchecked")
+	    Map<category, List<service>> sessionCategoryServiceMap = 
+	     	(Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+	    
+	    List<Map<String, Object>> serviceLists = new ArrayList<>();
+	    
+	    // Get all the services from the map
+	    for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
+	    	List<service> services = entry.getValue();
+	    	
+	    	for(service srv: services) {
+	    		Map<String, Object> tempMap = new HashMap<>();
+	    		tempMap.put("service_name", srv.getName().toString());
+	    		tempMap.put("service_id", srv.getId());
+	    		
+	    		serviceLists.add(tempMap);
+	    	}
+	    }
+	    
+	    
 	    if (paramMonth != null && paramYear != null) {
 	        currentMonth = Integer.parseInt(paramMonth) - 1; // Convert to 0-based
 	        currentYear = Integer.parseInt(paramYear);
@@ -225,6 +248,23 @@
 	%>
 </head>
 <body>
+	<!-- Include the Navbar -->
+	<div>
+		<%@ include file="/component/navbar.jsp" %>
+	</div>
+	
+	<%
+		String errorMessage = (String) request.getAttribute("errorMessage");
+
+		if (errorMessage != null) {
+	%>
+			<script>
+				alert(<%= errorMessage %>);
+			</script>
+	<%
+		}
+	%>
+
     <!-- Sidebar -->
     <div class="sidebar">
         <h3>Controls</h3>
@@ -240,16 +280,21 @@
         <!-- Drop down to choose the Service -->
         <div>
 	    	<select id="dropdown" name="service" required>
-	        	<option value="null" disabled selected>Select a service</option>
-	          	<option value="cleaning">Cleaning</option>
-	          	<option value="laundry">Laundry</option>
-		        <option value="carpet-cleaning">Carpet Cleaning</option>
-		        <option value="window-cleaning">Window Cleaning</option>
+	        	<option value="null" disabled <% if(selectedService == null) {%> selected <%} %>>Select a service</option>
+	        	<%
+	        		for(Map<String, Object> service: serviceLists) {
+	        	%>
+	        		<option value="<%= service.get("service_id") %>" <% if (service.get("service_name").equals(selectedService)) { %> selected <% } %>>
+	        			<%= service.get("service_name") %>
+	        		</option>
+	        	<%
+	        		}
+	        	%>
 	        </select>
-	        <br><br>
+	        <br>
 	    </div>
-	    <hr style="width: 80%">
-	    
+	    <hr style="width: 90%">
+	    <br>
 	    <!-- Your Bookings -->
 	    <div>
 	    	<%
@@ -357,21 +402,29 @@
 	<!-- Hidden form to submit date data to the servlet -->
 	<form id="bookingForm" action="<%=request.getContextPath()%>/bookingPage" method="POST" style="display: none;">
 	    <input type="hidden" name="booking_date" id="selectedDate">
+	    <input type="hidden" name="service_booked_id" id="serviceId">
 	</form>
 
     <script>
     	// ===== Funciton to redirect to booking slot =====
         function bookSlot(day, month, year) {
-			if(<%= isCurrentMonth %>) {
-				// Add additional booking logic here
-	            const formattedDate = year + '-' + month + '-' + day;
-				console.log('This is the formatted date that u have chosen: ', formattedDate);
+        	if(<%= isCurrentMonth %>) {
+				const dropdown = document.getElementById("dropdown");
 				
-				// Set the date as soon as it has been formatted
-	            document.getElementById("selectedDate").value = formattedDate;
-	            
-	        	// Submit the form programmatically
-	            document.getElementById("bookingForm").submit();
+				if(dropdown.value == "null") {
+		            dropdown.style.borderColor = "red";
+				}
+				else {
+					// format the dates
+		            const formattedDate = year + '-' + month + '-' + day;
+					console.log('This is the formatted date that u have chosen: ', formattedDate);
+					
+		            document.getElementById("selectedDate").value = formattedDate;
+		            document.getElementById("serviceId").value = document.getElementById('dropdown').value;
+		            
+		        	// Submit the form programmatically
+		            document.getElementById("bookingForm").submit();
+				}
 			}
 			else return;
         }

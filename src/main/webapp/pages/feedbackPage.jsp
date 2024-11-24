@@ -6,6 +6,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Feedback Session</title>
+	<link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css">
+	<link rel="icon" href="<%=request.getContextPath()%>/assets/icons/favicon.ico" type="image/x-icon">
 	<style>
       	body { font-family: Arial, sans-serif; padding: 10px 0; background-color: #B7E0FF;}
       	section { margin: 20px 0; }
