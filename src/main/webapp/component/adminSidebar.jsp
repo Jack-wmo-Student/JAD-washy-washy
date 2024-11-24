@@ -16,7 +16,7 @@
             top: 0;
             left: 0;
             background-color: #526D82; /* Dark background */
-            padding-top: 20px;
+            padding-top: 70px;
             overflow-y: auto; /* Enable vertical scroll if needed */
         }
         .sidebar a {
