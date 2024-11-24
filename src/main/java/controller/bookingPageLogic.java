@@ -19,6 +19,7 @@ import java.sql.*;
 import java.util.List;
 import model.booking;
 import model.timeslot;
+import utils.sessionUtils;
 
 public class bookingPageLogic extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -88,6 +89,13 @@ public class bookingPageLogic extends HttpServlet {
 		    
 		    // Store the list in the sessions
 	  		HttpSession session = request.getSession(false);
+			// Check if the user is logged in
+			if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session==null) {
+				// Handle invalid login
+				request.setAttribute("error", "You must log in first.");
+				request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+				return;
+			}
 		    session.setAttribute("bookingLists", bookingList);
 		    
 		    // Forward to the JSP
