@@ -74,15 +74,17 @@
 				<td><%=cat.getDescription()%></td>
 				<td>
 					<div class="actions">
+						<!-- Edit Button -->
 						<form action="editService.jsp" method="get"
 							style="display: inline;">
 							<input type="hidden" name="categoryId" value="<%=cat.getId()%>" />
 							<button type="submit" class="btn-edit">Edit</button>
 						</form>
+
+						<!-- Delete Button -->
 						<form action="<%=request.getContextPath()%>/DeleteCategoryServlet"
 							method="post">
-							<input type="hidden" name="categoryId"
-								value="<%=cat.getId()%>" />
+							<input type="hidden" name="categoryId" value="<%=cat.getId()%>" />
 							<button type="submit">Delete Category</button>
 						</form>
 					</div>
