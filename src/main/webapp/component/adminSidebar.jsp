@@ -15,7 +15,7 @@
             position: fixed; /* Stay in place */
             top: 0;
             left: 0;
-            background-color: #526D82; /* Dark background */
+            background-color: #333333; /* Dark background */
             padding-top: 20px;
             overflow-y: auto; /* Enable vertical scroll if needed */
         }

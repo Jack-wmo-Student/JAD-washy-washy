@@ -76,6 +76,6 @@ public class DeleteServiceServlet extends HttpServlet {
         }
 
         // Redirect or forward to a response page
-        response.sendRedirect(request.getContextPath() + "/pages/editService.jsp?categoryId=" + request.getParameter("categoryId"));
+        response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
     }
 }
