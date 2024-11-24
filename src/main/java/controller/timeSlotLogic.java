@@ -89,7 +89,7 @@ public class timeSlotLogic extends HttpServlet {
         	timeslotAvailability.put("5pm-6pm", formattedTimeslots.get(9));
 			
         	// Store the list in the session attribute
-        	HttpSession session = request.getSession();
+        	HttpSession session = request.getSession(false);
 		    session.setAttribute("timeslot-availability", timeslotAvailability);
 		    
 		    response.sendRedirect(request.getContextPath() + "/pages/timeSlotPage.jsp");

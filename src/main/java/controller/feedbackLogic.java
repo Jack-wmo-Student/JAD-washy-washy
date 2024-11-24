@@ -73,7 +73,7 @@ public class feedbackLogic extends HttpServlet {
 		    }
 	      	
 		    // Store the list in the request attribute
-		    HttpSession session = request.getSession();
+		    HttpSession session = request.getSession(false);
 		    session.setAttribute("questions", questionList);
 
 		    // Forward to the JSP
