@@ -9,6 +9,9 @@
 	href="<%=request.getContextPath()%>/assets/navbar.css">
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/assets/accountSettings.css">
+<link rel="icon"
+	href="<%=request.getContextPath()%>/assets/icons/favicon.ico"
+	type="image/x-icon">
 </head>
 <body>
 	<%@include file="/component/navbar.jsp"%>
