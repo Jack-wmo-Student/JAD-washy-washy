@@ -197,7 +197,7 @@ public class timeSlotLogic extends HttpServlet {
 	            for (int j = i; j < i + duration && j < timeslots.size(); j++) {
 	                if (!bool_timeslots.get(j)) {
 	                    allTrue = false;
-	                    break;
+	                    break; 
 	                }
 	            }
 
