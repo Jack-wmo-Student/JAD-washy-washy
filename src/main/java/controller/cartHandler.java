@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 public class cartHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -28,10 +29,19 @@ public class cartHandler extends HttpServlet {
 			throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 
+		List<Integer> bookingIdLists = new ArrayList<>();
+		
+		// Check if the user is logged in and session exists
 		if (session == null || session.getAttribute("cart-item-list") == null) {
 			response.sendRedirect(request.getContextPath() + "/pages/login.jsp");
 			return;
 		}
+		
+		if(session.getAttribute("bookingIdLists") == null) {
+			// Create the list of booking id, add in the session
+			session.setAttribute("bookingIdLists", bookingIdLists);
+		}
+		
 
 		Integer userId = (Integer) session.getAttribute("userId");
 		if (userId == null) {
@@ -77,10 +87,13 @@ public class cartHandler extends HttpServlet {
 						try (ResultSet rs = bookingStmt.executeQuery()) {
 							if (rs.next()) {
 								bookingId = rs.getInt("booking_id");
+								bookingIdLists.add(bookingId);
 							} else {
 								throw new Exception("Failed to retrieve booking_id.");
 							}
 						}
+						
+						session.setAttribute("bookingIdLists", bookingIdLists);
 					}
 
 					// Step 2: Calculate the time slots to update based on service duration
@@ -108,6 +121,7 @@ public class cartHandler extends HttpServlet {
 				}
 
 				connection.commit(); // Commit transaction
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				request.setAttribute("error", "An error occurred while processing your booking. Please try again.");
