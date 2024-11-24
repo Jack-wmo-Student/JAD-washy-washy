@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.LinkedHashMap;
 import model.booking;
 import model.timeslot;
+import model.category;
+import model.service;
+import model.cartItem;
 
 public class timeSlotLogic extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -40,6 +43,10 @@ public class timeSlotLogic extends HttpServlet {
 		String date = (String) request.getAttribute("date");
 		String strServiceId = (String) request.getAttribute("serviceId");
 		int serviceId = 0;
+		
+		// Create the session for the list of carts
+		List<cartItem> cartItemLists = new ArrayList<>();
+		
 		
 		System.out.println("--- Chosen Date: " + date);
 		System.out.println("--- Chosen serviceId: " + strServiceId);
@@ -88,9 +95,13 @@ public class timeSlotLogic extends HttpServlet {
         	timeslotAvailability.put("4pm-5pm", formattedTimeslots.get(8));
         	timeslotAvailability.put("5pm-6pm", formattedTimeslots.get(9));
 			
+        	
         	// Store the list in the session attribute
         	HttpSession session = request.getSession(false);
 		    session.setAttribute("timeslot-availability", timeslotAvailability);
+		    session.setAttribute("service-id", serviceId);
+		    session.setAttribute("timeslot-id", smallInfo.get("timeslot_id"));
+		    session.setAttribute("cart-item-list", cartItemLists);
 		    
 		    response.sendRedirect(request.getContextPath() + "/pages/timeSlotPage.jsp");
 		} catch (Exception e) {
@@ -102,9 +113,47 @@ public class timeSlotLogic extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// Get the data from the frontend
+		HttpSession session = request.getSession(false);
+		
+		// Get the data
+		String chosenTimeRange = request.getParameter("timeslot");
+		
+		// get data from the session
+		@SuppressWarnings("unchecked")
+		Map<String, Object> timeslotAvailability = (Map<String, Object>) session.getAttribute("timeslot-availability");
+		@SuppressWarnings("unchecked")
+		Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+		int serviceId = (int) session.getAttribute("service-id");
+		int timeslotId = (int) session.getAttribute("timeslot-id");
+		
+		// Create cartItemObj
+		cartItem cartItemObj = new cartItem();
+		
+		String bookingDate = (String) timeslotAvailability.get("booking_date");
+		
+		// Create timeslot obj
+		timeslot timeslotObj = new timeslot(timeslotId, chosenTimeRange);
+				
+		// loop to get the service object
+		Map<String, Object> serviceDetails = new HashMap<>();
+		
+		for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
+	    	List<service> services = entry.getValue();
+	    	
+	    	for(service srv: services) {
+	    		if(srv.getId() == serviceId) {
+	    			// if we arrive here, it means the service is correct now
+	    			// set everything inside the cartItem
+	    			cartItemObj.setBookedDate(bookingDate);
+	    			cartItemObj.setTimeslot(timeslotObj);
+	    			cartItemObj.setService(srv);
+	    		}
+	    	}
+	    }
+		
 		
 		// set the tiemslot object,
+		
 	}
 	
 	
