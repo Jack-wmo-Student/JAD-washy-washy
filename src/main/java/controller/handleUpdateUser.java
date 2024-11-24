@@ -40,7 +40,7 @@ public class handleUpdateUser extends HttpServlet {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			request.setAttribute("error", "Internal error: Database driver not found.");
-			request.getRequestDispatcher("/pages/accountSettings.jsp").forward(request, response);
+			request.getRequestDispatcher("/pages/homePage.jsp").forward(request, response);
 			return;
 		}
 
