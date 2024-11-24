@@ -123,8 +123,11 @@ public class timeSlotLogic extends HttpServlet {
 		Map<String, Object> timeslotAvailability = (Map<String, Object>) session.getAttribute("timeslot-availability");
 		@SuppressWarnings("unchecked")
 		Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+		@SuppressWarnings("unchecked")
+		List<cartItem> cartItemLists = (List<cartItem>) session.getAttribute("cart-item-list");
 		int serviceId = (int) session.getAttribute("service-id");
 		int timeslotId = (int) session.getAttribute("timeslot-id");
+		
 		
 		// Create cartItemObj
 		cartItem cartItemObj = new cartItem();
@@ -152,7 +155,14 @@ public class timeSlotLogic extends HttpServlet {
 	    }
 		
 		
-		// set the tiemslot object,
+		// Push to cartItemList session thing
+		cartItemLists.add(cartItemObj);
+        
+        // Store the list in the session attribute again to reflect the changes
+        session.setAttribute("cart-item-list", cartItemLists);
+        
+        // Redirect to the cart page
+        response.sendRedirect(request.getContextPath() + "/pages/cart.jsp");
 		
 	}
 	
