@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="java.util.Map, java.util.List,model.category,model.service"%>
+<%@ page
+	import="java.util.Map, java.util.List,model.category,model.service"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,12 +24,13 @@
 <body>
 	<!-- Include the Navbar -->
 	<div>
-		<%@ include file="/component/navbar.jsp" %>
+		<%@ include file="/component/navbar.jsp"%>
 	</div>
 
 	<!-- Aligned Carousel Section -->
 	<div class="carousel-container">
-		<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+		<div id="carouselExample" class="carousel slide"
+			data-bs-ride="carousel">
 			<!-- Indicators -->
 			<div class="carousel-indicators">
 				<button type="button" data-bs-target="#carouselExample"
@@ -85,7 +87,8 @@
 			for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
 				category cat = entry.getKey();
 				String categoryName = (cat.getName() != null) ? cat.getName().trim() : "Unknown Category";
-				String categoryDescription = (cat.getDescription() != null) ? cat.getDescription().trim()
+				String categoryDescription = (cat.getDescription() != null)
+				? cat.getDescription().trim()
 				: "No description available.";
 				List<service> services = entry.getValue();
 		%>
@@ -97,7 +100,8 @@
 				if (services != null && !services.isEmpty()) {
 					for (service serv : services) {
 						String serviceName = (serv.getName() != null) ? serv.getName().trim() : "Unknown Service";
-						String serviceDescription = (serv.getDescription() != null) ? serv.getDescription().trim()
+						String serviceDescription = (serv.getDescription() != null)
+						? serv.getDescription().trim()
 						: "No description available.";
 				%>
 				<div class="service-card">
@@ -110,7 +114,12 @@
 						<%=serv.getDurationInHour()%>
 						hour(s)
 					</p>
-					<button class="book-button">Book Now</button>
+					<form action="<%=request.getContextPath()%>/bookingPage"
+						method="get">
+						 <input type="hidden" name="selectedService" value="<%= serviceName %>" />
+						<button type="submit" class="book-button">Book Now</button>
+					</form>
+
 				</div>
 				<%
 				}
@@ -137,20 +146,21 @@
 	<script>
 		// Function to navigate to the selected category
 		function navigateToCategory(categoryId) {
-    if (categoryId) {
-        const categoryElement = document.querySelector(categoryId);
-        if (categoryElement) {
-            const navbarHeight = document.querySelector(".navbar").offsetHeight;
-            const position = categoryElement.offsetTop - navbarHeight - 10; // Add extra buffer space
+			if (categoryId) {
+				const categoryElement = document.querySelector(categoryId);
+				if (categoryElement) {
+					const navbarHeight = document.querySelector(".navbar").offsetHeight;
+					const position = categoryElement.offsetTop - navbarHeight
+							- 10; // Add extra buffer space
 
-            // Scroll to the adjusted position
-            window.scrollTo({
-                top: position,
-                behavior: "smooth",
-            });
-        }
-    }
-}
+					// Scroll to the adjusted position
+					window.scrollTo({
+						top : position,
+						behavior : "smooth",
+					});
+				}
+			}
+		}
 	</script>
 </body>
 </html>

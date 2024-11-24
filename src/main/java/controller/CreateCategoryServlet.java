@@ -22,7 +22,7 @@ public class CreateCategoryServlet extends HttpServlet {
 		if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
 			// Handle invalid login
 			request.setAttribute("error", "You must log in first.");
-			request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
 			return;
 		}
 
@@ -42,7 +42,7 @@ public class CreateCategoryServlet extends HttpServlet {
 		if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
 			// Handle invalid login
 			request.setAttribute("error", "You must log in first.");
-			request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
 			return;
 		}
 

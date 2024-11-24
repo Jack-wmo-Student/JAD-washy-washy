@@ -38,7 +38,7 @@ public class cartItem {
 		this.timeslot = timeslot;
 	}
 	
-	public void setservice(service service) {
+	public void setService(service service) {
 		this.service = service;
 	}
 }

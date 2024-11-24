@@ -92,8 +92,16 @@
 		<url-pattern>/handleRegisterUser</url-pattern>
 	</servlet-mapping>
 	<servlet>
-    <servlet-name>StatisticsServlet</servlet-name>
-    <servlet-class>controller.StatisticsServlet</servlet-class>
+		<servlet-name>ManageMemberServlet</servlet-name>
+		<servlet-class>controller.ManageMemberServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ManageMemberServlet</servlet-name>
+		<url-pattern>/ManageMemberServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>StatisticsServlet</servlet-name>
+		<servlet-class>controller.StatisticsServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>StatisticsServlet</servlet-name>
@@ -171,5 +179,11 @@
 	    <servlet-name>washyUsers</servlet-name>
 	    <url-pattern>/washyUsers</url-pattern>
 	</servlet-mapping>
-
+		<servlet-name>cartHandler</servlet-name>
+		<servlet-class>controller.cartHandler</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>cartHandler</servlet-name>
+		<url-pattern>/cartHandler</url-pattern>
+	</servlet-mapping>
 </web-app>

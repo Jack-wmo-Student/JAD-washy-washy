@@ -40,7 +40,7 @@
     <div class="sidebar">
         <a href="<%=request.getContextPath()%>/pages/editServiceCategory.jsp">Edit Categories/Services</a>
         <a href="<%=request.getContextPath()%>/pages/memberManagement.jsp">Manage Members</a>
-        <a href="<%=request.getContextPath()%>/UserServlet">Statistics Dashboard</a>
+        <a href="<%=request.getContextPath()%>/StatisticsServlet">Statistics Dashboard</a>
     </div>
 </body>
 </html>

@@ -10,6 +10,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.RequestDispatcher;
 
 public class StatisticsServlet extends HttpServlet {
 	 private static final long serialVersionUID = 1L;
@@ -23,6 +25,7 @@ public class StatisticsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+        	System.out.println("===== In Stats Servlet DoGet ======");
             // Fetch total services
             int totalServices = getTotalServices(connection);
 
@@ -53,10 +56,12 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     private int getTotalServices(Connection connection) throws SQLException {
+    	System.out.println("--- getTotalServices ---");
         String query = "SELECT COUNT(*) AS total_services FROM service";
         try (PreparedStatement stmt = connection.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
+            	System.out.println("total_services"+ rs.getInt("total_services"));
                 return rs.getInt("total_services");
             }
         }
@@ -64,6 +69,7 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     private List<Map<String, Object>> getCategoryWiseServices(Connection connection) throws SQLException {
+    	System.out.println("--- getCategoryWiseServices ---");
         String query = "SELECT category_id, COUNT(*) AS total_services FROM service GROUP BY category_id";
         List<Map<String, Object>> results = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(query);
@@ -73,16 +79,21 @@ public class StatisticsServlet extends HttpServlet {
                 row.put("category_id", rs.getInt("category_id"));
                 row.put("total_services", rs.getInt("total_services"));
                 results.add(row);
+                
+                System.out.println("cat_id:" + rs.getInt("category_id"));
+                System.out.println("total_services:" + rs.getInt("total_services"));
             }
         }
         return results;
     }
 
     private int getTotalBookings(Connection connection) throws SQLException {
+    	System.out.println("--- getTotalBookings ---");
         String query = "SELECT COUNT(*) AS total_bookings FROM booking";
         try (PreparedStatement stmt = connection.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
+            	System.out.println("tot_bookings:" + rs.getInt("total_bookings"));
                 return rs.getInt("total_bookings");
             }
         }
@@ -90,6 +101,7 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     private List<Map<String, Object>> getMostBookedServices(Connection connection) throws SQLException {
+    	System.out.println("--- getMostBookedServices ---");
         String query = """
             SELECT service_id, COUNT(*) AS total_bookings
             FROM booking
@@ -104,6 +116,9 @@ public class StatisticsServlet extends HttpServlet {
                 Map<String, Object> row = new HashMap<>();
                 row.put("service_id", rs.getInt("service_id"));
                 row.put("total_bookings", rs.getInt("total_bookings"));
+                
+                System.out.println("service_id:" + rs.getInt("service_id"));
+                System.out.println("total_bookings:" + rs.getInt("total_bookings"));
                 results.add(row);
             }
         }
@@ -111,6 +126,7 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     private List<Map<String, Object>> getBookingsByDate(Connection connection) throws SQLException {
+    	System.out.println("--- getBookingsByDate ---");
         String query = """
             SELECT booked_date, COUNT(*) AS total_bookings 
             FROM booking 
@@ -124,6 +140,10 @@ public class StatisticsServlet extends HttpServlet {
                 Map<String, Object> row = new HashMap<>();
                 row.put("booked_date", rs.getDate("booked_date").toString());
                 row.put("total_bookings", rs.getInt("total_bookings"));
+                
+                System.out.println("booked_date:" + rs.getDate("booked_date").toString());
+                System.out.println("total_bookings:" + rs.getInt("total_bookings"));
+                
                 results.add(row);
             }
         }

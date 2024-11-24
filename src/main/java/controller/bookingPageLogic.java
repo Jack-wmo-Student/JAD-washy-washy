@@ -1,24 +1,21 @@
 package controller;
 
-import jakarta.servlet.RequestDispatcher;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.net.URLEncoder;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 import model.booking;
 import model.timeslot;
+import utils.sessionUtils;
 
 public class bookingPageLogic extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -37,11 +34,24 @@ public class bookingPageLogic extends HttpServlet {
 		// Declarations
 		System.out.println("I am in booking Logic");
 		
+		// Check if the user is logged in or not
+		HttpSession session = request.getSession(false);
+		// Check if the user is logged in
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session==null || session.getAttribute("userId") == null) {
+			// Handle invalid login
+			request.setAttribute("error", "You must log in first.");
+			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+			return;
+		}
+		
+		//Get the user Id 
+		int user_id = (int) session.getAttribute("userId");
+		
 	  	List<booking> bookingList = new ArrayList<>();
 		
 		try {  		
 	  		// Fetch the first data that we need. Booking_id, date, service_name and timeslot_id
-	  		List<Map<String, Object>> resultLists = fetchUserBookings(1); // Need to change to dynamic
+	  		List<Map<String, Object>> resultLists = fetchUserBookings(user_id); // Need to change to dynamic
 		  	
 //	  		Example result that we want to return to the front end
 //	  		[
@@ -85,9 +95,7 @@ public class bookingPageLogic extends HttpServlet {
 	  			bookingList.add(bookingObj);
 	  		}
 	  		
-		    
-		    // Store the list in the sessions
-	  		HttpSession session = request.getSession(false);
+		    // Set the session
 		    session.setAttribute("bookingLists", bookingList);
 		    
 		    // Forward to the JSP
@@ -102,6 +110,17 @@ public class bookingPageLogic extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		System.out.println("I am in booking Post Logic");
+		
+		// Check if the user is logged in or not
+		HttpSession session = request.getSession(false);
+		// Check if the user is logged in
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session==null) {
+			// Handle invalid login
+			request.setAttribute("error", "You must log in first.");
+			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+			return;
+		}
+		
 		// Set Class
 		try {
 			Class.forName(dbClass);
@@ -133,7 +152,7 @@ public class bookingPageLogic extends HttpServlet {
 			};
 
 			
-			request.getRequestDispatcher("/timeSlotLogicPage").forward(wrappedRequest, response);
+			request.getRequestDispatcher("/timeSlotLogic").forward(wrappedRequest, response);
 		}
 	}
 		
