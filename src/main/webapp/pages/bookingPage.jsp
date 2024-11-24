@@ -15,63 +15,63 @@
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/assets/bookingPage.css">
 <%
-// Get current month and year dynamically or from request parameters for navigation
-Calendar calendar = Calendar.getInstance();
-int currentMonth = calendar.get(Calendar.MONTH); // 0-based
-int currentYear = calendar.get(Calendar.YEAR);
-boolean isCurrentMonth = (currentMonth == Calendar.getInstance().get(Calendar.MONTH))
-		&& (currentYear == Calendar.getInstance().get(Calendar.YEAR));
-String selectedService = request.getParameter("selectedService");
-
-String paramMonth = request.getParameter("month");
-String paramYear = request.getParameter("year");
-
-// Get the Category service map
-@SuppressWarnings("unchecked")
-Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
-		.getAttribute("categoryServiceMap");
-
-List<Map<String, Object>> serviceLists = new ArrayList<>();
-
-// Get all the services from the map
-for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
-	List<service> services = entry.getValue();
-
-	for (service srv : services) {
-		Map<String, Object> tempMap = new HashMap<>();
-		tempMap.put("service_name", srv.getName().toString());
-		tempMap.put("service_id", srv.getId());
-
-		serviceLists.add(tempMap);
+	// Get current month and year dynamically or from request parameters for navigation
+	Calendar calendar = Calendar.getInstance();
+	int currentMonth = calendar.get(Calendar.MONTH); // 0-based
+	int currentYear = calendar.get(Calendar.YEAR);
+	boolean isCurrentMonth = (currentMonth == Calendar.getInstance().get(Calendar.MONTH))
+			&& (currentYear == Calendar.getInstance().get(Calendar.YEAR));
+	String selectedService = request.getParameter("selectedService");
+	
+	String paramMonth = request.getParameter("month");
+	String paramYear = request.getParameter("year");
+	
+	// Get the Category service map
+	@SuppressWarnings("unchecked")
+	Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
+			.getAttribute("categoryServiceMap");
+	
+	List<Map<String, Object>> serviceLists = new ArrayList<>();
+	
+	// Get all the services from the map
+	for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
+		List<service> services = entry.getValue();
+	
+		for (service srv : services) {
+			Map<String, Object> tempMap = new HashMap<>();
+			tempMap.put("service_name", srv.getName().toString());
+			tempMap.put("service_id", srv.getId());
+	
+			serviceLists.add(tempMap);
+		}
 	}
-}
-
-if (paramMonth != null && paramYear != null) {
-	currentMonth = Integer.parseInt(paramMonth) - 1; // Convert to 0-based
-	currentYear = Integer.parseInt(paramYear);
-}
-
-calendar.set(currentYear, currentMonth, 1);
-int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-
-String monthName = new DateFormatSymbols().getMonths()[currentMonth];
-
-// Determine previous and next month/year
-int prevMonth = currentMonth - 1;
-int prevYear = currentYear;
-int nextMonth = currentMonth + 1;
-int nextYear = currentYear;
-
-if (prevMonth < 0) {
-	prevMonth = 11;
-	prevYear--;
-}
-
-if (nextMonth > 11) {
-	nextMonth = 0;
-	nextYear++;
-}
+	
+	if (paramMonth != null && paramYear != null) {
+		currentMonth = Integer.parseInt(paramMonth) - 1; // Convert to 0-based
+		currentYear = Integer.parseInt(paramYear);
+	}
+	
+	calendar.set(currentYear, currentMonth, 1);
+	int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+	int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+	
+	String monthName = new DateFormatSymbols().getMonths()[currentMonth];
+	
+	// Determine previous and next month/year
+	int prevMonth = currentMonth - 1;
+	int prevYear = currentYear;
+	int nextMonth = currentMonth + 1;
+	int nextYear = currentYear;
+	
+	if (prevMonth < 0) {
+		prevMonth = 11;
+		prevYear--;
+	}
+	
+	if (nextMonth > 11) {
+		nextMonth = 0;
+		nextYear++;
+	}
 %>
 </head>
 <body>

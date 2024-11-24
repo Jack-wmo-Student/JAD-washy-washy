@@ -1,0 +1,57 @@
+@charset "UTF-8";
+
+.container {
+	max-width: 1100px;
+	margin: 0 auto;	
+	padding: 20px;
+}
+
+/* Chart section styling */
+.chart-container {
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	margin-bottom: 20px;
+}
+
+.chart-container h3 {
+	color: #333;
+	font-size: 1.2em;
+	margin-bottom: 1rem;
+}
+
+canvas {
+	max-width: 100%;
+	margin: 0 auto;
+	height: 400px !important;
+}
+
+/* Dashboard section styling */
+.dashboard-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 20px;
+}
+
+.dashboard-stats {
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+}
+
+.stat-box {
+	flex: 1 1 200px;
+	background: #007bff;
+	color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	text-align: center;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-box h3 {
+	font-size: 2em;
+	margin: 0;
+}
