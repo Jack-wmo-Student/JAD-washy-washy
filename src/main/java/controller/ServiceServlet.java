@@ -1,4 +1,4 @@
-package controller;
+ package controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -7,157 +7,159 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.service;
 import model.category;
+import utils.sessionUtils;
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
-import java.util.List;
-
-import utils.sessionUtils;
-
-
 
 public class ServiceServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Database configuration
-	String dbClass = System.getenv("DB_CLASS");
+    // Database configuration
+    String dbClass = System.getenv("DB_CLASS");
     String dbUrl = System.getenv("DB_URL");
     String dbUser = System.getenv("DB_USER");
     String dbPassword = System.getenv("DB_PASSWORD");
-//    Class.forName(dbClass);
+    
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// Check if the user is logged in
-		if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
-			// Handle invalid login
-			request.setAttribute("error", "You must log in first.");
-			request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
-			return;
-		}
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    	HttpSession session = request.getSession();
+        // Check if the user is logged in
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+            request.setAttribute("error", "You must log in first.");
+            request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+            return;
+        }
 
-		// Optional: Check if the user is an admin
-		if (!sessionUtils.isAdmin(request)) {
-			response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
-			return;
-		}
+        // Optional: Check if the user is an admin
+        if (!sessionUtils.isAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+            return;
+        }
 
-		String categoryId = request.getParameter("categoryId");
-		request.getSession().setAttribute("categoryId", categoryId);
+        // Get categoryId from request parameters
+        String categoryIdParam = request.getParameter("categoryId");
+        if (categoryIdParam == null || categoryIdParam.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
+            return;
+        }
 
-		List<service> services = new ArrayList<>();
-		String categoryName = null;
+        int categoryId = Integer.parseInt(categoryIdParam);
+        List<service> services = new ArrayList<>();
+        String categoryName = null;
 
-		try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-				PreparedStatement psCategory = conn
-						.prepareStatement("SELECT category_name FROM service_categories WHERE category_id = ?");
-				PreparedStatement psServices = conn.prepareStatement("SELECT * FROM service WHERE category_id = ?")) {
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement psCategory = conn.prepareStatement(
+                     "SELECT category_name FROM service_categories WHERE category_id = ?");
+             PreparedStatement psServices = conn.prepareStatement(
+                     "SELECT * FROM service WHERE category_id = ?")) {
 
-			psCategory.setInt(1, Integer.parseInt(categoryId));
-			try (ResultSet rsCategory = psCategory.executeQuery()) {
-				if (rsCategory.next()) {
-					categoryName = rsCategory.getString("category_name");
-				}
-			}
+            psCategory.setInt(1, categoryId);
+            try (ResultSet rsCategory = psCategory.executeQuery()) {
+                if (rsCategory.next()) {
+                    categoryName = rsCategory.getString("category_name");
+                }
+            }
 
-			psServices.setInt(1, Integer.parseInt(categoryId));
-			try (ResultSet rsServices = psServices.executeQuery()) {
-				while (rsServices.next()) {
-					service service = new service(rsServices.getInt("service_id"), rsServices.getInt("category_id"),
-							rsServices.getString("service_name"), rsServices.getDouble("price"),
-							rsServices.getInt("duration_in_hour"), rsServices.getString("service_description"));
-					services.add(service);
-				}
-			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		response.sendRedirect(request.getContextPath() + "/pages/editService.jsp");
-	}
+        // Pass data to JSP
+        request.setAttribute("categoryName", categoryName);
+        request.setAttribute("services", services);
+        request.setAttribute("categoryId", categoryId);
+        session.setAttribute("previousUrl", request.getRequestURL().toString());
+        String previousUrl = (String) session.getAttribute("previousUrl");
+        // Redirect back to the category's services page
+        response.sendRedirect(previousUrl);
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
-	    String serviceName = request.getParameter("serviceName");
-	    String servicePrice = request.getParameter("servicePrice");
-	    String serviceDuration = request.getParameter("serviceDuration");
-	    String serviceDescription = request.getParameter("serviceDescription");
-	    String categoryId = (String) request.getSession().getAttribute("categoryId");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    	HttpSession session = request.getSession();
+        String serviceName = request.getParameter("serviceName");
+        String servicePrice = request.getParameter("servicePrice");
+        String serviceDuration = request.getParameter("serviceDuration");
+        String serviceDescription = request.getParameter("serviceDescription");
+        String categoryIdParam = request.getParameter("categoryId");
 
-	    HttpSession session = request.getSession();
-	    int generatedServiceId = 0;
+        if (categoryIdParam == null || categoryIdParam.isEmpty()) {
+            session.setAttribute("errorMessage", "Invalid categoryId provided.");
+            response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
+            return;
+        }
 
-	    categoryId = request.getParameter("categoryId");
-	    try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-	         PreparedStatement psInsert = conn.prepareStatement(
-	                 "INSERT INTO service (service_name, category_id, price, duration_in_hour, service_description) VALUES (?, ?, ?, ?, ?)",
-	                 Statement.RETURN_GENERATED_KEYS);
-	         PreparedStatement psFetchServices = conn.prepareStatement(
-	                 "SELECT * FROM service WHERE category_id = ?")) {
+        int categoryId = Integer.parseInt(categoryIdParam);
 
-	        // Insert the new service into the database
-	        psInsert.setString(1, serviceName);
-	        psInsert.setInt(2, Integer.parseInt(categoryId));
-	        psInsert.setDouble(3, Double.parseDouble(servicePrice));
-	        psInsert.setInt(4, Integer.parseInt(serviceDuration));
-	        psInsert.setString(5, serviceDescription);
-	        int rowsAffected = psInsert.executeUpdate();
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement psInsert = conn.prepareStatement(
+                     "INSERT INTO service (service_name, category_id, price, duration_in_hour, service_description) VALUES (?, ?, ?, ?, ?)",
+                     Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement psFetchServices = conn.prepareStatement(
+                     "SELECT * FROM service WHERE category_id = ?")) {
 
-	        // Retrieve the generated service ID
-	        if (rowsAffected > 0) {
-	            try (ResultSet rs = psInsert.getGeneratedKeys()) {
-	                if (rs.next()) {
-	                    generatedServiceId = rs.getInt(1);
-	                }
-	            }
-	        }
+            // Insert the new service into the database
+            psInsert.setString(1, serviceName);
+            psInsert.setInt(2, categoryId);
+            psInsert.setDouble(3, Double.parseDouble(servicePrice));
+            psInsert.setInt(4, Integer.parseInt(serviceDuration));
+            psInsert.setString(5, serviceDescription);
+            int rowsAffected = psInsert.executeUpdate();
 
-	        // Fetch updated services for the category
-	        psFetchServices.setInt(1, Integer.parseInt(categoryId));
-	        List<service> updatedServices = new ArrayList<>();
-	        try (ResultSet rsServices = psFetchServices.executeQuery()) {
-	            while (rsServices.next()) {
-	                service service = new service(
-	                        rsServices.getInt("service_id"),
-	                        rsServices.getInt("category_id"),
-	                        rsServices.getString("service_name"),
-	                        rsServices.getDouble("price"),
-	                        rsServices.getInt("duration_in_hour"),
-	                        rsServices.getString("service_description"));
-	                updatedServices.add(service);
-	            }
-	        }
+            if (rowsAffected > 0) {
+                System.out.println("Service added successfully.");
+            }
 
-	        // Update the sessionCategoryServiceMap
-	        @SuppressWarnings("unchecked")
-	        Map<category, List<service>> sessionCategoryServiceMap = 
-	                (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+            // Fetch updated services for the category
+            psFetchServices.setInt(1, categoryId);
+            List<service> updatedServices = new ArrayList<>();
+            try (ResultSet rsServices = psFetchServices.executeQuery()) {
+                while (rsServices.next()) {
+                    updatedServices.add(new service(
+                            rsServices.getInt("service_id"),
+                            rsServices.getInt("category_id"),
+                            rsServices.getString("service_name"),
+                            rsServices.getDouble("price"),
+                            rsServices.getInt("duration_in_hour"),
+                            rsServices.getString("service_description")));
+                }
+            }
 
-	        if (sessionCategoryServiceMap != null) {
-	            // Locate the relevant category and update its services
-	            for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
-	                category cat = entry.getKey();
-	                if (cat.getId() == Integer.parseInt(categoryId)) {
-	                    entry.setValue(updatedServices); // Update the services for this category
-	                    break;
-	                }
-	            }
+            // Debug: Print updated services
+            System.out.println("Updated services: " + updatedServices);
 
-	            // Update the session attribute
-	            session.setAttribute("categoryServiceMap", sessionCategoryServiceMap);
-	        }
+            // Update the sessionCategoryServiceMap
+            @SuppressWarnings("unchecked")
+            Map<category, List<service>> sessionCategoryServiceMap =
+                    (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
 
-	        // Add success message
-	        session.setAttribute("successMessage", "Service added successfully!");
+            if (sessionCategoryServiceMap != null) {
+                for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
+                    category cat = entry.getKey();
+                    if (cat.getId() == categoryId) {
+                        entry.setValue(updatedServices); // Update the services for this category
+                        break;
+                    }
+                }
+                session.setAttribute("categoryServiceMap", sessionCategoryServiceMap);
+            }
+            
 
-	    } catch (Exception e) {
-	        session.setAttribute("errorMessage", "Error adding service: " + e.getMessage());
-	        e.printStackTrace();
-	    }
+            // Add success message
+            session.setAttribute("successMessage", "Service added successfully!");
 
-	    // Redirect to the service list page to refresh the display
-	    response.sendRedirect(request.getContextPath() + "/ServiceServlet");
-	}
+        } catch (Exception e) {
+            session.setAttribute("errorMessage", "Error adding service: " + e.getMessage());
+            e.printStackTrace();
+        }
+        session.setAttribute("previousUrl", request.getRequestURL().toString());
+        String previousUrl = (String) session.getAttribute("previousUrl");
+        // Redirect back to the category's services page
+        response.sendRedirect(previousUrl);
+    }
 }

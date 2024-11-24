@@ -36,6 +36,7 @@ public class handleRegisterUser extends HttpServlet {
 	 *      response)
 	 */
 	private boolean isUsernameExists(String username) {
+		System.out.println("Checking username: " + username);
 		String checkQuery = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
 
 		try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -44,10 +45,14 @@ public class handleRegisterUser extends HttpServlet {
 			stmt.setString(1, username);
 
 			try (ResultSet rs = stmt.executeQuery()) {
-				if (rs.next() && rs.getInt(1) > 0) {
-					return true; // Username already exists
+				if (rs.next()) {
+					int count = rs.getInt(1);
+					return count > 0; // Username exists
+				} else {
+					return false; // No results returned, username does not exist
 				}
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -88,7 +93,7 @@ public class handleRegisterUser extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// Retrieve form data
-		String username = request.getParameter("username");
+		String username = request.getParameter("username").trim();
 		String password = request.getParameter("password");
 
 		// Input validation

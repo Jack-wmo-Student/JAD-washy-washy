@@ -137,13 +137,20 @@
 	<script>
 		// Function to navigate to the selected category
 		function navigateToCategory(categoryId) {
-			if (categoryId) {
-				const categoryElement = document.querySelector(categoryId);
-				if (categoryElement) {
-					categoryElement.scrollIntoView({ behavior: "smooth" });
-				}
-			}
-		}
+    if (categoryId) {
+        const categoryElement = document.querySelector(categoryId);
+        if (categoryElement) {
+            const navbarHeight = document.querySelector(".navbar").offsetHeight;
+            const position = categoryElement.offsetTop - navbarHeight - 10; // Add extra buffer space
+
+            // Scroll to the adjusted position
+            window.scrollTo({
+                top: position,
+                behavior: "smooth",
+            });
+        }
+    }
+}
 	</script>
 </body>
 </html>
