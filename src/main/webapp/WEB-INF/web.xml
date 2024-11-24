@@ -83,6 +83,14 @@
 		<servlet-name>handleRegisterUser</servlet-name>
 		<url-pattern>/handleRegisterUser</url-pattern>
 	</servlet-mapping>
+	<servlet>
+    <servlet-name>StatisticsServlet</servlet-name>
+    <servlet-class>controller.StatisticsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>StatisticsServlet</servlet-name>
+	    <url-pattern>/statistics</url-pattern>
+	</servlet-mapping>
 	
 
 </web-app>
