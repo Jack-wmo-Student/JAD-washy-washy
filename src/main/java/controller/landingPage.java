@@ -45,15 +45,16 @@ public class landingPage extends HttpServlet {
             } else {
                 // Set a lightweight cookie for session validation
                 Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
+                isLoggedInCookie.setPath("/"); // Cookie is valid for the entire domain
                 isLoggedInCookie.setHttpOnly(true); // Prevent JavaScript access
-                isLoggedInCookie.setSecure(true); // Ensure it's sent only over HTTPS
+                isLoggedInCookie.setSecure(false); // Ensure it's sent only over HTTPS
                 isLoggedInCookie.setMaxAge(60 * 60); // Cookie expiry: 1 hour
 
                 response.addCookie(isLoggedInCookie);
 
                 // Use session attributes for sensitive user data
-                HttpSession session = request.getSession();
-                session.setAttribute("userId", validatedUser.getId());
+                HttpSession session = request.getSession(false);
+                session.setAttribute("userId", validatedUser.getUser_id());
                 session.setAttribute("username", validatedUser.getUsername());
                 session.setAttribute("isAdmin", validatedUser.isAdmin());
 

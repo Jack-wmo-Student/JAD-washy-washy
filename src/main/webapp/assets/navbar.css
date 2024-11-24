@@ -4,6 +4,7 @@ body {
 }
 /* Navbar container */
 .navbar {
+	font-size: 14px;
 	background-color: #333;
 	color: white;
 	padding: 15px;
@@ -20,14 +21,9 @@ body {
 	height: 60px; /* Explicit height to avoid overflow issues */
 }
 
-/* Adjust body to prevent content from hiding behind the fixed navbar */
-body {
-	padding-top: 60px; /* Matches the navbar height */
-	margin: 0;
-}
-
 /* Navbar title */
 .navbar h2 {
+	font-size: 24px;
 	margin: 0;
 	margin-left: 20px;
 	padding-left: 20px;
@@ -88,8 +84,8 @@ body {
 }
 
 /* Logout button */
-.logout-button, .login-button {
-	background-color: #f44336;
+.login-button {
+	background-color: #4CAF50;
 	color: white;
 	border: none;
 	padding: 10px 15px;
@@ -100,6 +96,64 @@ body {
 	align-self: center; /* Ensure the logout button aligns vertically */
 }
 
-.logout-button:hover, .login-button:hover {
-	background-color: #d32f2f;
+.login-button:hover {
+	background-color: #4CAA01;
+}
+
+/* Profile Dropdown Container */
+.profile-dropdown-container {
+	position: relative;
+}
+
+/* Profile Dropdown Select */
+.profile-dropdown-container .dropdown {
+	background-color: #333; /* Match navbar background */
+	color: white; /* White text for contrast */
+	padding: 5px 10px; /* Add some spacing */
+	border: none; /* Remove default border */
+	border-radius: 5px; /* Rounded corners */
+	font-family: Arial, sans-serif; /* Consistent font */
+	font-size: 14px; /* Readable font size */
+	cursor: pointer; /* Pointer cursor for interactivity */
+	transition: background-color 0.2s ease; /* Smooth hover effect */
+	appearance: none; /* Remove default dropdown styling */
+}
+
+/* Profile Dropdown Hover Effect */
+.profile-dropdown-container .dropdown:hover {
+	background-color: #444; /* Slightly lighter hover background */
+}
+
+/* Profile Dropdown Options */
+.profile-dropdown-container .dropdown option {
+	background-color: #333; /* Match dropdown background */
+	color: white; /* White text */
+	font-family: Arial, sans-serif; /* Consistent font */
+}
+
+/* Profile Dropdown Arrow Styling */
+.profile-dropdown-container .dropdown::-ms-expand {
+	display: none; /* Hide the default dropdown arrow in IE */
+}
+
+.profile-dropdown-container .dropdown::after {
+	content: ''; /* Create a custom dropdown arrow */
+	position: absolute;
+	top: 50%;
+	right: 10px;
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 5px solid white; /* White arrow */
+	pointer-events: none; /* Ensure the arrow doesn't block clicks */
+	transform: translateY(-50%);
+}
+
+/* Dropdown Container Position Fix */
+.profile-dropdown-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-left: 20px; /* Add spacing between links */
 }

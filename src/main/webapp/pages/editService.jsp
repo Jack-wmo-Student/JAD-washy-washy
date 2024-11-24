@@ -35,18 +35,18 @@
 
 		<!-- Display success or error messages -->
 		<%
-		String successMessage = (String) request.getAttribute("successMessage");
-		String errorMessage = (String) request.getAttribute("errorMessage");
-		if (successMessage != null) {
+			String successMessage = (String) request.getAttribute("successMessage");
+			String errorMessage = (String) request.getAttribute("errorMessage");
+			if (successMessage != null) {
 		%>
-		<p style="color: green;"><%=successMessage%></p>
+			<p style="color: green;"><%=successMessage%></p>
 		<%
-		}
-		if (errorMessage != null) {
+			}
+			if (errorMessage != null) {
 		%>
-		<p style="color: red;"><%=errorMessage%></p>
+				<p style="color: red;"><%=errorMessage%></p>
 		<%
-		}
+			}
 		%>
 
 		<form action="<%=request.getContextPath()%>/ServiceServlet" method="post">

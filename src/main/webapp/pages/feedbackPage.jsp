@@ -6,6 +6,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Feedback Session</title>
+	<link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css">
+	<link rel="icon" href="<%=request.getContextPath()%>/assets/icons/favicon.ico" type="image/x-icon">
 	<style>
       	body { font-family: Arial, sans-serif; padding: 10px 0; background-color: #B7E0FF;}
       	section { margin: 20px 0; }
@@ -118,6 +120,11 @@
 	%>
 </head>
 <body>
+	<!-- Include the Navbar -->
+	<div>
+		<%@ include file="/component/navbar.jsp" %>
+	</div>
+	
 	<div id="container">
 	    <!-- Title -->
 			<header>
@@ -208,7 +215,7 @@
 	    <div id="thankYouOverlay" class="overlay">
 	    	<div class="popup">
 	        	<h2>Thank You for Your Feedback!</h2>
-	            <button onclick="window.location.href = 'nextPage.jsp';">Continue</button>
+	            <button onclick="window.location.href='<%=request.getContextPath()%>/pages/homePage.jsp'">Continue</button>
 	        </div>
 	    </div>
 

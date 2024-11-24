@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="java.util.List, java.util.Map, model.category, utils.sessionUtils"%>
+<%@ page
+	import="java.util.List, java.util.Map, model.category, utils.sessionUtils"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,19 +24,25 @@
 			if (isAdmin != null && isAdmin) { // Check if user is an admin
 			%>
 			<li><a href="<%=request.getContextPath()%>/washyUsers">Admin Dashboard</a></li>
+
 			<%
 			}
 			%>
 			<!-- Feedback Tab -->
 			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li>
 
+			<li><a href="<%=request.getContextPath()%>/bookingPage">Book
+					now</a></li>
+
 			<!-- Categories Dropdown using <select> -->
-			<li>
-				<select class="category-dropdown" onchange="navigateToCategory(this.value)">
+			<li><select class="category-dropdown"
+				onchange="navigateToCategory(this.value)">
 					<option value="" disabled selected hidden>Categories</option>
 					<%
+					@SuppressWarnings("unchecked")
 					// Retrieve category-service map from the session
-					Map<category, List<category>> categoryServiceMap = (Map<category, List<category>>) session.getAttribute("categoryServiceMap");
+					Map<category, List<category>> categoryServiceMap = (Map<category, List<category>>) session
+							.getAttribute("categoryServiceMap");
 
 					// Dynamically render category options or show fallback message
 					if (categoryServiceMap != null && !categoryServiceMap.isEmpty()) {
@@ -51,8 +58,7 @@
 					<%
 					}
 					%>
-				</select>
-			</li>
+			</select></li>
 		</ul>
 
 		<!-- Login/Logout Button -->
@@ -60,13 +66,21 @@
 		// Use sessionUtils.isLoggedIn to check login status
 		if (sessionUtils.isLoggedIn(request, "isLoggedIn")) { // Assuming "isLoggedIn" is the cookie name
 		%>
-		<form action="<%=request.getContextPath()%>/logout" method="POST" class="logout-form">
-			<button type="submit" class="logout-button">Log Out</button>
-		</form>
+		<div class="profile-dropdown-container">
+			<select class="dropdown" onchange="handleProfileAction(this.value)">
+				<option value="" disabled selected hidden>Profile</option>
+				<option
+					value="<%=request.getContextPath()%>/pages/accountSettings.jsp">Account
+					Settings</option>
+				<option value="<%=request.getContextPath()%>/logout">Log
+					Out</option>
+			</select>
+		</div>
 		<%
 		} else {
 		%>
-		<form action="<%=request.getContextPath()%>/pages/login.jsp" method="GET" class="login-form">
+		<form action="<%=request.getContextPath()%>/pages/login.jsp"
+			method="GET" class="login-form">
 			<button type="submit" class="login-button">Log In / Sign Up</button>
 		</form>
 		<%
@@ -79,6 +93,11 @@
 		function navigateToCategory(categoryId) {
 			if (categoryId) {
 				window.location.href = categoryId;
+			}
+		}
+		function handleProfileAction(actionUrl) {
+			if (actionUrl) {
+				window.location.href = actionUrl;
 			}
 		}
 	</script>
