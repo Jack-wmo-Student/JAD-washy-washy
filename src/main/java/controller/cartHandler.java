@@ -7,79 +7,53 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.cartItem;
-import model.timeslot;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.List;
 
-/**
- * Servlet implementation class cartHandler
- */
 public class cartHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
 	public cartHandler() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// Retrieve session
 		HttpSession session = request.getSession(false);
 
-		// Check if the user is logged in and session exists
 		if (session == null || session.getAttribute("cart-item-list") == null) {
 			response.sendRedirect(request.getContextPath() + "/pages/login.jsp");
 			return;
 		}
 
-		// Check if the userId exists in the session
 		Integer userId = (Integer) session.getAttribute("userId");
 		if (userId == null) {
 			response.sendRedirect(
 					request.getContextPath() + "/pages/login.jsp?error=Invalid session. Please log in again.");
 			return;
 		}
-		
-		// Retrieve the cart items and user ID from the session
+
 		@SuppressWarnings("unchecked")
 		List<cartItem> cartItems = (List<cartItem>) session.getAttribute("cart-item-list");
-	    if (cartItems == null) {
-	        response.sendRedirect(request.getContextPath() + "/pages/bookingPage.jsp?error=Invalid session. Please log in again.");
-	        return;
-	    }
+		if (cartItems == null) {
+			response.sendRedirect(
+					request.getContextPath() + "/pages/bookingPage.jsp?error=Invalid session. Please log in again.");
+			return;
+		}
 
-		// Database connection variables
 		String DB_CLASS = System.getenv("DB_CLASS");
 		String DB_URL = System.getenv("DB_URL");
 		String DB_USER = System.getenv("DB_USER");
 		String DB_PASSWORD = System.getenv("DB_PASSWORD");
 
 		try {
-			// Load the database driver
 			Class.forName(DB_CLASS);
 
 			try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
@@ -109,29 +83,27 @@ public class cartHandler extends HttpServlet {
 						}
 					}
 
-					// Step 2: Update the timeslot table with the booking_id
-					String timeslotUpdateQuery = """
-							    UPDATE timeslot
-							    SET "8am-9am" = CASE WHEN ? = '8am-9am' THEN ? ELSE "8am-9am" END,
-							        "9am-10am" = CASE WHEN ? = '9am-10am' THEN ? ELSE "9am-10am" END,
-							        "10am-11am" = CASE WHEN ? = '10am-11am' THEN ? ELSE "10am-11am" END,
-							        "11am-12pm" = CASE WHEN ? = '11am-12pm' THEN ? ELSE "11am-12pm" END,
-							        "1pm-2pm" = CASE WHEN ? = '1pm-2pm' THEN ? ELSE "1pm-2pm" END,
-							        "2pm-3pm" = CASE WHEN ? = '2pm-3pm' THEN ? ELSE "2pm-3pm" END,
-							        "3pm-4pm" = CASE WHEN ? = '3pm-4pm' THEN ? ELSE "3pm-4pm" END,
-							        "4pm-5pm" = CASE WHEN ? = '4pm-5pm' THEN ? ELSE "4pm-5pm" END,
-							        "5pm-6pm" = CASE WHEN ? = '5pm-6pm' THEN ? ELSE "5pm-6pm" END
-							    WHERE timeslot_id = ?
-							""";
+					// Step 2: Calculate the time slots to update based on service duration
+					int duration = item.getService().getDurationInHour();
+					String[] timeRanges = { "8am-9am", "9am-10am", "10am-11am", "11am-12pm", "1pm-2pm", "2pm-3pm",
+							"3pm-4pm", "4pm-5pm", "5pm-6pm" };
+					String selectedTimeRange = item.getTimeslot().getTimeRange();
+					int startIndex = Arrays.asList(timeRanges).indexOf(selectedTimeRange);
 
-					try (PreparedStatement timeslotStmt = connection.prepareStatement(timeslotUpdateQuery)) {
-						String timeRange = item.getTimeslot().getTimeRange();
-						for (int i = 1; i <= 18; i += 2) {
-							timeslotStmt.setString(i, timeRange);
-							timeslotStmt.setInt(i + 1, bookingId);
+					if (startIndex == -1 || startIndex + duration > timeRanges.length) {
+						throw new Exception("Invalid time range or duration exceeds available slots.");
+					}
+
+					// Step 3: Update the time slots with booking_id
+					for (int i = startIndex; i < startIndex + duration; i++) {
+						String timeslotUpdateQuery = "UPDATE timeslot SET \"" + timeRanges[i]
+								+ "\" = ? WHERE timeslot_id = ?";
+
+						try (PreparedStatement timeslotStmt = connection.prepareStatement(timeslotUpdateQuery)) {
+							timeslotStmt.setInt(1, bookingId);
+							timeslotStmt.setInt(2, item.getTimeslot().getTimeSlotId());
+							timeslotStmt.executeUpdate();
 						}
-						timeslotStmt.setInt(19, item.getTimeslot().getTimeSlotId());
-						timeslotStmt.executeUpdate();
 					}
 				}
 
@@ -155,5 +127,4 @@ public class cartHandler extends HttpServlet {
 		// Redirect to the booking confirmation page
 		response.sendRedirect(request.getContextPath() + "/feedbackLogic");
 	}
-
 }
