@@ -19,7 +19,11 @@ import java.util.List;
 import java.util.LinkedHashMap;
 import model.booking;
 import model.timeslot;
+import model.category;
+import model.service;
+import model.cartItem;
 import utils.sessionUtils;
+
 
 public class timeSlotLogic extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -42,7 +46,9 @@ public class timeSlotLogic extends HttpServlet {
 		String date = (String) request.getAttribute("date");
 		String strServiceId = (String) request.getAttribute("serviceId");
 		int serviceId = 0;
-
+		// Create the session for the list of carts
+		List<cartItem> cartItemLists = new ArrayList<>();
+		
 		System.out.println("--- Chosen Date: " + date);
 		System.out.println("--- Chosen serviceId: " + strServiceId);
 
@@ -83,27 +89,31 @@ public class timeSlotLogic extends HttpServlet {
 			Map<String, Object> timeslotAvailability = new LinkedHashMap<>();
 			timeslotAvailability.put("booking_date", date);
 			timeslotAvailability.put("8am-9am", formattedTimeslots.get(0));
-			timeslotAvailability.put("9am-10am", formattedTimeslots.get(1));
-			timeslotAvailability.put("10am-11am", formattedTimeslots.get(2));
-			timeslotAvailability.put("11am-12pm", formattedTimeslots.get(3));
-			timeslotAvailability.put("12pm-1pm", formattedTimeslots.get(4));
-			timeslotAvailability.put("1pm-2pm", formattedTimeslots.get(5));
-			timeslotAvailability.put("2pm-3pm", formattedTimeslots.get(6));
-			timeslotAvailability.put("3pm-4pm", formattedTimeslots.get(7));
-			timeslotAvailability.put("4pm-5pm", formattedTimeslots.get(8));
-			timeslotAvailability.put("5pm-6pm", formattedTimeslots.get(9));
-
-			// Store the list in the session attribute
-			HttpSession session = request.getSession(false);
-			if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null) {
-				// Handle invalid login
-				request.setAttribute("error", "You must log in first.");
-				request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
-				return;
-			}
-			session.setAttribute("timeslot-availability", timeslotAvailability);
-
-			response.sendRedirect(request.getContextPath() + "/pages/timeSlotPage.jsp");
+        	timeslotAvailability.put("9am-10am", formattedTimeslots.get(1));
+        	timeslotAvailability.put("10am-11am", formattedTimeslots.get(2));
+        	timeslotAvailability.put("11am-12pm", formattedTimeslots.get(3));
+        	timeslotAvailability.put("12pm-1pm", formattedTimeslots.get(4));
+        	timeslotAvailability.put("1pm-2pm", formattedTimeslots.get(5));
+        	timeslotAvailability.put("2pm-3pm", formattedTimeslots.get(6));
+        	timeslotAvailability.put("3pm-4pm", formattedTimeslots.get(7));
+        	timeslotAvailability.put("4pm-5pm", formattedTimeslots.get(8));
+        	timeslotAvailability.put("5pm-6pm", formattedTimeslots.get(9));
+			
+        	// Store the list in the session attribute
+        	HttpSession session = request.getSession(false);
+        	if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null) {
+        		// Handle invalid login
+        		request.setAttribute("error", "You must log in first.");
+        		request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+        		return;
+        	}
+        	
+		    session.setAttribute("timeslot-availability", timeslotAvailability);
+		    session.setAttribute("service-id", serviceId);
+		    session.setAttribute("timeslot-id", smallInfo.get("timeslot_id"));
+		    session.setAttribute("cart-item-list", cartItemLists);
+		    
+		    response.sendRedirect(request.getContextPath() + "/pages/timeSlotPage.jsp");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -111,11 +121,58 @@ public class timeSlotLogic extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// Get the data from the frontend
-
-		// set the tiemslot object,
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession(false);
+		
+		// Get the data
+		String chosenTimeRange = request.getParameter("timeslot");
+		
+		// get data from the session
+		@SuppressWarnings("unchecked")
+		Map<String, Object> timeslotAvailability = (Map<String, Object>) session.getAttribute("timeslot-availability");
+		@SuppressWarnings("unchecked")
+		Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+		@SuppressWarnings("unchecked")
+		List<cartItem> cartItemLists = (List<cartItem>) session.getAttribute("cart-item-list");
+		int serviceId = (int) session.getAttribute("service-id");
+		int timeslotId = (int) session.getAttribute("timeslot-id");
+		
+		
+		// Create cartItemObj
+		cartItem cartItemObj = new cartItem();
+		
+		String bookingDate = (String) timeslotAvailability.get("booking_date");
+		
+		// Create timeslot obj
+		timeslot timeslotObj = new timeslot(timeslotId, chosenTimeRange);
+				
+		// loop to get the service object
+		Map<String, Object> serviceDetails = new HashMap<>();
+		
+		for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
+	    	List<service> services = entry.getValue();
+	    	
+	    	for(service srv: services) {
+	    		if(srv.getId() == serviceId) {
+	    			// if we arrive here, it means the service is correct now
+	    			// set everything inside the cartItem
+	    			cartItemObj.setBookedDate(bookingDate);
+	    			cartItemObj.setTimeslot(timeslotObj);
+	    			cartItemObj.setService(srv);
+	    		}
+	    	}
+	    }
+		
+		
+		// Push to cartItemList session thing
+		cartItemLists.add(cartItemObj);
+        
+        // Store the list in the session attribute again to reflect the changes
+        session.setAttribute("cart-item-list", cartItemLists);
+        
+        // Redirect to the cart page
+        response.sendRedirect(request.getContextPath() + "/pages/cart.jsp");
+		
 	}
 
 	private List<Integer> formatTimeslots(List<Integer> timeslots, int duration) {
@@ -135,18 +192,18 @@ public class timeSlotLogic extends HttpServlet {
 
 		// Start the process
 		for (int i = 0; i < bool_timeslots.size(); i++) {
-			if (!bool_timeslots.get(i)) {
-				// If the current timeslot is false, mark as 0
-				formattedTimeslots.add(0);
-			} else {
-				// Check the next `duration` slots
-				boolean allTrue = true;
-				for (int j = i; j < i + duration && j < timeslots.size(); j++) {
-					if (!bool_timeslots.get(j)) {
-						allTrue = false;
-						break;
-					}
-				}
+	        if (!bool_timeslots.get(i)) {
+	            // If the current timeslot is false, mark as 0
+	            formattedTimeslots.add(0);
+	        } else {
+	            // Check the next `duration` slots
+	            boolean allTrue = true;
+	            for (int j = i; j < i + duration && j < timeslots.size(); j++) {
+	                if (!bool_timeslots.get(j)) {
+	                    allTrue = false;
+	                    break; 
+	                }
+	            }
 
 				if (i + duration <= timeslots.size() && allTrue) {
 					// If we have enough slots and all are true
