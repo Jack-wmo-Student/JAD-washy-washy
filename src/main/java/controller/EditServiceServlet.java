@@ -71,19 +71,15 @@ public class EditServiceServlet extends HttpServlet {
         }
 
         // Forward to JSP for editing
-        request.getRequestDispatcher("/pages/editService.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String serviceId = request.getParameter("serviceId");
         String categoryId = request.getParameter("categoryId");
-
-        if (serviceId == null || categoryId == null || serviceId.isEmpty() || categoryId.isEmpty()) {
-            request.setAttribute("errorMessage", "Invalid service or category ID.");
-            request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
-            return;
-        }
+        String duration = request.getParameter("serviceDuration");
+        String duration = request.getParameter("serviceDescription");
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             String query = "UPDATE service SET service_name = ?, price = ?, duration_in_hour = ?, service_description = ? WHERE service_id = ?";
@@ -107,6 +103,6 @@ public class EditServiceServlet extends HttpServlet {
         }
 
         // Redirect back to the category's services page
-        response.sendRedirect(request.getContextPath() + "/ServiceServlet?categoryId=" + categoryId);
+        response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
     }
 }
