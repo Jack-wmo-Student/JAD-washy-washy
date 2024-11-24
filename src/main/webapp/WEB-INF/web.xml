@@ -51,7 +51,7 @@
 		<servlet-name>EditServiceServlet</servlet-name>
 		<url-pattern>/EditServiceServlet</url-pattern>
 	</servlet-mapping>
-		<servlet>
+	<servlet>
 		<servlet-name>feedbackLogic</servlet-name>
 		<servlet-class>controller.feedbackLogic</servlet-class>
 	</servlet>
@@ -67,6 +67,7 @@
 		<servlet-name>bookingPageLogic</servlet-name>
 		<url-pattern>/bookingPage</url-pattern>
 	</servlet-mapping>
+	<servlet>
 		<servlet-name>DeleteCategoryServlet</servlet-name>
 		<servlet-class>controller.DeleteCategoryServlet</servlet-class>
 	</servlet>
@@ -90,6 +91,22 @@
 		<servlet-name>handleRegisterUser</servlet-name>
 		<url-pattern>/handleRegisterUser</url-pattern>
 	</servlet-mapping>
-	
+	<servlet>
+		<servlet-name>handleUpdateUser</servlet-name>
+		<servlet-class>controller.handleUpdateUser</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>handleUpdateUser</servlet-name>
+		<url-pattern>/handleUpdateUser</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>logout</servlet-name>
+		<servlet-class>controller.logout</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>logout</servlet-name>
+		<url-pattern>/logout</url-pattern>
+	</servlet-mapping>
+
 
 </web-app>
