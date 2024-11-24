@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 body {
 	display: flex;
 	font-family: Arial, sans-serif;
@@ -187,25 +188,44 @@ body {
 }
 
 .go-to-cart-container {
-    display: flex;
-    justify-content: flex-end; /* Aligns the button to the right */
-    margin-bottom: 20px;
+	display: flex;
+	justify-content: flex-end; /* Aligns the button to the right */
+	margin-bottom: 20px;
 }
 
 .go-to-cart-button {
-    background-color: #28a745;
-    color: white;
-    text-decoration: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+	background-color: #28a745;
+	color: white;
+	text-decoration: none;
+	padding: 10px 15px;
+	border-radius: 5px;
+	font-size: 16px;
+	font-weight: bold;
+	transition: background-color 0.3s ease;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .go-to-cart-button:hover {
-    background-color: #218838;
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.05);
+	background-color: #218838;
+	box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+	transform: scale(1.05);
+}
+
+.add-more-button {
+	display: inline-block;
+	background-color: #007bff; /* Blue background */
+	color: #fff; /* White text */
+	padding: 10px 20px; /* Spacing inside the button */
+	font-size: 16px; /* Font size */
+	font-weight: bold; /* Bold text */
+	text-align: center; /* Center the text */
+	border: none; /* Remove default button border */
+	border-radius: 5px; /* Rounded corners */
+	cursor: pointer; /* Pointer cursor on hover */
+	text-decoration: none; /* Remove underline */
+	transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.add-more-button:hover {
+	background-color: #0056b3; /* Darker blue on hover */
 }

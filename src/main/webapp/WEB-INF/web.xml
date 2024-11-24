@@ -121,7 +121,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>timeSlotLogic</servlet-name>
-		<url-pattern>/timeSlotLogicPage</url-pattern>
+		<url-pattern>/timeSlotLogic</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>handleUpdateUser</servlet-name>
@@ -138,5 +138,13 @@
 	<servlet-mapping>
 		<servlet-name>logout</servlet-name>
 		<url-pattern>/logout</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>cartHandler</servlet-name>
+		<servlet-class>controller.cartHandler</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>cartHandler</servlet-name>
+		<url-pattern>/cartHandler</url-pattern>
 	</servlet-mapping>
 </web-app>
