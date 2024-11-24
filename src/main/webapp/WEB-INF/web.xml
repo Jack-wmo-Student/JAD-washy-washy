@@ -92,5 +92,14 @@
 		<url-pattern>/handleRegisterUser</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>timeSlotLogic</servlet-name>
+		<servlet-class>controller.timeSlotLogic</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>timeSlotLogic</servlet-name>
+		<url-pattern>/timeSlotLogicPage</url-pattern>
+	</servlet-mapping>
+	
 
 </web-app>

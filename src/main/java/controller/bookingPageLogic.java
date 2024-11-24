@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
@@ -22,10 +23,10 @@ import model.timeslot;
 public class bookingPageLogic extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private final String dbClass = System.getenv("DB_CLASS");
-	private final String dbUrl = System.getenv("DB_URL");
-	private final String dbPassword = System.getenv("DB_PASSWORD");
-	private final String dbUser = System.getenv("DB_USER");
+	private static final String dbClass = System.getenv("DB_CLASS");
+	private static final String dbUrl = System.getenv("DB_URL");
+	private static final String dbPassword = System.getenv("DB_PASSWORD");
+	private static final String dbUser = System.getenv("DB_USER");
 	
 	public bookingPageLogic() {
 		super();	
@@ -34,25 +35,13 @@ public class bookingPageLogic extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// Declarations
-	  	Connection conn = null;
-	  	List<booking> bookingList = new ArrayList<>();
-	  	
-	  	
 		System.out.println("I am in booking Logic");
-		// Set Class
-		try {
-			Class.forName(dbClass);
-		} catch(ClassNotFoundException e) {
-			System.out.printf("Connection drive issue.", e);
-			e.printStackTrace();
-		}
 		
-		try {
-	  		// === Connect to Database ===
-	  		conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-	  		
+	  	List<booking> bookingList = new ArrayList<>();
+		
+		try {  		
 	  		// Fetch the first data that we need. Booking_id, date, service_name and timeslot_id
-	  		List<Map<String, Object>> resultLists = fetchUserBookings(conn, 1);
+	  		List<Map<String, Object>> resultLists = fetchUserBookings(1); // Need to change to dynamic
 		  	
 //	  		Example result that we want to return to the front end
 //	  		[
@@ -74,7 +63,7 @@ public class bookingPageLogic extends HttpServlet {
 	  			int timeslotId = (int) eachBooking.get("timeslot_id");
 	  			
 	  			// Fetch the timeslots now
-	  			List<String> timeslots = fetchBookedTimeSlots(conn, bookingId, timeslotId);
+	  			List<String> timeslots = fetchBookedTimeSlots(bookingId, timeslotId);
 	  			
 	  			if(timeslots.size() != 1) {
 	  				String[] firstPart = timeslots.get(0).split("-");
@@ -111,7 +100,6 @@ public class bookingPageLogic extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Connection conn = null;
 		
 		System.out.println("I am in booking Post Logic");
 		// Set Class
@@ -129,33 +117,54 @@ public class bookingPageLogic extends HttpServlet {
 		
 		// validate if the data is valid, if not, error, otherwise redirect to timeslot page
 		if(date == null || date.trim().isEmpty() || serviceId == null || serviceId.trim().isEmpty()) {
+			
 			request.setAttribute("errorMessage", "Please choose a valid date or service!");
 			
-			response.sendRedirect(request.getContextPath() + "/pages/bookingPage.jsp");;
+			response.sendRedirect(request.getContextPath() + "/pages/bookingPage.jsp");
 		}
 		else { // send them to the timeslot page already
-			response.sendRedirect(request.getContextPath() + "/pages/timeslotPage.jsp?date=" + URLEncoder.encode(date, "UTF-8") + "&serviceId=" + serviceId);
+			request.setAttribute("date", (String) date);
+			request.setAttribute("serviceId", serviceId);
+			HttpServletRequest wrappedRequest = new HttpServletRequestWrapper(request) {
+				@Override
+				public String getMethod() {
+					return "GET";
+				}
+			};
+
+			
+			request.getRequestDispatcher("/timeSlotLogicPage").forward(wrappedRequest, response);
 		}
 	}
 		
 	
 	
-	private static List<Map<String, Object>> fetchUserBookings(Connection conn, int userId) throws SQLException {
+	private static List<Map<String, Object>> fetchUserBookings(int userId) throws SQLException {
+		// Set Class
+		try {
+			Class.forName(dbClass);
+		} catch(ClassNotFoundException e) {
+			System.out.printf("Connection drive issue.", e);
+			e.printStackTrace();
+		}
+		
+		Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+		
 		 String query = """
-		            SELECT 
-		                b.booking_id,
-		                b.booked_date,
-		                s.service_name,
-		                b.timeslot_id
-		            FROM 
-		                booking b
-		            JOIN 
-		                service s ON b.service_id = s.service_id
-		            WHERE 
-		                b.user_id = ?
-		            ORDER BY
-		 		    	b.booked_date DESC;
-		        """;
+			            SELECT 
+			                b.booking_id,
+			                b.booked_date,
+			                s.service_name,
+			                b.timeslot_id
+			            FROM 
+			                booking b
+			            JOIN 
+			                service s ON b.service_id = s.service_id
+			            WHERE 
+			                b.user_id = ?
+			            ORDER BY
+			 		    	b.booked_date DESC;
+			        """;
 		 
 		 List<Map<String, Object>> resultList = new ArrayList<>();
 		 try(PreparedStatement pstmt1 = conn.prepareStatement(query);) {
@@ -176,7 +185,17 @@ public class bookingPageLogic extends HttpServlet {
 		return resultList;
 	}
 
-	private static List<String> fetchBookedTimeSlots(Connection conn, int bookingId, int timeSlotId) throws SQLException {
+	private static List<String> fetchBookedTimeSlots(int bookingId, int timeSlotId) throws SQLException {
+		// Set Class
+		try {
+			Class.forName(dbClass);
+		} catch(ClassNotFoundException e) {
+			System.out.printf("Connection drive issue.", e);
+			e.printStackTrace();
+		}
+				
+		Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+		
 		String query = """
 		        SELECT 
 	            t.timeslot_id,

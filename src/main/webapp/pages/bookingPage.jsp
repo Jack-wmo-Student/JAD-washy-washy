@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monthly Booking Calendar</title>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css">
     <style>
         body {
             display: flex;
@@ -407,7 +408,7 @@
     <script>
     	// ===== Funciton to redirect to booking slot =====
         function bookSlot(day, month, year) {
-			if(<%= isCurrentMonth %>) {
+        	if(<%= isCurrentMonth %>) {
 				const dropdown = document.getElementById("dropdown");
 				
 				if(dropdown.value == "null") {
@@ -419,7 +420,7 @@
 					console.log('This is the formatted date that u have chosen: ', formattedDate);
 					
 		            document.getElementById("selectedDate").value = formattedDate;
-		            document.getElementById("serviceId").value = document.getElementById('dropdown');
+		            document.getElementById("serviceId").value = document.getElementById('dropdown').value;
 		            
 		        	// Submit the form programmatically
 		            document.getElementById("bookingForm").submit();

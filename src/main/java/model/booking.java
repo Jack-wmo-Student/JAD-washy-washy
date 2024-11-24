@@ -17,7 +17,7 @@ public class booking {
         this.timeslot = timeslot;
         this.bookedDate = bookedDate;
     }
-
+    
     // Getters and Setters
     public int getBookingId() {
         return bookingId;
