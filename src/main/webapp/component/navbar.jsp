@@ -23,13 +23,14 @@
 			Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
 			if (isAdmin != null && isAdmin) { // Check if user is an admin
 			%>
-			<li><a href="<%=request.getContextPath()%>/washyUsers">Admin Dashboard</a></li>
+			<li><a href="<%=request.getContextPath()%>/washyUsers">Admin
+					Dashboard</a></li>
 
 			<%
 			}
 			%>
-			<!-- Feedback Tab -->
-			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li>
+			<!-- 			<!-- Feedback Tab -->
+			<%-- 			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li> --%>
 
 			<li><a href="<%=request.getContextPath()%>/bookingPage">Book
 					now</a></li>
