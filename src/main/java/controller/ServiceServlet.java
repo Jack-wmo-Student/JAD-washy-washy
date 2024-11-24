@@ -22,11 +22,11 @@ public class ServiceServlet extends HttpServlet {
     String dbUser = System.getenv("DB_USER");
     String dbPassword = System.getenv("DB_PASSWORD");
     
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
+
         // Check if the user is logged in
         if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
             request.setAttribute("error", "You must log in first.");
@@ -40,7 +40,6 @@ public class ServiceServlet extends HttpServlet {
             return;
         }
 
-        // Get categoryId from request parameters
         String categoryIdParam = request.getParameter("categoryId");
         if (categoryIdParam == null || categoryIdParam.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
@@ -51,6 +50,15 @@ public class ServiceServlet extends HttpServlet {
         List<service> services = new ArrayList<>();
         String categoryName = null;
 
+        // Check if the request has already been forwarded
+        Boolean isRedirected = (Boolean) request.getAttribute("redirected");
+        if (isRedirected == null) {
+            request.setAttribute("redirected", true); // Mark as forwarded
+            request.getRequestDispatcher("/pages/editServiceServlet").forward(request, response);
+            return;
+        }
+
+        // Fetch category and services
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
              PreparedStatement psCategory = conn.prepareStatement(
                      "SELECT category_name FROM service_categories WHERE category_id = ?");
@@ -64,6 +72,19 @@ public class ServiceServlet extends HttpServlet {
                 }
             }
 
+            psServices.setInt(1, categoryId);
+            try (ResultSet rsServices = psServices.executeQuery()) {
+                while (rsServices.next()) {
+                    services.add(new service(
+                            rsServices.getInt("service_id"),
+                            rsServices.getInt("category_id"),
+                            rsServices.getString("service_name"),
+                            rsServices.getDouble("price"),
+                            rsServices.getInt("duration_in_hour"),
+                            rsServices.getString("service_description")
+                    ));
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,15 +94,12 @@ public class ServiceServlet extends HttpServlet {
         request.setAttribute("categoryName", categoryName);
         request.setAttribute("services", services);
         request.setAttribute("categoryId", categoryId);
-        session.setAttribute("previousUrl", request.getRequestURL().toString());
-        String previousUrl = (String) session.getAttribute("previousUrl");
-        // Redirect back to the category's services page
-        response.sendRedirect(previousUrl);
+        request.getRequestDispatcher("/pages/editService.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	HttpSession session = request.getSession();
+    	HttpSession session = request.getSession(false);
         String serviceName = request.getParameter("serviceName");
         String servicePrice = request.getParameter("servicePrice");
         String serviceDuration = request.getParameter("serviceDuration");
@@ -95,6 +113,7 @@ public class ServiceServlet extends HttpServlet {
         }
 
         int categoryId = Integer.parseInt(categoryIdParam);
+        System.out.print(categoryIdParam);
 
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
              PreparedStatement psInsert = conn.prepareStatement(
@@ -149,7 +168,6 @@ public class ServiceServlet extends HttpServlet {
                 session.setAttribute("categoryServiceMap", sessionCategoryServiceMap);
             }
             
-
             // Add success message
             session.setAttribute("successMessage", "Service added successfully!");
 
@@ -157,9 +175,7 @@ public class ServiceServlet extends HttpServlet {
             session.setAttribute("errorMessage", "Error adding service: " + e.getMessage());
             e.printStackTrace();
         }
-        session.setAttribute("previousUrl", request.getRequestURL().toString());
-        String previousUrl = (String) session.getAttribute("previousUrl");
         // Redirect back to the category's services page
-        response.sendRedirect(previousUrl);
+        request.getRequestDispatcher("/pages/editServiceCategory.jsp").forward(request, response);
     }
 }

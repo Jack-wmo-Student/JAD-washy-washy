@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ page import="java.util.*,model.category, model.service"%>
+<%@ page import="java.util.*,model.category, model.service, utils.sessionUtils"%>
 <!DOCTYPE html>
 
 <html>
@@ -10,6 +10,19 @@
 	href="<%=request.getContextPath()%>/assets/serviceManagement.css">
 </head>
 <body>
+	<%
+	if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+		request.setAttribute("error", "You must log in first.");
+		request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+		return;
+	}
+
+	// Optional: Check if the user is an admin
+	if (!sessionUtils.isAdmin(request)) {
+		response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+		return;
+	}
+	%>
 	<div class="container">
 		<%@ include file="../component/adminSidebar.jsp"%>
 		<h2>Create Service Category</h2>

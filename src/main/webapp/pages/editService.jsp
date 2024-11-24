@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="java.util.*,model.service, model.category"%>
+<%@ page import="java.util.*,model.service, model.category, utils.sessionUtils"%>
 <!DOCTYPE html>
 
 <html>
@@ -11,7 +11,22 @@
 	href="<%=request.getContextPath()%>/assets/serviceManagement.css">
 </head>
 <body>
+
+	<% if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+        request.setAttribute("error", "You must log in first.");
+        request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+        return;
+    }
+
+    // Optional: Check if the user is an admin
+    if (!sessionUtils.isAdmin(request)) {
+        response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+        return;
+    } %>
+
 	<%@ include file="../component/adminSidebar.jsp"%>
+	
+	
 	<div class="container">
 		<%
 		String requestCategoryId = request.getParameter("categoryId");
@@ -39,18 +54,19 @@
 			String errorMessage = (String) request.getAttribute("errorMessage");
 			if (successMessage != null) {
 		%>
-			<p style="color: green;"><%=successMessage%></p>
+		<p style="color: green;"><%=successMessage%></p>
 		<%
 			}
 			if (errorMessage != null) {
 		%>
-				<p style="color: red;"><%=errorMessage%></p>
+		<p style="color: red;"><%=errorMessage%></p>
 		<%
 			}
 		%>
 
-		<form action="<%=request.getContextPath()%>/ServiceServlet" method="post">
-			
+		<form action="<%=request.getContextPath()%>/ServiceServlet"
+			method="post">
+
 			<div>
 				<label for="serviceName">Service Name:</label> <input type="text"
 					name="serviceName" placeholder="Enter service name" required />
@@ -70,6 +86,8 @@
 					type="text" name="serviceDescription"
 					placeholder="Enter description" required />
 			</div>
+			<%System.out.print(categoryId + "FIRST");%>
+			<input type="hidden" name="categoryId" value="<%=categoryId%>" />
 			<div>
 				<input type="submit" value="Add Service" />
 			</div>
@@ -108,9 +126,8 @@
 								name="serviceName" value="<%=service.getName()%>" /> <input
 								type="hidden" name="servicePrice"
 								value="<%=service.getPrice()%>" /> <input type="hidden"
-								name="serviceDuration"
-								value="<%=service.getDurationInHour()%>" /> <input
-								type="hidden" name="serviceDescription"
+								name="serviceDuration" value="<%=service.getDurationInHour()%>" />
+							<input type="hidden" name="serviceDescription"
 								value="<%=service.getDescription()%>" />
 
 							<button type="submit" class="btn btn-edit">Edit</button>
@@ -118,10 +135,8 @@
 						<form action="<%=request.getContextPath()%>/DeleteServiceServlet"
 							method="post">
 							<input type="hidden" name="serviceId"
-								value="<%=service.getId()%>" />
-								<input
-								type="hidden" name="categoryId"
-								value="<%=categoryId%>" />
+								value="<%=service.getId()%>" /> <input type="hidden"
+								name="categoryId" value="<%=categoryId%>" />
 							<button type="submit">Delete Service</button>
 						</form>
 					</td>

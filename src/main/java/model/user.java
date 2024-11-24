@@ -12,9 +12,12 @@ public class user {
         this.isAdmin = isAdmin;
         this.isBlocked = isBlocked;
     }
-
-    public int getId() {
-    	return user_id;
+    
+    public user() {
+    	this.user_id = 1;
+        this.username = "John Doe";
+        this.isAdmin = false;
+        this.isBlocked = false;
     }
     
     public String getUsername() {
@@ -32,4 +35,19 @@ public class user {
     public boolean isBlocked() {
         return isBlocked;
     }
+
+	public void setUserId(int id) {
+		this.user_id = id;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public void setAdmin(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
+	
+	public void setBlocked(boolean isBlocked) {
+		this.isBlocked = isBlocked;
+	}
 }
