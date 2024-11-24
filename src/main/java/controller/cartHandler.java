@@ -88,8 +88,8 @@ public class cartHandler extends HttpServlet {
 				for (cartItem item : cartItems) {
 					// Step 1: Insert into the booking table
 					String bookingQuery = """
-							    INSERT INTO booking (user_id, timeslot_id, service_id, created_at, booked_date)
-							    VALUES (?, ?, ?, NOW(), ?)
+							    INSERT INTO booking (user_id, timeslot_id, service_id, feedback_id, created_at, booked_date)
+							    VALUES (?, ?, ?, null, NOW(), ?)
 							    RETURNING booking_id
 							""";
 
