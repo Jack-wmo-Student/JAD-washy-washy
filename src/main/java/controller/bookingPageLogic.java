@@ -87,7 +87,7 @@ public class bookingPageLogic extends HttpServlet {
 	  		
 		    
 		    // Store the list in the sessions
-	  		HttpSession session = request.getSession();
+	  		HttpSession session = request.getSession(false);
 		    session.setAttribute("bookingLists", bookingList);
 		    
 		    // Forward to the JSP
