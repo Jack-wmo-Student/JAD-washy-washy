@@ -92,29 +92,33 @@
 		<url-pattern>/handleRegisterUser</url-pattern>
 	</servlet-mapping>
 	<servlet>
-	<servlet-name>ManageMemberServlet</servlet-name>
-    <servlet-class>controller.ManageMemberServlet</servlet-class>
+		<servlet-name>ManageMemberServlet</servlet-name>
+		<servlet-class>controller.ManageMemberServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	    <servlet-name>ManageMemberServlet</servlet-name>
-	    <url-pattern>/ManageMemberServlet</url-pattern>
+		<servlet-name>ManageMemberServlet</servlet-name>
+		<url-pattern>/ManageMemberServlet</url-pattern>
 	</servlet-mapping>
 	<servlet>
-	<servlet-name>washyUsers</servlet-name>
-    <servlet-class>controller.washyUsers</servlet-class>
+		<servlet-name>washyUsers</servlet-name>
+		<servlet-class>controller.washyUsers</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	    <servlet-name>washyUsers</servlet-name>
-	    <url-pattern>/washyUsers</url-pattern>
+		<servlet-name>washyUsers</servlet-name>
+		<url-pattern>/washyUsers</url-pattern>
 	</servlet-mapping>
 	<servlet>
-    <servlet-name>StatisticsServlet</servlet-name>
-    <servlet-class>controller.StatisticsServlet</servlet-class>
+		<servlet-name>StatisticsServlet</servlet-name>
+		<servlet-class>controller.StatisticsServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>StatisticsServlet</servlet-name>
 		<url-pattern>/StatisticsServlet</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>timeSlotLogic</servlet-name>
+		<servlet-class>controller.timeSlotLogic</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>timeSlotLogic</servlet-name>
 		<url-pattern>/timeSlotLogicPage</url-pattern>
