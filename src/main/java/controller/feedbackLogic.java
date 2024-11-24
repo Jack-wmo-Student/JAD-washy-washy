@@ -12,11 +12,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import utils.sessionUtils;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.*;
 import java.util.List;
@@ -36,6 +38,18 @@ public class feedbackLogic extends HttpServlet {
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+		
+		// Check if the user is logged in or not
+		HttpSession session = request.getSession(false);
+		// Check if the user is logged in
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session==null) {
+			// Handle invalid login
+			request.setAttribute("error", "You must log in first.");
+			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+			return;
+		}
+		
+		
 		// Get questions, put inside 
 		
 		ResultSet rs = null;
@@ -73,7 +87,6 @@ public class feedbackLogic extends HttpServlet {
 		    }
 	      	
 		    // Store the list in the request attribute
-		    HttpSession session = request.getSession(false);
 		    session.setAttribute("questions", questionList);
 
 		    // Forward to the JSP
@@ -97,6 +110,18 @@ public class feedbackLogic extends HttpServlet {
 	@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+		// Check if the user is logged in or not
+		HttpSession session = request.getSession(false);
+		// Check if the user is logged in
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session==null) {
+			// Handle invalid login
+			request.setAttribute("error", "You must log in first.");
+			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+			return;
+		}
+		// Get the booking List from the session
+		List<Integer> bookingIdLists = (List<Integer>) session.getAttribute("bookingIdLists");
+		
 		// Get the request names
 		Enumeration<String> parameterNames = request.getParameterNames();
 
@@ -108,30 +133,35 @@ public class feedbackLogic extends HttpServlet {
 			e.printStackTrace();
 		}
 	    
-//	    // Create the feedback first with the booking Id
-//	    String createFeedbackQuery = "INSERT INTO feedback (booking_id) VALUES (?)";
-//	    
-//	    try(Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-//	    		PreparedStatement pstmt = conn.prepareStatement(createFeedbackQuery);) {
-//	    	
-//	    	// Process each parameter
-//	    	pstmt.setInt(1, bookingId);
-//	    	
-//	    	// Execute the query
-//	    	pstmt.executeUpdate();
-//	    }catch(Exception e) {
-//	    	e.printStackTrace();
-//	    } 
-//	    
-	    
 	    // Create the query for the database
 	    String createResponsequery = "INSERT INTO response(feedback_id, question_id, response_value) VALUES (?, ?, ?)";
-	    
+	    String bookingUpdateQuery = "UPDATE booking SET feedback_id = ? WHERE booking_id = ?";
 	    
 	    // Set connection with database and query the response
 	    try(Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-	    		PreparedStatement pstmt = conn.prepareStatement(createResponsequery);) {
+	    		PreparedStatement pstmt1 = conn.prepareStatement(bookingUpdateQuery);
+	    		PreparedStatement pstmt2 = conn.prepareStatement(createResponsequery);
+	    		Statement stmt = conn.createStatement()) {
 	    	
+	    	// Step 1: Insert a new feedback entry
+	        String feedbackInsertQuery = "INSERT INTO feedback DEFAULT VALUES RETURNING feedback_id";
+	    	
+	       
+	    	ResultSet rs = stmt.executeQuery(feedbackInsertQuery);
+	    	int feedback_id = 0;
+	    	
+	    	while(rs.next()) {
+	    		feedback_id = rs.getInt("feedback_id");
+	    	}
+	    	
+	    	
+	        // Update the booking id
+	    	for(Integer bookingId : bookingIdLists) {
+                pstmt1.setInt(1, feedback_id);
+                pstmt1.setInt(2, bookingId);
+                pstmt1.executeUpdate();
+            }
+ 	    		
 	    	// Loop through the map and send query
 	    	while (parameterNames.hasMoreElements()) {
 	            String paramName = parameterNames.nextElement();
@@ -141,12 +171,12 @@ public class feedbackLogic extends HttpServlet {
 	            	int questionId = Integer.parseInt(paramName);
 
 		            // Process each parameter
-		            pstmt.setInt(1, 2);
-		            pstmt.setInt(2, questionId);
-		            pstmt.setString(3, paramValue);
+		            pstmt2.setInt(1, feedback_id);
+		            pstmt2.setInt(2, questionId);
+		            pstmt2.setString(3, paramValue);
 		            
 		            // Execute Data
-		            pstmt.executeUpdate();
+		            pstmt2.executeUpdate();
 	            }	           
 	        }
 	    	

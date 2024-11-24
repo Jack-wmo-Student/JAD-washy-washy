@@ -1,23 +1,18 @@
 package controller;
 
-import jakarta.servlet.RequestDispatcher;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.net.URLEncoder;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 import java.util.LinkedHashMap;
-import model.booking;
 import model.timeslot;
 import model.category;
 import model.service;
@@ -39,6 +34,17 @@ public class timeSlotLogic extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		// Check if the user is logged in or not
+		HttpSession session = request.getSession(false);
+		// Check if the user is logged in
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session==null) {
+			// Handle invalid login
+			request.setAttribute("error", "You must log in first.");
+			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+			return;
+		}
+		
 		System.out.println("We are in doGet of the timeslotPage");
 
 		// Get data from the params
@@ -108,13 +114,6 @@ public class timeSlotLogic extends HttpServlet {
 			timeslotAvailability.put("5pm-6pm", formattedTimeslots.get(9));
 
 			// Store the list in the session attribute
-			HttpSession session = request.getSession(false);
-			if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null) {
-				// Handle invalid login
-				request.setAttribute("error", "You must log in first.");
-				request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
-				return;
-			}
 
 			session.setAttribute("timeslot-availability", timeslotAvailability);
 			session.setAttribute("service-id", serviceId);
