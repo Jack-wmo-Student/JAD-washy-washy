@@ -1,12 +1,30 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+<canvas id="bookingChart" width="600" height="400"></canvas>
+<script>
+    const bookingDates = [];
+    const bookingCounts = [];
+    // Assume you fetched bookings by date in servlet and set it as "bookingsByDate"
+    <c:forEach var="row" items="${bookingsByDate}">
+        bookingDates.push("${row.booked_date}");
+        bookingCounts.push(${row.total_bookings});
+    </c:forEach>;
 
-</body>
-</html>
+    const ctx2 = document.getElementById('bookingChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: bookingDates,
+            datasets: [{
+                label: 'Bookings Over Time',
+                data: bookingCounts,
+                borderColor: '#36A2EB',
+                fill: false,
+            }]
+        },
+        options: {
+            scales: {
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: 'Number of Bookings' } }
+            }
+        }
+    });
+</script>

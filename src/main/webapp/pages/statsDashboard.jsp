@@ -6,11 +6,10 @@
     <title>Business Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
 </head>
 <body>
 <div class="container mt-5">
-<%@ include file="../component/adminSidebar.jsp"%>
+    <%@ include file="../component/adminSidebar.jsp" %>
     <h1>Business Dashboard</h1>
     <hr>
 
@@ -32,12 +31,16 @@
 
 <script>
     // Category-wise Services Chart
-    const categoryLabels = [];
-    const categoryCounts = [];
-    <c:forEach var="row" items="${categoryWiseServices}">
-        categoryLabels.push("Category ${row.category_id}");
-        categoryCounts.push(${row.total_services});
-    </c:forEach>;
+    const categoryLabels = [
+        <c:forEach var="row" items="${categoryWiseServices}">
+            "Category ${row.category_id}",
+        </c:forEach>
+    ];
+    const categoryCounts = [
+        <c:forEach var="row" items="${categoryWiseServices}">
+            ${row.total_services},
+        </c:forEach>
+    ];
 
     const ctx1 = document.getElementById('categoryChart').getContext('2d');
     new Chart(ctx1, {
@@ -46,18 +49,22 @@
             labels: categoryLabels,
             datasets: [{
                 data: categoryCounts,
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
             }]
         }
     });
 
     // Bookings Over Time Chart
-    const bookingDates = [];
-    const bookingCounts = [];
-    <c:forEach var="row" items="${bookingsByDate}">
-        bookingDates.push("${row.booked_date}");
-        bookingCounts.push(${row.total_bookings});
-    </c:forEach>;
+    const bookingDates = [
+        <c:forEach var="row" items="${bookingsByDate}">
+            "${row.booked_date}",
+        </c:forEach>
+    ];
+    const bookingCounts = [
+        <c:forEach var="row" items="${bookingsByDate}">
+            ${row.total_bookings},
+        </c:forEach>
+    ];
 
     const ctx2 = document.getElementById('bookingChart').getContext('2d');
     new Chart(ctx2, {
@@ -67,7 +74,7 @@
             datasets: [{
                 data: bookingCounts,
                 borderColor: '#36A2EB',
-                fill: false,
+                fill: false
             }]
         },
         options: {
@@ -79,12 +86,16 @@
     });
 
     // Most Booked Services Chart
-    const serviceLabels = [];
-    const serviceBookings = [];
-    <c:forEach var="row" items="${mostBookedServices}">
-        serviceLabels.push("Service ${row.service_id}");
-        serviceBookings.push(${row.total_bookings});
-    </c:forEach>;
+    const serviceLabels = [
+        <c:forEach var="row" items="${mostBookedServices}">
+            "Service ${row.service_id}",
+        </c:forEach>
+    ];
+    const serviceBookings = [
+        <c:forEach var="row" items="${mostBookedServices}">
+            ${row.total_bookings},
+        </c:forEach>
+    ];
 
     const ctx3 = document.getElementById('mostBookedChart').getContext('2d');
     new Chart(ctx3, {
@@ -93,7 +104,7 @@
             labels: serviceLabels,
             datasets: [{
                 data: serviceBookings,
-                backgroundColor: '#4BC0C0',
+                backgroundColor: '#4BC0C0'
             }]
         },
         options: {
