@@ -91,14 +91,14 @@
 		<servlet-name>handleRegisterUser</servlet-name>
 		<url-pattern>/handleRegisterUser</url-pattern>
 	</servlet-mapping>
-	<servlet>
+<!-- 	<servlet>
 		<servlet-name>ManageMemberServlet</servlet-name>
 		<servlet-class>controller.ManageMemberServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ManageMemberServlet</servlet-name>
 		<url-pattern>/ManageMemberServlet</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping> -->
 	<servlet>
 		<servlet-name>StatisticsServlet</servlet-name>
 		<servlet-class>controller.StatisticsServlet</servlet-class>
@@ -124,11 +124,11 @@
 		<url-pattern>/logout</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>timeSlotLogic</servlet-name>
-		<servlet-class>controller.timeSlotLogic</servlet-class>
+		<servlet-name>timeSlotLogicPage</servlet-name>
+		<servlet-class>controller.timeSlotLogicPage</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>timeSlotLogic</servlet-name>
+		<servlet-name>timeSlotLogicPage</servlet-name>
 		<url-pattern>/timeSlotLogicPage</url-pattern>
 	</servlet-mapping>
 	<servlet>
@@ -157,6 +157,13 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>BlockUserServlet</servlet-name>
+	    <servlet-class>controller.BlockUserServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>BlockUserServlet</servlet-name>
+	    <url-pattern>/BlockUserServlet</url-pattern>
+	</servlet-mapping>
+<!-- 	<servlet>
 		<servlet-class>controller.BlockUserServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
@@ -168,9 +175,12 @@
 		<servlet-class>controller.washyUsers</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>washyUsers</servlet-name>
+	    <servlet-name>washyUsers</servlet-name>
+	    <url-pattern>/washyUsers</url-pattern>
+	</servlet-mapping> -->
+<!-- 		<servlet-name>washyUsers</servlet-name>
 		<url-pattern>/washyUsers</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping> -->
 	<servlet>
 		<servlet-name>cartHandler</servlet-name>
 		<servlet-class>controller.cartHandler</servlet-class>

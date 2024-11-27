@@ -94,7 +94,7 @@ public class ServiceServlet extends HttpServlet {
         request.setAttribute("categoryName", categoryName);
         request.setAttribute("services", services);
         request.setAttribute("categoryId", categoryId);
-        request.getRequestDispatcher("/pages/editService.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -176,6 +176,6 @@ public class ServiceServlet extends HttpServlet {
             e.printStackTrace();
         }
         // Redirect back to the category's services page
-        request.getRequestDispatcher("/pages/editServiceCategory.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
     }
 }
