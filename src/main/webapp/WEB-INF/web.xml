@@ -124,36 +124,36 @@
 		<url-pattern>/logout</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>timeSlotLogic</servlet-name>
-		<servlet-class>controller.timeSlotLogic</servlet-class>
+		<servlet-name>timeSlotLogicPage</servlet-name>
+		<servlet-class>controller.timeSlotLogicPage</servlet-class>
 	</servlet>
 	<servlet-mapping>
-    <servlet-name>timeSlotLogic</servlet-name>
-    <url-pattern>/timeSlotLogicPage</url-pattern>
+		<servlet-name>timeSlotLogicPage</servlet-name>
+		<url-pattern>/timeSlotLogicPage</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>UserServlet</servlet-name>
-	    <servlet-class>controller.UserServlet</servlet-class>
+		<servlet-class>controller.UserServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	    <servlet-name>UserServlet</servlet-name>
-	    <url-pattern>/UserServlet</url-pattern>
+		<servlet-name>UserServlet</servlet-name>
+		<url-pattern>/UserServlet</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>UserActionServlet</servlet-name>
-	    <servlet-class>controller.UserActionServlet</servlet-class>
+		<servlet-class>controller.UserActionServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	    <servlet-name>UserActionServlet</servlet-name>
-	    <url-pattern>/UserActionServlet</url-pattern>
+		<servlet-name>UserActionServlet</servlet-name>
+		<url-pattern>/UserActionServlet</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>PromoteUserServlet</servlet-name>
-	    <servlet-class>controller.PromoteUserServlet</servlet-class>
+		<servlet-class>controller.PromoteUserServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	    <servlet-name>PromoteUserServlet</servlet-name>
-	    <url-pattern>/PromoteUserServlet</url-pattern>
+		<servlet-name>PromoteUserServlet</servlet-name>
+		<url-pattern>/PromoteUserServlet</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>BlockUserServlet</servlet-name>
@@ -164,12 +164,22 @@
 	    <url-pattern>/BlockUserServlet</url-pattern>
 	</servlet-mapping>
 <!-- 	<servlet>
+		<servlet-class>controller.BlockUserServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BlockUserServlet</servlet-name>
+		<url-pattern>/BlockUserServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
 		<servlet-name>washyUsers</servlet-name>
-	    <servlet-class>controller.washyUsers</servlet-class>
+		<servlet-class>controller.washyUsers</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>washyUsers</servlet-name>
 	    <url-pattern>/washyUsers</url-pattern>
+	</servlet-mapping> -->
+<!-- 		<servlet-name>washyUsers</servlet-name>
+		<url-pattern>/washyUsers</url-pattern>
 	</servlet-mapping> -->
 	<servlet>
 		<servlet-name>cartHandler</servlet-name>
