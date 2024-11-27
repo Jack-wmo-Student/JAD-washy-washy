@@ -34,28 +34,30 @@
         }  
         %>
 
-        <form action="<%= request.getContextPath() %>/EditServiceServlet" method="post">
-            <input type="hidden" name="serviceId" value="<%=session.getAttribute("serviceId")%>" />
+        <%-- <form action="<%= request.getContextPath() %>/EditServiceServlet" method="post"> --%>
+            <input type="hidden" name="serviceId" />
             <div>
-                <label for="serviceName">Service Name:</label>
-                <input type="text" name="serviceName" value="<%=request.getParameter("serviceName")%>" required />
+                <label for="serviceName">Service Name:</label> <span><%=request.getParameter("serviceName")%></span>
+                <input type="text" name="serviceName"  required />
             </div>
             <div>
-                <label for="servicePrice">Service Price:</label>
-                <input type="number" name="servicePrice" value="<%=request.getParameter("servicePrice")%>" step="10" required />
+                <label for="servicePrice">Service Price:</label> <span><%=request.getParameter("servicePrice")%></span>
+                <input type="number" name="servicePrice"  step="10" required />
             </div>
             <div>
-                <label for="serviceDuration">Service Duration (in hours):</label>
-                <input type="number" name="serviceDuration" value="<%=request.getParameter("serviceDuration")%>" required />
+                <label for="serviceDuration">Service Duration (in hours):</label> <span><%=request.getParameter("serviceDuration")%></span>
+                <input type="number" name="serviceDuration"  required />
             </div>
             <div>
-                <label for="serviceDescription">Service Description:</label>
-                <input type="text" name="serviceDescription" value="<%=request.getParameter("serviceDescription")%>" required />
+                <label for="serviceDescription">Service Description:</label> <span><%=request.getParameter("serviceDescription")%></span>
+                <input type="text" name="serviceDescription"  required />
             </div>
             <div>
                 <input type="submit" value="Update Service" />
             </div>
         </form>
+        
+        
 
 		<a href="<%= request.getContextPath() %>/pages/editServiceCategory.jsp">Back to Main Page</a>    </div>
 </body>
