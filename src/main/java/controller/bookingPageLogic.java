@@ -152,7 +152,7 @@ public class bookingPageLogic extends HttpServlet {
 			};
 
 			
-			request.getRequestDispatcher("/timeSlotLogic").forward(wrappedRequest, response);
+			request.getRequestDispatcher("/timeSlotLogicPage").forward(wrappedRequest, response);
 		}
 	}
 		

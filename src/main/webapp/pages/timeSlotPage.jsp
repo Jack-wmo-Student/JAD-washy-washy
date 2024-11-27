@@ -32,7 +32,7 @@
         <div class="calendar-header">Select a Timeslot</div>
         <h2 style="text-align: center;"><%= bookingDate %></h2>
         
-        <form action="<%=request.getContextPath()%>/timeSlotLogic" method="post">
+        <form action="<%=request.getContextPath()%>/timeSlotLogicPage" method="post">
             <div class="timeslot-grid">
                 <%               
                     if (timeslotAvailability != null) {
