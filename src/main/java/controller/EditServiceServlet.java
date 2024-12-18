@@ -79,7 +79,7 @@ public class EditServiceServlet extends HttpServlet {
         String serviceId = request.getParameter("serviceId");
         String categoryId = request.getParameter("categoryId");
         String duration = request.getParameter("serviceDuration");
-        String duration = request.getParameter("serviceDescription");
+        String description = request.getParameter("serviceDescription");
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             String query = "UPDATE service SET service_name = ?, price = ?, duration_in_hour = ?, service_description = ? WHERE service_id = ?";
