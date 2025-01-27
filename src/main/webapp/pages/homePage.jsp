@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page
-	import="java.util.Map, java.util.List,model.category,model.service"%>
+	import="java.util.Map, java.util.List,MODEL.CLASS.category,MODEL.CLASS.service"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>

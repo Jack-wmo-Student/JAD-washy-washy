@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="java.util.List, model.cartItem"%>
+<%@ page import="java.util.List,MODEL.CLASS.cartItem"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
