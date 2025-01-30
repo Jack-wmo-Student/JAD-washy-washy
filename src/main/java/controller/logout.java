@@ -1,7 +1,5 @@
-package controller;
+package CONTROLLER;
 
-import model.category;
-import model.service;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,6 +11,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import MODEL.CLASS.category;
+import MODEL.CLASS.service;
 
 /**
  * Servlet implementation class logout

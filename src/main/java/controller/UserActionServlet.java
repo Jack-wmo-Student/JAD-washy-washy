@@ -1,4 +1,4 @@
-package controller;
+package CONTROLLER;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;

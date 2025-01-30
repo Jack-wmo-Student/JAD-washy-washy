@@ -1,14 +1,15 @@
-package controller;
+package CONTROLLER;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.List;
+
+import MODEL.CLASS.category;
+import MODEL.CLASS.service;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.category;
-import model.service;
 import utils.sessionUtils;
 
 public class CreateCategoryServlet extends HttpServlet {

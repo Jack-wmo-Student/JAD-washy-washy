@@ -1,4 +1,4 @@
-package controller;
+package CONTROLLER;
 
 import java.io.IOException;
 import java.sql.*;
@@ -8,8 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import utils.sessionUtils;
-import model.service;
+
 import java.util.*;
+
+import MODEL.CLASS.service;
 
 public class EditServiceServlet extends HttpServlet {
 

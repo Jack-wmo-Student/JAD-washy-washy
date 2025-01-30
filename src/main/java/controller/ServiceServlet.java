@@ -1,17 +1,18 @@
- package controller;
+ package CONTROLLER;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.service;
-import model.category;
 import utils.sessionUtils;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+
+import MODEL.CLASS.category;
+import MODEL.CLASS.service;
 
 public class ServiceServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;

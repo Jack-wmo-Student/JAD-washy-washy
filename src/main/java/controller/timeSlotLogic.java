@@ -1,6 +1,12 @@
-package controller;
+package CONTROLLER;
 
 import java.util.Map;
+
+import MODEL.CLASS.cartItem;
+import MODEL.CLASS.category;
+import MODEL.CLASS.service;
+import MODEL.CLASS.timeslot;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
@@ -13,10 +19,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 import java.util.LinkedHashMap;
-import model.timeslot;
-import model.category;
-import model.service;
-import model.cartItem;
+
 import utils.sessionUtils;
 
 public class timeSlotLogic extends HttpServlet {

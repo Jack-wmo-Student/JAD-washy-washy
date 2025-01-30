@@ -1,4 +1,4 @@
-package controller;
+package CONTROLLER;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -10,10 +10,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.category;
-import model.service;
 import utils.sessionUtils;
 import java.util.Map;
+
+import MODEL.CLASS.category;
+import MODEL.CLASS.service;
+
 import java.util.List;
 
 public class DeleteCategoryServlet extends HttpServlet {

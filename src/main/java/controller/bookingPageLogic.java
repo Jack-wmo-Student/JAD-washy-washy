@@ -1,6 +1,10 @@
-package controller;
+package CONTROLLER;
 
 import java.util.Map;
+
+import MODEL.CLASS.booking;
+import MODEL.CLASS.timeslot;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
@@ -13,8 +17,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
-import model.booking;
-import model.timeslot;
+
 import utils.sessionUtils;
 
 public class bookingPageLogic extends HttpServlet {

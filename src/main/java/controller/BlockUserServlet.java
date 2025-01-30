@@ -1,11 +1,12 @@
-package controller;
+package CONTROLLER;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import model.user;
+
+import MODEL.CLASS.user;
 
 public class BlockUserServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

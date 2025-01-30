@@ -1,4 +1,4 @@
-package controller;
+package CONTROLLER;
 
 // All the imports
 import jakarta.servlet.RequestDispatcher;

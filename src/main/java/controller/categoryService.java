@@ -1,12 +1,10 @@
-package controller;
+package CONTROLLER;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.category;
-import model.service;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -17,6 +15,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import MODEL.CLASS.category;
+import MODEL.CLASS.service;
 
 public class categoryService extends HttpServlet {
     private static final long serialVersionUID = 1L;
