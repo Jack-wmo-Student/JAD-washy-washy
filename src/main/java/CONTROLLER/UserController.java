@@ -1,76 +1,87 @@
-package controller;
+package CONTROLLER;
 
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
-import model.UserDAO;
-import model.UserDAOImpl;
-import model.user;
-import model.DAOException;
+import MODEL.CLASS.User;
+import MODEL.DAO.UserDAO;
+import MODEL.DAOException;
 import utils.sessionUtils;
 import utils.passwordUtils;
+import java.util.*;
 
 @WebServlet("/user/*")
 public class UserController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private final UserDAO userDAO = new UserDAOImpl();
+    private final UserDAO userDAO = new UserDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try {
-            // Check if user is admin
-            if (!sessionUtils.isAdmin(request)) {
-                request.setAttribute("error", "Access denied. Admin privileges required.");
-                response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+            // Validate admin access
+            if (!validateAdminAccess(request, response)) {
                 return;
             }
 
             // Get all users
-            request.setAttribute("users", userDAO.getAllUsers());
+            List<User> users = userDAO.getAllUsers();
+            request.setAttribute("users", users);
+            
+            // Forward to JSP
             RequestDispatcher dispatcher = request.getRequestDispatcher("/pages/memberManagement.jsp");
             dispatcher.forward(request, response);
 
         } catch (DAOException e) {
-            handleError(request, response, "Error retrieving users: " + e.getMessage());
+            request.setAttribute("error", "Error retrieving users: " + e.getMessage());
+            request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        String action = request.getPathInfo();
         
-        // Check if user is admin
-        if (!sessionUtils.isAdmin(request)) {
-            sendJsonResponse(response, 403, "Access denied. Admin privileges required.");
+        // Validate admin access
+        if (!validateAdminAccess(request, response)) {
+            return;
+        }
+
+        String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            sendJsonResponse(response, 400, "Invalid request path");
             return;
         }
 
         try {
-            // Get the current admin's ID
             HttpSession session = request.getSession(false);
             int currentUserId = (int) session.getAttribute("userId");
             int targetUserId = Integer.parseInt(request.getParameter("userId"));
 
-            switch (action) {
+            switch (pathInfo) {
                 case "/toggle-block":
                     handleToggleBlock(targetUserId, currentUserId, response);
                     break;
+                    
                 case "/toggle-admin":
                     handleToggleAdmin(targetUserId, currentUserId, response);
                     break;
+                    
                 case "/update":
                     handleUpdateUser(request, response);
                     break;
+                    
                 default:
                     sendJsonResponse(response, 400, "Invalid action");
             }
         } catch (NumberFormatException e) {
-            sendJsonResponse(response, 400, "Invalid user ID");
+            sendJsonResponse(response, 400, "Invalid user ID format");
+        } catch (DAOException e) {
+            sendJsonResponse(response, 400, e.getMessage());
         } catch (Exception e) {
             sendJsonResponse(response, 500, "Internal server error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -97,7 +108,7 @@ public class UserController extends HttpServlet {
     private void handleUpdateUser(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
         try {
-            // Extract and validate parameters
+            // Extract parameters
             int userId = Integer.parseInt(request.getParameter("userId"));
             String username = request.getParameter("username");
             String password = request.getParameter("password");
@@ -123,7 +134,7 @@ public class UserController extends HttpServlet {
             }
 
             // Update user
-            user user = new user();
+            User user = new User();
             user.setUserId(userId);
             user.setUsername(username);
             if (password != null && !password.isEmpty()) {
@@ -138,17 +149,51 @@ public class UserController extends HttpServlet {
         }
     }
 
-    private void handleError(HttpServletRequest request, HttpServletResponse response, String error) 
-            throws ServletException, IOException {
-        request.setAttribute("error", error);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/pages/error.jsp");
-        dispatcher.forward(request, response);
+    private boolean validateAdminAccess(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException {
+        // Check if user is logged in
+        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+            if (isAjaxRequest(request)) {
+                sendJsonResponse(response, 401, "You must be logged in");
+            } else {
+                request.setAttribute("error", "You must log in first.");
+                try {
+                    request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+                } catch (ServletException e) {
+                    e.printStackTrace();
+                }
+            }
+            return false;
+        }
+
+        // Check if user is admin
+        if (!sessionUtils.isAdmin(request)) {
+            if (isAjaxRequest(request)) {
+                sendJsonResponse(response, 403, "Admin access required");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isAjaxRequest(HttpServletRequest request) {
+        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
 
     private void sendJsonResponse(HttpServletResponse response, int status, String message) 
             throws IOException {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.setStatus(status);
-        response.getWriter().write("{\"message\": \"" + message + "\"}");
+        
+        // Simple JSON string construction
+        String jsonResponse = String.format("{\"message\": \"%s\"}", 
+            message.replace("\"", "\\\"")  // Escape quotes in message
+        );
+        
+        response.getWriter().write(jsonResponse);
     }
 }

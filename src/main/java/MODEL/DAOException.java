@@ -1,4 +1,4 @@
-package model;
+package MODEL;
 
 /**
  * Custom exception class for handling DAO (Data Access Object) related exceptions.

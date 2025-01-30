@@ -1,9 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<<<<<<< HEAD
 <%@ page import="java.util.*, model.user, utils.sessionUtils"%>
-=======
-<%@ page import="java.util.*,MODEL.CLASS.user,MODEL.CLASS.category,utils.sessionUtils"%>
->>>>>>> branch 'Rafael' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
+<%@ page import="java.util.*,MODEL.CLASS.User,MODEL.CLASS.Category,utils.sessionUtils"%>
 
 <!DOCTYPE html>
 <html>
