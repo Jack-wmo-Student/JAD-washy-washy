@@ -2,10 +2,10 @@ package CONTROLLER;
 
 import java.util.Map;
 
-import MODEL.CLASS.cartItem;
-import MODEL.CLASS.category;
-import MODEL.CLASS.service;
-import MODEL.CLASS.timeslot;
+import MODEL.CLASS.CartItem;
+import MODEL.CLASS.Category;
+import MODEL.CLASS.Service;
+import MODEL.CLASS.TimeSlot;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class timeSlotLogic extends HttpServlet {
 			// Retrieve the cart list from the session, or create a new one if it doesn't
 			// exist
 			@SuppressWarnings("unchecked")
-			List<cartItem> cartItemLists = (List<cartItem>) session.getAttribute("cart-item-list");
+			List<CartItem> cartItemLists = (List<CartItem>) session.getAttribute("cart-item-list");
 			if (cartItemLists == null) {
 				cartItemLists = new ArrayList<>(); // Initialize a new list if it's null
 				session.setAttribute("cart-item-list", cartItemLists); // Store it back in the session
@@ -160,31 +160,31 @@ public class timeSlotLogic extends HttpServlet {
 
 		// Retrieve other required attributes from the session
 		@SuppressWarnings("unchecked")
-		Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
+		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
 				.getAttribute("categoryServiceMap");
 		int serviceId = (int) session.getAttribute("service-id");
 		int timeslotId = (int) session.getAttribute("timeslot-id");
 
 		// Retrieve cart from session or create a new one if it doesn't exist
 		@SuppressWarnings("unchecked")
-		List<cartItem> cartItemLists = (List<cartItem>) session.getAttribute("cart-item-list");
+		List<CartItem> cartItemLists = (List<CartItem>) session.getAttribute("cart-item-list");
 		if (cartItemLists == null) {
 			cartItemLists = new ArrayList<>();
 		}
 
 		// Create cartItemObj
-		cartItem cartItemObj = new cartItem();
+		CartItem cartItemObj = new CartItem();
 
 		// Create timeslot obj
-		timeslot timeslotObj = new timeslot(timeslotId, chosenTimeRange);
+		TimeSlot timeslotObj = new TimeSlot(timeslotId, chosenTimeRange);
 
 		// loop to get the service object
 		Map<String, Object> serviceDetails = new HashMap<>();
 
-		for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
-			List<service> services = entry.getValue();
+		for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
+			List<Service> services = entry.getValue();
 
-			for (service srv : services) {
+			for (Service srv : services) {
 				if (srv.getId() == serviceId) {
 					// if we arrive here, it means the service is correct now
 					// set everything inside the cartItem

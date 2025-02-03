@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.List;
 
-import MODEL.CLASS.cartItem;
+import MODEL.CLASS.CartItem;
 
 import java.util.ArrayList;
 
@@ -53,7 +53,7 @@ public class cartHandler extends HttpServlet {
 		}
 
 		@SuppressWarnings("unchecked")
-		List<cartItem> cartItems = (List<cartItem>) session.getAttribute("cart-item-list");
+		List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart-item-list");
 		if (cartItems == null) {
 			response.sendRedirect(
 					request.getContextPath() + "/pages/bookingPage.jsp?error=Invalid session. Please log in again.");
@@ -71,7 +71,7 @@ public class cartHandler extends HttpServlet {
 			try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
 				connection.setAutoCommit(false); // Begin transaction
 
-				for (cartItem item : cartItems) {
+				for (CartItem item : cartItems) {
 					// Step 1: Insert into the booking table
 					String bookingQuery = """
 							    INSERT INTO booking (user_id, timeslot_id, service_id, feedback_id, created_at, booked_date)

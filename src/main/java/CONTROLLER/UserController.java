@@ -137,9 +137,9 @@ public class UserController extends HttpServlet {
             User user = new User();
             user.setUserId(userId);
             user.setUsername(username);
-            if (password != null && !password.isEmpty()) {
-                user.setPassword(passwordUtils.hashPassword(password));
-            }
+//            if (password != null && !password.isEmpty()) {
+//                user.setPassword(passwordUtils.hashPassword(password));
+//            }
 
             userDAO.updateUser(user);
             sendJsonResponse(response, 200, "User updated successfully");

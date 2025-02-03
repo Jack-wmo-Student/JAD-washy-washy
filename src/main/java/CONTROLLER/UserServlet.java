@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
-import MODEL.CLASS.user;
+import MODEL.CLASS.User;
 
 public class UserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -17,7 +17,7 @@ public class UserServlet extends HttpServlet {
         String dbPassword = System.getenv("DB_PASSWORD");
         String dbClass = System.getenv("DB_CLASS");
 
-        ArrayList<user> users = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
         try {
             Class.forName(dbClass); // Load database driver
         } catch (ClassNotFoundException e) {
@@ -32,11 +32,11 @@ public class UserServlet extends HttpServlet {
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     ResultSet resultSet = statement.executeQuery();
                     while (resultSet.next()) {
-                        user user = new user();
+                        User user = new User();
                         user.setUserId(resultSet.getInt("user_id"));
                         user.setUsername(resultSet.getString("username"));
-                        user.setAdmin(resultSet.getBoolean("is_admin"));
-                        user.setBlocked(resultSet.getBoolean("is_blocked"));
+                        user.setIsAdmin(resultSet.getBoolean("is_admin"));
+                        user.setIsBlocked(resultSet.getBoolean("is_blocked"));
                         users.add(user);
                     }
                 }

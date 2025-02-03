@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import MODEL.CLASS.category;
-import MODEL.CLASS.service;
+import MODEL.CLASS.Category;
+import MODEL.CLASS.Service;
 
 /**
  * Servlet implementation class logout
@@ -35,7 +35,7 @@ public class logout extends HttpServlet {
 
 		if (session != null) {
 			@SuppressWarnings("unchecked")
-			Map<category, List<service>> categoryServiceMap = (Map<category, List<service>>) session
+			Map<Category, List<Service>> categoryServiceMap = (Map<Category, List<Service>>) session
 					.getAttribute("categoryServiceMap");
 
 			// Invalidate the current session

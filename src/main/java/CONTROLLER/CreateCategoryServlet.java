@@ -5,8 +5,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.List;
 
-import MODEL.CLASS.category;
-import MODEL.CLASS.service;
+import MODEL.CLASS.Category;
+import MODEL.CLASS.Service;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -104,8 +104,8 @@ public class CreateCategoryServlet extends HttpServlet {
 			}
 
 			// Retrieve the existing category-service map from the session
-			Map<category, List<service>> sessionCategoryServiceMap = 
-					(Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+			Map<Category, List<Service>> sessionCategoryServiceMap = 
+					(Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
 
 			if (sessionCategoryServiceMap == null) {
 				// Initialize a new map if it doesn't exist
@@ -113,7 +113,7 @@ public class CreateCategoryServlet extends HttpServlet {
 			}
 
 			// Create a new category object and add it to the map
-			category newCategory = new category(generatedId, categoryName, categoryDescription);
+			Category newCategory = new Category(generatedId, categoryName, categoryDescription);
 			sessionCategoryServiceMap.put(newCategory, new ArrayList<>());
 
 			// Update the session attribute

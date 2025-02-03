@@ -1,5 +1,6 @@
  package CONTROLLER;
 
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,8 +12,9 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
-import MODEL.CLASS.category;
-import MODEL.CLASS.service;
+import MODEL.CLASS.Category;
+import MODEL.CLASS.Service;
+
 
 public class ServiceServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -48,7 +50,7 @@ public class ServiceServlet extends HttpServlet {
         }
 
         int categoryId = Integer.parseInt(categoryIdParam);
-        List<service> services = new ArrayList<>();
+        List<Service> services = new ArrayList<>();
         String categoryName = null;
 
         // Check if the request has already been forwarded
@@ -76,7 +78,7 @@ public class ServiceServlet extends HttpServlet {
             psServices.setInt(1, categoryId);
             try (ResultSet rsServices = psServices.executeQuery()) {
                 while (rsServices.next()) {
-                    services.add(new service(
+                    services.add(new Service(
                             rsServices.getInt("service_id"),
                             rsServices.getInt("category_id"),
                             rsServices.getString("service_name"),
@@ -137,10 +139,10 @@ public class ServiceServlet extends HttpServlet {
 
             // Fetch updated services for the category
             psFetchServices.setInt(1, categoryId);
-            List<service> updatedServices = new ArrayList<>();
+            List<Service> updatedServices = new ArrayList<>();
             try (ResultSet rsServices = psFetchServices.executeQuery()) {
                 while (rsServices.next()) {
-                    updatedServices.add(new service(
+                    updatedServices.add(new Service(
                             rsServices.getInt("service_id"),
                             rsServices.getInt("category_id"),
                             rsServices.getString("service_name"),
@@ -155,12 +157,12 @@ public class ServiceServlet extends HttpServlet {
 
             // Update the sessionCategoryServiceMap
             @SuppressWarnings("unchecked")
-            Map<category, List<service>> sessionCategoryServiceMap =
-                    (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+            Map<Category, List<Service>> sessionCategoryServiceMap =
+                    (Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
 
             if (sessionCategoryServiceMap != null) {
-                for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
-                    category cat = entry.getKey();
+                for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
+                    Category cat = entry.getKey();
                     if (cat.getId() == categoryId) {
                         entry.setValue(updatedServices); // Update the services for this category
                         break;

@@ -13,8 +13,8 @@ import jakarta.servlet.http.HttpSession;
 import utils.sessionUtils;
 import java.util.Map;
 
-import MODEL.CLASS.category;
-import MODEL.CLASS.service;
+import MODEL.CLASS.Category;
+import MODEL.CLASS.Service;
 
 import java.util.List;
 
@@ -76,13 +76,13 @@ public class DeleteCategoryServlet extends HttpServlet {
             if (rowsDeleted > 0) {
                 // Update the session attribute to reflect the deletion
                 @SuppressWarnings("unchecked")
-                Map<category, List<service>> sessionCategoryServiceMap = 
-                        (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+                Map<Category, List<Service>> sessionCategoryServiceMap = 
+                        (Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
 
                 if (sessionCategoryServiceMap != null) {
                     // Locate and remove the category
-                    category toRemove = null;
-                    for (category cat : sessionCategoryServiceMap.keySet()) {
+                    Category toRemove = null;
+                    for (Category cat : sessionCategoryServiceMap.keySet()) {
                         if (cat.getId() == Integer.parseInt(categoryId)) {
                             toRemove = cat;
                             break;

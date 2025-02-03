@@ -2,8 +2,8 @@ package CONTROLLER;
 
 import java.util.Map;
 
-import MODEL.CLASS.booking;
-import MODEL.CLASS.timeslot;
+import MODEL.CLASS.Booking;
+import MODEL.CLASS.TimeSlot;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class bookingPageLogic extends HttpServlet {
 		//Get the user Id 
 		int user_id = (int) session.getAttribute("userId");
 		
-	  	List<booking> bookingList = new ArrayList<>();
+	  	List<Booking> bookingList = new ArrayList<>();
 		
 		try {  		
 	  		// Fetch the first data that we need. Booking_id, date, service_name and timeslot_id
@@ -70,7 +70,7 @@ public class bookingPageLogic extends HttpServlet {
 	  		// Fetch Data 3. Get the timeslots by using booking Ids
 	  		for(int i = 0; i < resultLists.size(); i++) {
 	  			// Declare stuffs
-	  			timeslot timeslot = new timeslot();  			
+	  			TimeSlot timeslot = new TimeSlot();  			
 	  			Map<String, Object> eachBooking = resultLists.get(i);
 	  			int bookingId = (int) eachBooking.get("booking_id");
 	  			int timeslotId = (int) eachBooking.get("timeslot_id");
@@ -94,7 +94,7 @@ public class bookingPageLogic extends HttpServlet {
 	  			}
 	  			
 	  			// Create the booking object and add to the list
-	  			booking bookingObj = new booking(bookingId, (String) eachBooking.get("service_name"), timeslot, eachBooking.get("booked_date").toString());
+	  			Booking bookingObj = new Booking(bookingId, (String) eachBooking.get("service_name"), timeslot, eachBooking.get("booked_date").toString());
 	  			bookingList.add(bookingObj);
 	  		}
 	  		
@@ -258,10 +258,5 @@ public class bookingPageLogic extends HttpServlet {
 		
 		return resultList;
 	}
-
-
-
-
-
 
 }

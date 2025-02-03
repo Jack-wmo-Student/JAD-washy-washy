@@ -11,7 +11,7 @@ import utils.sessionUtils;
 
 import java.util.*;
 
-import MODEL.CLASS.service;
+import MODEL.CLASS.Service;
 
 public class EditServiceServlet extends HttpServlet {
 
@@ -45,13 +45,13 @@ public class EditServiceServlet extends HttpServlet {
         // Fetch services for the category
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             String query = "SELECT * FROM service WHERE category_id = ?";
-            List<service> services = new ArrayList<>();
+            List<Service> services = new ArrayList<>();
 
             try (PreparedStatement ps = conn.prepareStatement(query)) {
                 ps.setInt(1, Integer.parseInt(categoryId));
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        services.add(new service(
+                        services.add(new Service(
                                 rs.getInt("service_id"),
                                 rs.getInt("category_id"),
                                 rs.getString("service_name"),

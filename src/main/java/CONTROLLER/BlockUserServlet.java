@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
-import MODEL.CLASS.user;
+import MODEL.CLASS.User;
 
 public class BlockUserServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,8 +36,8 @@ public class BlockUserServlet extends HttpServlet {
 					User user = new User();
 					user.setUserId(resultSet.getInt("user_id"));
 					user.setUsername(resultSet.getString("username"));
-					user.setAdmin(resultSet.getBoolean("is_admin"));
-					user.setBlocked(resultSet.getBoolean("is_blocked"));
+					user.setIsAdmin(resultSet.getBoolean("is_admin"));
+					user.setIsBlocked(resultSet.getBoolean("is_blocked"));
 					users.add(user);
 				}
 			}
