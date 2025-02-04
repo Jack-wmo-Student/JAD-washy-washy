@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page
-	import="java.util.Map, java.util.List,model.category,model.service"%>
+	import="java.util.Map, java.util.List,MODEL.CLASS.Category,MODEL.CLASS.Service"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,17 +80,17 @@
 		<%
 		// Retrieve the category-service map from the session
 		@SuppressWarnings("unchecked")
-		Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
+		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
 				.getAttribute("categoryServiceMap");
 
 		if (sessionCategoryServiceMap != null && !sessionCategoryServiceMap.isEmpty()) {
-			for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
-				category cat = entry.getKey();
+			for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
+				Category cat = entry.getKey();
 				String categoryName = (cat.getName() != null) ? cat.getName().trim() : "Unknown Category";
 				String categoryDescription = (cat.getDescription() != null)
 				? cat.getDescription().trim()
 				: "No description available.";
-				List<service> services = entry.getValue();
+				List<Service> services = entry.getValue();
 		%>
 		<div class="category" id="category-<%=cat.getId()%>">
 			<h2 class="category-title"><%=categoryName%></h2>
@@ -98,7 +98,7 @@
 			<div class="services">
 				<%
 				if (services != null && !services.isEmpty()) {
-					for (service serv : services) {
+					for (Service serv : services) {
 						String serviceName = (serv.getName() != null) ? serv.getName().trim() : "Unknown Service";
 						String serviceDescription = (serv.getDescription() != null)
 						? serv.getDescription().trim()

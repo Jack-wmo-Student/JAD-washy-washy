@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ page import="java.util.*,model.category, model.service, utils.sessionUtils"%>
+<%@ page import="java.util.*,MODEL.CLASS.Category,MODEL.CLASS.Service, utils.sessionUtils"%>
 <!DOCTYPE html>
 
 <html>
@@ -61,7 +61,7 @@
 
 		<h3>Existing Categories</h3>
 		<%
-		Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
+		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
 				.getAttribute("categoryServiceMap");
 
 		if (sessionCategoryServiceMap == null && sessionCategoryServiceMap.isEmpty()) {
@@ -78,8 +78,8 @@
 				<th>Actions</th>
 			</tr>
 			<%
-			for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
-				category cat = entry.getKey();
+			for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
+				Category cat = entry.getKey();
 			%>
 			<tr>
 				<td><%=cat.getId()%></td>

@@ -1,5 +1,5 @@
 <%@ page
-	import="java.util.List, java.util.Map, model.category, utils.sessionUtils"%>
+	import="java.util.List, java.util.Map, MODEL.CLASS.Category, utils.sessionUtils"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,12 +42,12 @@
 					<%
 					@SuppressWarnings("unchecked")
 					// Retrieve category-service map from the session
-					Map<category, List<category>> categoryServiceMap = (Map<category, List<category>>) session
+					Map<Category, List<Category>> categoryServiceMap = (Map<Category, List<Category>>) session
 							.getAttribute("categoryServiceMap");
 
 					// Dynamically render category options or show fallback message
 					if (categoryServiceMap != null && !categoryServiceMap.isEmpty()) {
-						for (category cat : categoryServiceMap.keySet()) {
+						for (Category cat : categoryServiceMap.keySet()) {
 							String categoryName = (cat.getName() != null) ? cat.getName().trim() : "Unknown Category";
 					%>
 					<option value="#category-<%=cat.getId()%>"><%=categoryName%></option>
