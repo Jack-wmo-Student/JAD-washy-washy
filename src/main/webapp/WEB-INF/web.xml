@@ -13,7 +13,7 @@
 	<!-- Servlet configuration for landingPage -->
 	<servlet>
 		<servlet-name>landingPage</servlet-name>
-		<servlet-class>controller.landingPage</servlet-class>
+		<servlet-class>CONTROLLER.AuthController</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>landingPage</servlet-name>
@@ -21,7 +21,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>categoryService</servlet-name>
-		<servlet-class>controller.categoryService</servlet-class>
+		<servlet-class>CONTROLLER.categoryService</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>categoryService</servlet-name>
@@ -29,7 +29,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>CreateCategoryServlet</servlet-name>
-		<servlet-class>controller.CreateCategoryServlet</servlet-class>
+		<servlet-class>CONTROLLER.CreateCategoryServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CreateCategoryServlet</servlet-name>
@@ -37,7 +37,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>ServiceServlet</servlet-name>
-		<servlet-class>controller.ServiceServlet</servlet-class>
+		<servlet-class>CONTROLLER.ServiceServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ServiceServlet</servlet-name>
@@ -45,7 +45,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>EditServiceServlet</servlet-name>
-		<servlet-class>controller.EditServiceServlet</servlet-class>
+		<servlet-class>CONTROLLER.EditServiceServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>EditServiceServlet</servlet-name>
@@ -53,7 +53,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>feedbackLogic</servlet-name>
-		<servlet-class>controller.feedbackLogic</servlet-class>
+		<servlet-class>CONTROLLER.feedbackLogic</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>feedbackLogic</servlet-name>
@@ -61,7 +61,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>bookingPageLogic</servlet-name>
-		<servlet-class>controller.bookingPageLogic</servlet-class>
+		<servlet-class>CONTROLLER.bookingPageLogic</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>bookingPageLogic</servlet-name>
@@ -69,7 +69,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>DeleteCategoryServlet</servlet-name>
-		<servlet-class>controller.DeleteCategoryServlet</servlet-class>
+		<servlet-class>CONTROLLER.DeleteCategoryServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DeleteCategoryServlet</servlet-name>
@@ -77,7 +77,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>DeleteServiceServlet</servlet-name>
-		<servlet-class>controller.DeleteServiceServlet</servlet-class>
+		<servlet-class>CONTROLLER.DeleteServiceServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DeleteServiceServlet</servlet-name>
@@ -85,7 +85,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>handleRegisterUser</servlet-name>
-		<servlet-class>controller.handleRegisterUser</servlet-class>
+		<servlet-class>CONTROLLER.handleRegisterUser</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>handleRegisterUser</servlet-name>
@@ -93,7 +93,7 @@
 	</servlet-mapping>
 <!-- 	<servlet>
 		<servlet-name>ManageMemberServlet</servlet-name>
-		<servlet-class>controller.ManageMemberServlet</servlet-class>
+		<servlet-class>CONTROLLER.ManageMemberServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ManageMemberServlet</servlet-name>
@@ -101,7 +101,7 @@
 	</servlet-mapping> -->
 	<servlet>
 		<servlet-name>StatisticsServlet</servlet-name>
-		<servlet-class>controller.StatisticsServlet</servlet-class>
+		<servlet-class>CONTROLLER.StatisticsServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>StatisticsServlet</servlet-name>
@@ -109,7 +109,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>handleUpdateUser</servlet-name>
-		<servlet-class>controller.handleUpdateUser</servlet-class>
+		<servlet-class>CONTROLLER.handleUpdateUser</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>handleUpdateUser</servlet-name>
@@ -117,7 +117,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>logout</servlet-name>
-		<servlet-class>controller.logout</servlet-class>
+		<servlet-class>CONTROLLER.logout</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>logout</servlet-name>
@@ -125,7 +125,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>timeSlotLogic</servlet-name>
-		<servlet-class>controller.timeSlotLogic</servlet-class>
+		<servlet-class>CONTROLLER.timeSlotLogic</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>timeSlotLogic</servlet-name>
@@ -133,7 +133,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>UserServlet</servlet-name>
-		<servlet-class>controller.UserServlet</servlet-class>
+		<servlet-class>CONTROLLER.UserServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UserServlet</servlet-name>
@@ -141,7 +141,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>UserActionServlet</servlet-name>
-		<servlet-class>controller.UserActionServlet</servlet-class>
+		<servlet-class>CONTROLLER.UserActionServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UserActionServlet</servlet-name>
@@ -149,7 +149,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>PromoteUserServlet</servlet-name>
-		<servlet-class>controller.PromoteUserServlet</servlet-class>
+		<servlet-class>CONTROLLER.PromoteUserServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>PromoteUserServlet</servlet-name>
@@ -157,14 +157,14 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>BlockUserServlet</servlet-name>
-	    <servlet-class>controller.BlockUserServlet</servlet-class>
+	    <servlet-class>CONTROLLER.BlockUserServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>BlockUserServlet</servlet-name>
 	    <url-pattern>/BlockUserServlet</url-pattern>
 	</servlet-mapping>
 <!-- 	<servlet>
-		<servlet-class>controller.BlockUserServlet</servlet-class>
+		<servlet-class>CONTROLLER.BlockUserServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>BlockUserServlet</servlet-name>
@@ -172,7 +172,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>washyUsers</servlet-name>
-		<servlet-class>controller.washyUsers</servlet-class>
+		<servlet-class>CONTROLLER.washyUsers</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>washyUsers</servlet-name>
@@ -183,7 +183,7 @@
 	</servlet-mapping> -->
 	<servlet>
 		<servlet-name>cartHandler</servlet-name>
-		<servlet-class>controller.cartHandler</servlet-class>
+		<servlet-class>CONTROLLER.cartHandler</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>cartHandler</servlet-name>
