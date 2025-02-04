@@ -259,9 +259,4 @@ public class bookingPageLogic extends HttpServlet {
 		return resultList;
 	}
 
-
-
-
-
-
 }

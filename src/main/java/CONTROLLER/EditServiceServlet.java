@@ -45,7 +45,11 @@ public class EditServiceServlet extends HttpServlet {
         // Fetch services for the category
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             String query = "SELECT * FROM service WHERE category_id = ?";
+<<<<<<< HEAD
             List<Service> services = new ArrayList<Service>();
+=======
+            List<Service> services = new ArrayList<>();
+>>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
 
             try (PreparedStatement ps = conn.prepareStatement(query)) {
                 ps.setInt(1, Integer.parseInt(categoryId));

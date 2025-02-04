@@ -74,7 +74,11 @@ public class categoryService extends HttpServlet {
         request.getRequestDispatcher("/pages/homePage.jsp").forward(request, response);
     }
 
+<<<<<<< HEAD
     private Map<Category, List<Service>> FetchCategoriesAndServices() {
+=======
+    private Map<Category, List<Service>> fetchCategoriesAndServices() {
+>>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
         String categoryQuery = "SELECT category_id, category_name, category_description FROM category";
         String serviceQuery = "SELECT service_id, category_id, service_name, price, duration_in_hour, service_description FROM service";
         Map<Category, List<Service>> categoryServiceMap = new LinkedHashMap<>();

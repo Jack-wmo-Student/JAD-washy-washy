@@ -1,5 +1,9 @@
 <%@ page
+<<<<<<< HEAD
 	import="java.util.List, java.util.Map,MODEL.CLASS.Category, utils.sessionUtils"%>
+=======
+	import="java.util.List, java.util.Map, MODEL.CLASS.Category, utils.sessionUtils"%>
+>>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
 <!DOCTYPE html>
 <html lang="en">
 <head>

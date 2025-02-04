@@ -1,5 +1,6 @@
  package CONTROLLER;
 
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,10 @@ import java.util.*;
 
 import MODEL.CLASS.Category;
 import MODEL.CLASS.Service;
+<<<<<<< HEAD
+=======
+
+>>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
 
 public class ServiceServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;

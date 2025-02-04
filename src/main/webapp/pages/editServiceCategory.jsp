@@ -61,7 +61,10 @@
 
 		<h3>Existing Categories</h3>
 		<%
+<<<<<<< HEAD
 		@SuppressWarnings("unchecked")
+=======
+>>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
 		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
 				.getAttribute("categoryServiceMap");
 

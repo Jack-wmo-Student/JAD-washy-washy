@@ -43,6 +43,7 @@ public class PromoteUserServlet extends HttpServlet {
 					users.add(user);
 				}
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
