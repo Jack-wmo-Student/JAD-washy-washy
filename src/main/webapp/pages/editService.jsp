@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="java.util.*,MODEL.CLASS.service,MODEL.CLASS.category, utils.sessionUtils"%>
+<%@ page import="java.util.*,MODEL.CLASS.Service,MODEL.CLASS.Category, utils.sessionUtils"%>
 <!DOCTYPE html>
 
 <html>
@@ -30,13 +30,12 @@
 	<div class="container">
 		<%
 		String requestCategoryId = request.getParameter("categoryId");
-		Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
-				.getAttribute("categoryServiceMap");
+		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
 
 		int categoryId = Integer.parseInt(requestCategoryId);
-		category matchingCategory = null;
+		Category matchingCategory = null;
 
-		for (category category : sessionCategoryServiceMap.keySet()) {
+		for (Category category : sessionCategoryServiceMap.keySet()) {
 			if (category.getId() == categoryId) {
 				matchingCategory = category;
 				break;
@@ -109,8 +108,8 @@
 			</thead>
 			<tbody>
 				<%
-				List<service> serviceList = sessionCategoryServiceMap.get(matchingCategory);
-				for (service service : serviceList) {
+				List<Service> serviceList = sessionCategoryServiceMap.get(matchingCategory);
+				for (Service service : serviceList) {
 				%>
 				<tr>
 					<td><%=service.getId()%></td>

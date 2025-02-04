@@ -77,8 +77,6 @@ public class UserController extends HttpServlet {
             }
         } catch (NumberFormatException e) {
             sendJsonResponse(response, 400, "Invalid user ID format");
-        } catch (DAOException e) {
-            sendJsonResponse(response, 400, e.getMessage());
         } catch (Exception e) {
             sendJsonResponse(response, 500, "Internal server error: " + e.getMessage());
             e.printStackTrace();

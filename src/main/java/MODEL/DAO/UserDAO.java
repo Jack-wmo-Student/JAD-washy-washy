@@ -90,7 +90,7 @@ import java.util.*;
 
 public class UserDAO {
     
-    public List<User> getAllUsers() throws SQLException {
+    public List<User> getAllUsers() throws SQLException {2
         String sql = "SELECT user_id, username, is_admin, is_blocked FROM users ORDER BY username";
         List<User> users = new ArrayList<>();
         
