@@ -3,7 +3,7 @@
 <%@ page
 	import="java.util.Calendar, java.text.DateFormatSymbols, java.util.List, jakarta.servlet.http.HttpSession, java.util.Map, java.util.ArrayList, java.util.HashMap"%>
 <%@ page
-	import="MODEL.CLASS.*"%>
+	import="MODEL.CLASS.Booking,MODEL.CLASS.TimeSlot,MODEL.CLASS.Category,MODEL.CLASS.Service"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,18 +32,18 @@
 			.getAttribute("categoryServiceMap");
 	
 	List<Map<String, Object>> serviceLists = new ArrayList<>();
-
+	
 	// Get all the services from the map
 	for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
-	    List<Service> services = entry.getValue();
-
-	    for (Service srv : services) {
-	        Map<String, Object> tempMap = new HashMap<>();
-	        tempMap.put("service_name", srv.getName());
-	        tempMap.put("service_id", srv.getId());
-	        
-	        serviceLists.add(tempMap);
-	    }
+		List<Service> services = entry.getValue();
+	
+		for (Service srv : services) {
+			Map<String, Object> tempMap = new HashMap<>();
+			tempMap.put("service_name", srv.getName().toString());
+			tempMap.put("service_id", srv.getId());
+	
+			serviceLists.add(tempMap);
+		}
 	}
 	
 	if (paramMonth != null && paramYear != null) {

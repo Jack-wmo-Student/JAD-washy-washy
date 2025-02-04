@@ -104,6 +104,10 @@ public class CreateCategoryServlet extends HttpServlet {
 			}
 
 			// Retrieve the existing category-service map from the session
+<<<<<<< HEAD
+			@SuppressWarnings("unchecked")
+=======
+>>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
 			Map<Category, List<Service>> sessionCategoryServiceMap = 
 					(Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
 
