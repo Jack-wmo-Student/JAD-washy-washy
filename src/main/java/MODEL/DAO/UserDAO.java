@@ -90,7 +90,7 @@ import java.util.*;
 
 public class UserDAO {
     
-    public List<User> getAllUsers() throws SQLException {2
+    public List<User> getAllUsers() throws SQLException {
         String sql = "SELECT user_id, username, is_admin, is_blocked FROM users ORDER BY username";
         List<User> users = new ArrayList<>();
         
@@ -222,8 +222,8 @@ public class UserDAO {
         User user = new User();
         user.setUserId(rs.getInt("user_id"));
         user.setUsername(rs.getString("username"));
-        user.setIsAdmin(rs.getBoolean("is_admin"));
-        user.setIsBlocked(rs.getBoolean("is_blocked"));
+        user.setIsAdmin(rs.getInt("is_admin"));
+        user.setIsBlocked(rs.getInt("is_blocked"));
         return user;
     }
 }
