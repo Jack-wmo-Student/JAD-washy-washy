@@ -28,16 +28,16 @@
 	
 	// Get the Category service map
 	@SuppressWarnings("unchecked")
-	Map<Category, List<service>> sessionCategoryServiceMap = (Map<Category, List<service>>) session
+	Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
 			.getAttribute("categoryServiceMap");
 	
 	List<Map<String, Object>> serviceLists = new ArrayList<>();
 	
 	// Get all the services from the map
-	for (Map.Entry<Category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
-		List<service> services = entry.getValue();
+	for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
+		List<Service> services = entry.getValue();
 	
-		for (service srv : services) {
+		for (Service srv : Services) {
 			Map<String, Object> tempMap = new HashMap<>();
 			tempMap.put("service_name", srv.getName().toString());
 			tempMap.put("service_id", srv.getId());
