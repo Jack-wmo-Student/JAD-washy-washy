@@ -3,8 +3,7 @@ package utils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import MODEL.DAOException;
-
+import MODEL.DAO.*;
 public class DatabaseUtil {
     // Environment variable names
     private static final String ENV_DB_URL = "DB_URL";
