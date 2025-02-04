@@ -38,8 +38,8 @@ public class PromoteUserServlet extends HttpServlet {
 					User user = new User();
 					user.setUserId(resultSet.getInt("user_id"));
 					user.setUsername(resultSet.getString("username"));
-					user.setIsAdmin(resultSet.getBoolean("is_admin"));
-					user.setIsBlocked(resultSet.getBoolean("is_blocked"));
+					user.setIsAdmin(resultSet.getInt("role_id"));
+					user.setIsBlocked(resultSet.getInt("status_id"));
 					users.add(user);
 				}
 			}

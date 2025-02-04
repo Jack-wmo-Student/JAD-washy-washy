@@ -4,8 +4,10 @@
 <%@ page
 	import="java.util.*,MODEL.CLASS.Service,MODEL.CLASS.Category, utils.sessionUtils"%>
 =======
-<%@ page import="java.util.*,MODEL.CLASS.Service,MODEL.CLASS.Category, utils.sessionUtils"%>
->>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
+<%@ page
+	import="java.util.*,MODEL.CLASS.Service,MODEL.CLASS.Category, utils.sessionUtils"%>
+>>>>>>> branch 'main' of
+https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
 <!DOCTYPE html>
 
 <html>
@@ -37,13 +39,9 @@
 	<div class="container">
 		<%
 		String requestCategoryId = request.getParameter("categoryId");
-<<<<<<< HEAD
 		@SuppressWarnings("unchecked")
 		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
 				.getAttribute("categoryServiceMap");
-=======
-		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
->>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
 
 		int categoryId = Integer.parseInt(requestCategoryId);
 		Category matchingCategory = null;
