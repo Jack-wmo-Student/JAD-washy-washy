@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="java.util.List,MODEL.CLASS.cartItem"%>
+<%@ page import="java.util.List,MODEL.CLASS.CartItem"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,11 +33,11 @@
 			return;
 		}
 		@SuppressWarnings("unchecked")
-		List<cartItem> carts = (List<cartItem>) session.getAttribute("cart-item-list");
+		List<CartItem> carts = (List<CartItem>) session.getAttribute("cart-item-list");
 
 		if (carts != null && !carts.isEmpty()) {
 			double totalPrice = 0.0;
-			for (cartItem item : carts) {
+			for (CartItem item : carts) {
 				String itemName = (item.getService().getName() != null) ? item.getService().getName().trim()
 				: "Unknown Service";
 				String itemDescription = (item.getService().getDescription() != null)

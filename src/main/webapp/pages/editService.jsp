@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<<<<<<< HEAD
+<%@ page
+	import="java.util.*,MODEL.CLASS.Service,MODEL.CLASS.Category, utils.sessionUtils"%>
+=======
 <%@ page import="java.util.*,MODEL.CLASS.Service,MODEL.CLASS.Category, utils.sessionUtils"%>
+>>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
 <!DOCTYPE html>
 
 <html>
@@ -12,25 +17,33 @@
 </head>
 <body>
 
-	<% if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
-        request.setAttribute("error", "You must log in first.");
-        request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
-        return;
-    }
+	<%
+	if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+		request.setAttribute("error", "You must log in first.");
+		request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+		return;
+	}
 
-    // Optional: Check if the user is an admin
-    if (!sessionUtils.isAdmin(request)) {
-        response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
-        return;
-    } %>
+	// Optional: Check if the user is an admin
+	if (!sessionUtils.isAdmin(request)) {
+		response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+		return;
+	}
+	%>
 
 	<%@ include file="../component/adminSidebar.jsp"%>
-	
-	
+
+
 	<div class="container">
 		<%
 		String requestCategoryId = request.getParameter("categoryId");
+<<<<<<< HEAD
+		@SuppressWarnings("unchecked")
+		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
+				.getAttribute("categoryServiceMap");
+=======
 		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
+>>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
 
 		int categoryId = Integer.parseInt(requestCategoryId);
 		Category matchingCategory = null;
@@ -49,18 +62,18 @@
 
 		<!-- Display success or error messages -->
 		<%
-			String successMessage = (String) request.getAttribute("successMessage");
-			String errorMessage = (String) request.getAttribute("errorMessage");
-			if (successMessage != null) {
+		String successMessage = (String) request.getAttribute("successMessage");
+		String errorMessage = (String) request.getAttribute("errorMessage");
+		if (successMessage != null) {
 		%>
 		<p style="color: green;"><%=successMessage%></p>
 		<%
-			}
-			if (errorMessage != null) {
+		}
+		if (errorMessage != null) {
 		%>
 		<p style="color: red;"><%=errorMessage%></p>
 		<%
-			}
+		}
 		%>
 
 		<form action="<%=request.getContextPath()%>/ServiceServlet"
@@ -85,7 +98,9 @@
 					type="text" name="serviceDescription"
 					placeholder="Enter description" required />
 			</div>
-			<%System.out.print(categoryId + "FIRST");%>
+			<%
+			System.out.print(categoryId + "FIRST");
+			%>
 			<input type="hidden" name="categoryId" value="<%=categoryId%>" />
 			<div>
 				<input type="submit" value="Add Service" />

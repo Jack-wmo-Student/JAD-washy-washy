@@ -27,7 +27,7 @@ public class BlockUserServlet extends HttpServlet {
 		}
 
 		// Fetch updated user list
-		ArrayList<User> users = new ArrayList<>();
+		ArrayList<User> users = new ArrayList<User>();
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			String selectSql = "SELECT user_id, username, is_admin, is_blocked FROM users";
 			try (PreparedStatement statement = connection.prepareStatement(selectSql)) {
