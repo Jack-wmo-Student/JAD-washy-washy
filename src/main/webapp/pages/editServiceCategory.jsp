@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ page import="java.util.*,model.category, model.service, utils.sessionUtils"%>
+<%@ page import="java.util.*,MODEL.CLASS.category,MODEL.CLASS.service, utils.sessionUtils"%>
 <!DOCTYPE html>
 
 <html>

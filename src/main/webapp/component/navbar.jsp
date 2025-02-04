@@ -1,5 +1,5 @@
 <%@ page
-	import="java.util.List, java.util.Map, model.category, utils.sessionUtils"%>
+	import="java.util.List, java.util.Map,MODEL.CLASS.category, utils.sessionUtils"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
