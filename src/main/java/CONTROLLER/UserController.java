@@ -6,7 +6,6 @@ import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 import MODEL.CLASS.User;
 import MODEL.DAO.UserDAO;
-import MODEL.DAOException;
 import utils.sessionUtils;
 import utils.passwordUtils;
 import java.util.*;

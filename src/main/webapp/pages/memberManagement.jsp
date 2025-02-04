@@ -143,32 +143,32 @@
             </thead>
             <tbody>
             <% 
-                List<user> users = (List<user>) request.getAttribute("users");
+                List<User> users = (List<User>) request.getAttribute("users");
                 if (users != null) {
-                    for (user user : users) {
+                    for (User user : users) {
                         int currentUserId = (int) session.getAttribute("userId");
-                        boolean isCurrentUser = user.getUser_id()== currentUserId;
+                        boolean isCurrentUser = user.getUserId()== currentUserId;
             %>
-                <tr data-user-id="<%= user.getUser_id() %>">
-                    <td><%= user.getUser_id() %></td>
+                <tr data-user-id="<%= user.getUserId() %>">
+                    <td><%= user.getUserId() %></td>
                     <td><%= user.getUsername() %></td>
-                    <td><span class="admin-status"><%= user.isAdmin() ? "Admin" : "User" %></span></td>
-                    <td><span class="block-status"><%= user.isBlocked() ? "Blocked" : "Active" %></span></td>
+                    <td><span class="admin-status"><%= user.isIsAdmin() ? "Admin" : "User" %></span></td>
+                    <td><span class="block-status"><%= user.isIsBlocked() ? "Blocked" : "Active" %></span></td>
                     <td>
                         <button 
-                            onclick="toggleBlockStatus(<%= user.getUser_id() %>)"
-                            class="btn <%= user.isBlocked() ? "btn-unblock" : "btn-block" %>"
+                            onclick="toggleBlockStatus(<%= user.getUserId() %>)"
+                            class="btn <%= user.isIsBlocked() ? "btn-unblock" : "btn-block" %>"
                             <%= isCurrentUser ? "disabled" : "" %>
-                            <%= user.isAdmin() ? "disabled" : "" %>>
-                            <%= user.isBlocked() ? "Unblock" : "Block" %>
+                            <%= user.isIsAdmin() ? "disabled" : "" %>>
+                            <%= user.isIsBlocked() ? "Unblock" : "Block" %>
                         </button>
                         
                         <button 
-                            onclick="toggleAdminStatus(<%= user.getUser_id() %>)"
-                            class="btn <%= user.isAdmin() ? "btn-demote" : "btn-promote" %>"
+                            onclick="toggleAdminStatus(<%= user.getUserId() %>)"
+                            class="btn <%= user.isIsAdmin() ? "btn-demote" : "btn-promote" %>"
                             <%= isCurrentUser ? "disabled" : "" %>
-                            <%= user.isBlocked() ? "disabled" : "" %>>
-                            <%= user.isAdmin() ? "Remove Admin" : "Make Admin" %>
+                            <%= user.isIsBlocked() ? "disabled" : "" %>>
+                            <%= user.isIsAdmin() ? "Remove Admin" : "Make Admin" %>
                         </button>
                     </td>
                 </tr>

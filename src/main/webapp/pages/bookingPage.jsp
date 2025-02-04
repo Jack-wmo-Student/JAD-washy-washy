@@ -3,7 +3,7 @@
 <%@ page
 	import="java.util.Calendar, java.text.DateFormatSymbols, java.util.List, jakarta.servlet.http.HttpSession, java.util.Map, java.util.ArrayList, java.util.HashMap"%>
 <%@ page
-	import="MODEL.CLASS.booking,MODEL.CLASS.timeslot,MODEL.CLASS.category,MODEL.CLASS.service"%>
+	import="MODEL.CLASS.*"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,13 +28,13 @@
 	
 	// Get the Category service map
 	@SuppressWarnings("unchecked")
-	Map<category, List<service>> sessionCategoryServiceMap = (Map<category, List<service>>) session
+	Map<Category, List<service>> sessionCategoryServiceMap = (Map<Category, List<service>>) session
 			.getAttribute("categoryServiceMap");
 	
 	List<Map<String, Object>> serviceLists = new ArrayList<>();
 	
 	// Get all the services from the map
-	for (Map.Entry<category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
+	for (Map.Entry<Category, List<service>> entry : sessionCategoryServiceMap.entrySet()) {
 		List<service> services = entry.getValue();
 	
 		for (service srv : services) {
@@ -140,14 +140,14 @@
 				return;
 			}
 				@SuppressWarnings("unchecked")
-				List<booking> bookingLists = (List<booking>) session.getAttribute("bookingLists");
+				List<Booking> bookingLists = (List<Booking>) session.getAttribute("bookingLists");
 
 				if (bookingLists != null && !bookingLists.isEmpty()) {
-					for (booking booking : bookingLists) {
+					for (Booking booking : bookingLists) {
 				// Extract the booking details
 				String serviceName = booking.getServiceName();
 				String bookedDate = booking.getBookedDate().toString();
-				String timeRange = booking.getTimeslot().getTimeRange();
+				String timeRange = booking.getTimeSlot().getTimeRange();
 				int bookingId = booking.getBookingId();
 			%>
 			<!-- Display if have -->
