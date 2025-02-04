@@ -33,7 +33,7 @@ public class UserController extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/pages/memberManagement.jsp");
             dispatcher.forward(request, response);
 
-        } catch (DAOException e) {
+        } catch (Exception e) {
             request.setAttribute("error", "Error retrieving users: " + e.getMessage());
             request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
@@ -90,7 +90,7 @@ public class UserController extends HttpServlet {
         try {
             userDAO.toggleUserBlock(targetUserId, currentUserId);
             sendJsonResponse(response, 200, "User block status updated successfully");
-        } catch (DAOException e) {
+        } catch (Exception e) {
             sendJsonResponse(response, 400, e.getMessage());
         }
     }
@@ -100,7 +100,7 @@ public class UserController extends HttpServlet {
         try {
             userDAO.toggleAdminStatus(targetUserId, currentUserId);
             sendJsonResponse(response, 200, "User admin status updated successfully");
-        } catch (DAOException e) {
+        } catch (Exception e) {
             sendJsonResponse(response, 400, e.getMessage());
         }
     }
@@ -144,7 +144,7 @@ public class UserController extends HttpServlet {
             userDAO.updateUser(user);
             sendJsonResponse(response, 200, "User updated successfully");
 
-        } catch (DAOException e) {
+        } catch (Exception e) {
             sendJsonResponse(response, 400, e.getMessage());
         }
     }
