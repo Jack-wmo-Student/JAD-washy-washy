@@ -19,27 +19,27 @@ public class Booking {
     }
     
     // Getters and Setters
-    public int getbooking_id() {
+    public int getBookingId() {
         return booking_id;
     }
 
-    public void setbooking_id(int booking_id) {
+    public void setBookingId(int booking_id) {
         this.booking_id = booking_id;
     }
 
-    public String getservice_name() {
+    public String getServiceName() {
         return service_name;
     }
 
-    public void setservice_name(String service_name) {
+    public void setServiceName(String service_name) {
         this.service_name = service_name;
     }
 
-    public TimeSlot gettime_slot() {
+    public TimeSlot getTimeSlot() {
         return time_slot;
     }
 
-    public void settime_slot(TimeSlot time_slot) {
+    public void setTimeSlot(TimeSlot time_slot) {
         this.time_slot = time_slot;
     }
 

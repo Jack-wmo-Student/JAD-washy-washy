@@ -16,8 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import MODEL.CLASS.category;
-import MODEL.CLASS.service;
+import MODEL.CLASS.Category;
+import MODEL.CLASS.Service;
 
 public class categoryService extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -61,12 +61,12 @@ public class categoryService extends HttpServlet {
 
         // Check if categories and services are already in session
         @SuppressWarnings("unchecked")
-        Map<category, List<service>> categoryServiceMap =
-                (Map<category, List<service>>) session.getAttribute("categoryServiceMap");
+        Map<Category, List<Service>> categoryServiceMap =
+                (Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
 
         if (categoryServiceMap == null) {
             // Fetch categories and services if not already in session
-            categoryServiceMap = fetchCategoriesAndServices();
+            categoryServiceMap = FetchCategoriesAndServices();
             session.setAttribute("categoryServiceMap", categoryServiceMap);
         }
 
@@ -74,23 +74,23 @@ public class categoryService extends HttpServlet {
         request.getRequestDispatcher("/pages/homePage.jsp").forward(request, response);
     }
 
-    private Map<category, List<service>> fetchCategoriesAndServices() {
+    private Map<Category, List<Service>> FetchCategoriesAndServices() {
         String categoryQuery = "SELECT category_id, category_name, category_description FROM category";
         String serviceQuery = "SELECT service_id, category_id, service_name, price, duration_in_hour, service_description FROM service";
-        Map<category, List<service>> categoryServiceMap = new LinkedHashMap<>();
+        Map<Category, List<Service>> categoryServiceMap = new LinkedHashMap<>();
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             System.out.println("Connected to the database successfully.");
 
             // Map to hold categories by ID
-            Map<Integer, category> categoryMap = new LinkedHashMap<>();
+            Map<Integer, Category> categoryMap = new LinkedHashMap<>();
 
             // Fetch all categories
             try (PreparedStatement categoryStmt = conn.prepareStatement(categoryQuery);
                  ResultSet categoryRs = categoryStmt.executeQuery()) {
 
                 while (categoryRs.next()) {
-                    category cat = new category(
+                    Category cat = new Category(
                             categoryRs.getInt("category_id"),
                             categoryRs.getString("category_name") != null ? categoryRs.getString("category_name").trim() : null,
                             categoryRs.getString("category_description") != null ? categoryRs.getString("category_description").trim() : null
@@ -105,7 +105,7 @@ public class categoryService extends HttpServlet {
                  ResultSet serviceRs = serviceStmt.executeQuery()) {
 
                 while (serviceRs.next()) {
-                    service serv = new service(
+                    Service serv = new Service(
                             serviceRs.getInt("service_id"),
                             serviceRs.getInt("category_id"),
                             serviceRs.getString("service_name") != null ? serviceRs.getString("service_name").trim() : null,
@@ -115,7 +115,7 @@ public class categoryService extends HttpServlet {
                     );
 
                     // Add service to the corresponding category
-                    category cat = categoryMap.get(serv.getCategoryId());
+                    Category cat = categoryMap.get(serv.getCategoryId());
                     if (cat != null) {
                         categoryServiceMap.get(cat).add(serv);
                     }

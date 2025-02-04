@@ -11,7 +11,7 @@ import utils.sessionUtils;
 
 import java.util.*;
 
-import MODEL.CLASS.service;
+import MODEL.CLASS.Service;
 
 public class EditServiceServlet extends HttpServlet {
 
@@ -45,13 +45,13 @@ public class EditServiceServlet extends HttpServlet {
         // Fetch services for the category
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             String query = "SELECT * FROM service WHERE category_id = ?";
-            List<service> services = new ArrayList<>();
+            List<Service> services = new ArrayList<Service>();
 
             try (PreparedStatement ps = conn.prepareStatement(query)) {
                 ps.setInt(1, Integer.parseInt(categoryId));
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        services.add(new service(
+                        services.add(new Service(
                                 rs.getInt("service_id"),
                                 rs.getInt("category_id"),
                                 rs.getString("service_name"),
@@ -78,8 +78,8 @@ public class EditServiceServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String serviceId = request.getParameter("serviceId");
-        String categoryId = request.getParameter("categoryId");
+        String service_id = request.getParameter("serviceId");
+        String category_id = request.getParameter("categoryId");
         String duration = request.getParameter("serviceDuration");
         String description = request.getParameter("serviceDescription");
 
@@ -90,7 +90,7 @@ public class EditServiceServlet extends HttpServlet {
                 ps.setDouble(2, Double.parseDouble(request.getParameter("servicePrice")));
                 ps.setInt(3, Integer.parseInt(request.getParameter("serviceDuration")));
                 ps.setString(4, request.getParameter("serviceDescription"));
-                ps.setInt(5, Integer.parseInt(serviceId));
+                ps.setInt(5, Integer.parseInt(service_id));
                 ps.executeUpdate();
             }
 
