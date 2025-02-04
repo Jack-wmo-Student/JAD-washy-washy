@@ -66,7 +66,7 @@ public class categoryService extends HttpServlet {
 
         if (categoryServiceMap == null) {
             // Fetch categories and services if not already in session
-            categoryServiceMap = fetchCategoriesAndServices();
+            categoryServiceMap = FetchCategoriesAndServices();
             session.setAttribute("categoryServiceMap", categoryServiceMap);
         }
 
@@ -74,7 +74,7 @@ public class categoryService extends HttpServlet {
         request.getRequestDispatcher("/pages/homePage.jsp").forward(request, response);
     }
 
-    private Map<Category, List<Service>> fetchCategoriesAndServices() {
+    private Map<Category, List<Service>> FetchCategoriesAndServices() {
         String categoryQuery = "SELECT category_id, category_name, category_description FROM category";
         String serviceQuery = "SELECT service_id, category_id, service_name, price, duration_in_hour, service_description FROM service";
         Map<Category, List<Service>> categoryServiceMap = new LinkedHashMap<>();

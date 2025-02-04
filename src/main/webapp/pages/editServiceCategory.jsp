@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ page import="java.util.*,MODEL.CLASS.Category,MODEL.CLASS.Service, utils.sessionUtils"%>
+<%@ page
+	import="java.util.*,MODEL.CLASS.Category,MODEL.CLASS.Service, utils.sessionUtils"%>
 <!DOCTYPE html>
 
 <html>
@@ -61,6 +62,7 @@
 
 		<h3>Existing Categories</h3>
 		<%
+		@SuppressWarnings("unchecked")
 		Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
 				.getAttribute("categoryServiceMap");
 

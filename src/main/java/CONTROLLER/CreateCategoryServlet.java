@@ -56,16 +56,16 @@ public class CreateCategoryServlet extends HttpServlet {
 		Connection conn = null;
 		PreparedStatement ps = null;
 
-
 		HttpSession session = request.getSession(false);
 
-		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null || session.getAttribute("userId") == null) {
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null
+				|| session.getAttribute("userId") == null) {
 			// Handle invalid login
 			request.setAttribute("error", "You must log in first.");
 			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
 			return;
 		}
-		
+
 		int generatedId = 0;
 
 		try {
@@ -104,8 +104,9 @@ public class CreateCategoryServlet extends HttpServlet {
 			}
 
 			// Retrieve the existing category-service map from the session
-			Map<Category, List<Service>> sessionCategoryServiceMap = 
-					(Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
+			@SuppressWarnings("unchecked")
+			Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
+					.getAttribute("categoryServiceMap");
 
 			if (sessionCategoryServiceMap == null) {
 				// Initialize a new map if it doesn't exist
@@ -127,8 +128,10 @@ public class CreateCategoryServlet extends HttpServlet {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (ps != null) ps.close();
-				if (conn != null) conn.close();
+				if (ps != null)
+					ps.close();
+				if (conn != null)
+					conn.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -136,4 +139,5 @@ public class CreateCategoryServlet extends HttpServlet {
 
 		// Redirect to the category page
 		response.sendRedirect(request.getContextPath() + "/CreateCategoryServlet");
-	}}
+	}
+}

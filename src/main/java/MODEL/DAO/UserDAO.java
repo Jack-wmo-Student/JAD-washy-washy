@@ -83,32 +83,7 @@ public class UserDAO {
 	public List<User> getAllUsers() throws SQLException {
 		String sql = "SELECT user_id, username, is_admin, is_blocked FROM users ORDER BY username";
 		List<User> users = new ArrayList<>();
-
-<<<<<<< HEAD
-public class UserDAO {
-    
-    public List<User> getAllUsers() throws SQLException {2
-        String sql = "SELECT user_id, username, is_admin, is_blocked FROM users ORDER BY username";
-        List<User> users = new ArrayList<>();
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    User user = mapResultSetToUser(rs);
-                    users.add(user);
-                }
-            }
-            return users;
-        } catch (SQLException e) {
-            throw new SQLException("Error retrieving users", e);
-        }
-    }
-=======
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
->>>>>>> branch 'main' of https://github.com/Giga-JAD/JAD-washy-washy-CA2.git
-
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					User user = mapResultSetToUser(rs);

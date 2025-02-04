@@ -1,5 +1,4 @@
- package CONTROLLER;
-
+package CONTROLLER;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -15,170 +14,159 @@ import java.util.*;
 import MODEL.CLASS.Category;
 import MODEL.CLASS.Service;
 
-
 public class ServiceServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    // Database configuration
-    String dbClass = System.getenv("DB_CLASS");
-    String dbUrl = System.getenv("DB_URL");
-    String dbUser = System.getenv("DB_USER");
-    String dbPassword = System.getenv("DB_PASSWORD");
-    
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
+	// Database configuration
+	String dbClass = System.getenv("DB_CLASS");
+	String dbUrl = System.getenv("DB_URL");
+	String dbUser = System.getenv("DB_USER");
+	String dbPassword = System.getenv("DB_PASSWORD");
 
-        // Check if the user is logged in
-        if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
-            request.setAttribute("error", "You must log in first.");
-            request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
-            return;
-        }
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		HttpSession session = request.getSession(false);
 
-        // Optional: Check if the user is an admin
-        if (!sessionUtils.isAdmin(request)) {
-            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
-            return;
-        }
+		// Check if the user is logged in
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+			request.setAttribute("error", "You must log in first.");
+			request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
+			return;
+		}
 
-        String categoryIdParam = request.getParameter("categoryId");
-        if (categoryIdParam == null || categoryIdParam.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
-            return;
-        }
+		// Optional: Check if the user is an admin
+		if (!sessionUtils.isAdmin(request)) {
+			response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
+			return;
+		}
 
-        int categoryId = Integer.parseInt(categoryIdParam);
-        List<Service> services = new ArrayList<>();
-        String categoryName = null;
+		String categoryIdParam = request.getParameter("categoryId");
+		if (categoryIdParam == null || categoryIdParam.isEmpty()) {
+			response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
+			return;
+		}
 
-        // Check if the request has already been forwarded
-        Boolean isRedirected = (Boolean) request.getAttribute("redirected");
-        if (isRedirected == null) {
-            request.setAttribute("redirected", true); // Mark as forwarded
-            request.getRequestDispatcher("/pages/editServiceServlet").forward(request, response);
-            return;
-        }
+		int categoryId = Integer.parseInt(categoryIdParam);
+		List<Service> services = new ArrayList<>();
+		String categoryName = null;
 
-        // Fetch category and services
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-             PreparedStatement psCategory = conn.prepareStatement(
-                     "SELECT category_name FROM service_categories WHERE category_id = ?");
-             PreparedStatement psServices = conn.prepareStatement(
-                     "SELECT * FROM service WHERE category_id = ?")) {
+		// Check if the request has already been forwarded
+		Boolean isRedirected = (Boolean) request.getAttribute("redirected");
+		if (isRedirected == null) {
+			request.setAttribute("redirected", true); // Mark as forwarded
+			request.getRequestDispatcher("/pages/editServiceServlet").forward(request, response);
+			return;
+		}
 
-            psCategory.setInt(1, categoryId);
-            try (ResultSet rsCategory = psCategory.executeQuery()) {
-                if (rsCategory.next()) {
-                    categoryName = rsCategory.getString("category_name");
-                }
-            }
+		// Fetch category and services
+		try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+				PreparedStatement psCategory = conn
+						.prepareStatement("SELECT category_name FROM service_categories WHERE category_id = ?");
+				PreparedStatement psServices = conn.prepareStatement("SELECT * FROM service WHERE category_id = ?")) {
 
-            psServices.setInt(1, categoryId);
-            try (ResultSet rsServices = psServices.executeQuery()) {
-                while (rsServices.next()) {
-                    services.add(new Service(
-                            rsServices.getInt("service_id"),
-                            rsServices.getInt("category_id"),
-                            rsServices.getString("service_name"),
-                            rsServices.getDouble("price"),
-                            rsServices.getInt("duration_in_hour"),
-                            rsServices.getString("service_description")
-                    ));
-                }
-            }
+			psCategory.setInt(1, categoryId);
+			try (ResultSet rsCategory = psCategory.executeQuery()) {
+				if (rsCategory.next()) {
+					categoryName = rsCategory.getString("category_name");
+				}
+			}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+			psServices.setInt(1, categoryId);
+			try (ResultSet rsServices = psServices.executeQuery()) {
+				while (rsServices.next()) {
+					services.add(new Service(rsServices.getInt("service_id"), rsServices.getInt("category_id"),
+							rsServices.getString("service_name"), rsServices.getDouble("price"),
+							rsServices.getInt("duration_in_hour"), rsServices.getString("service_description")));
+				}
+			}
 
-        // Pass data to JSP
-        request.setAttribute("categoryName", categoryName);
-        request.setAttribute("services", services);
-        request.setAttribute("categoryId", categoryId);
-        response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    	HttpSession session = request.getSession(false);
-        String serviceName = request.getParameter("serviceName");
-        String servicePrice = request.getParameter("servicePrice");
-        String serviceDuration = request.getParameter("serviceDuration");
-        String serviceDescription = request.getParameter("serviceDescription");
-        String categoryIdParam = request.getParameter("categoryId");
+		// Pass data to JSP
+		request.setAttribute("categoryName", categoryName);
+		request.setAttribute("services", services);
+		request.setAttribute("categoryId", categoryId);
+		response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
+	}
 
-        if (categoryIdParam == null || categoryIdParam.isEmpty()) {
-            session.setAttribute("errorMessage", "Invalid categoryId provided.");
-            response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
-            return;
-        }
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		HttpSession session = request.getSession(false);
+		String serviceName = request.getParameter("serviceName");
+		String servicePrice = request.getParameter("servicePrice");
+		String serviceDuration = request.getParameter("serviceDuration");
+		String serviceDescription = request.getParameter("serviceDescription");
+		String categoryIdParam = request.getParameter("categoryId");
 
-        int categoryId = Integer.parseInt(categoryIdParam);
-        System.out.print(categoryIdParam);
+		if (categoryIdParam == null || categoryIdParam.isEmpty()) {
+			session.setAttribute("errorMessage", "Invalid categoryId provided.");
+			response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
+			return;
+		}
 
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-             PreparedStatement psInsert = conn.prepareStatement(
-                     "INSERT INTO service (service_name, category_id, price, duration_in_hour, service_description) VALUES (?, ?, ?, ?, ?)",
-                     Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement psFetchServices = conn.prepareStatement(
-                     "SELECT * FROM service WHERE category_id = ?")) {
+		int categoryId = Integer.parseInt(categoryIdParam);
+		System.out.print(categoryIdParam);
 
-            // Insert the new service into the database
-            psInsert.setString(1, serviceName);
-            psInsert.setInt(2, categoryId);
-            psInsert.setDouble(3, Double.parseDouble(servicePrice));
-            psInsert.setInt(4, Integer.parseInt(serviceDuration));
-            psInsert.setString(5, serviceDescription);
-            int rowsAffected = psInsert.executeUpdate();
+		try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+				PreparedStatement psInsert = conn.prepareStatement(
+						"INSERT INTO service (service_name, category_id, price, duration_in_hour, service_description) VALUES (?, ?, ?, ?, ?)",
+						Statement.RETURN_GENERATED_KEYS);
+				PreparedStatement psFetchServices = conn
+						.prepareStatement("SELECT * FROM service WHERE category_id = ?")) {
 
-            if (rowsAffected > 0) {
-                System.out.println("Service added successfully.");
-            }
+			// Insert the new service into the database
+			psInsert.setString(1, serviceName);
+			psInsert.setInt(2, categoryId);
+			psInsert.setDouble(3, Double.parseDouble(servicePrice));
+			psInsert.setInt(4, Integer.parseInt(serviceDuration));
+			psInsert.setString(5, serviceDescription);
+			int rowsAffected = psInsert.executeUpdate();
 
-            // Fetch updated services for the category
-            psFetchServices.setInt(1, categoryId);
-            List<Service> updatedServices = new ArrayList<>();
-            try (ResultSet rsServices = psFetchServices.executeQuery()) {
-                while (rsServices.next()) {
-                    updatedServices.add(new Service(
-                            rsServices.getInt("service_id"),
-                            rsServices.getInt("category_id"),
-                            rsServices.getString("service_name"),
-                            rsServices.getDouble("price"),
-                            rsServices.getInt("duration_in_hour"),
-                            rsServices.getString("service_description")));
-                }
-            }
+			if (rowsAffected > 0) {
+				System.out.println("Service added successfully.");
+			}
 
-            // Debug: Print updated services
-            System.out.println("Updated services: " + updatedServices);
+			// Fetch updated services for the category
+			psFetchServices.setInt(1, categoryId);
+			List<Service> updatedServices = new ArrayList<>();
+			try (ResultSet rsServices = psFetchServices.executeQuery()) {
+				while (rsServices.next()) {
+					updatedServices.add(new Service(rsServices.getInt("service_id"), rsServices.getInt("category_id"),
+							rsServices.getString("service_name"), rsServices.getDouble("price"),
+							rsServices.getInt("duration_in_hour"), rsServices.getString("service_description")));
+				}
+			}
 
-            // Update the sessionCategoryServiceMap
-            @SuppressWarnings("unchecked")
-            Map<Category, List<Service>> sessionCategoryServiceMap =
-                    (Map<Category, List<Service>>) session.getAttribute("categoryServiceMap");
+			// Debug: Print updated services
+			System.out.println("Updated services: " + updatedServices);
 
-            if (sessionCategoryServiceMap != null) {
-                for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
-                    Category cat = entry.getKey();
-                    if (cat.getId() == categoryId) {
-                        entry.setValue(updatedServices); // Update the services for this category
-                        break;
-                    }
-                }
-                session.setAttribute("categoryServiceMap", sessionCategoryServiceMap);
-            }
-            
-            // Add success message
-            session.setAttribute("successMessage", "Service added successfully!");
+			// Update the sessionCategoryServiceMap
+			@SuppressWarnings("unchecked")
+			Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
+					.getAttribute("categoryServiceMap");
 
-        } catch (Exception e) {
-            session.setAttribute("errorMessage", "Error adding service: " + e.getMessage());
-            e.printStackTrace();
-        }
-        // Redirect back to the category's services page
-        response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
-    }
+			if (sessionCategoryServiceMap != null) {
+				for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
+					Category cat = entry.getKey();
+					if (cat.getId() == categoryId) {
+						entry.setValue(updatedServices); // Update the services for this category
+						break;
+					}
+				}
+				session.setAttribute("categoryServiceMap", sessionCategoryServiceMap);
+			}
+
+			// Add success message
+			session.setAttribute("successMessage", "Service added successfully!");
+
+		} catch (Exception e) {
+			session.setAttribute("errorMessage", "Error adding service: " + e.getMessage());
+			e.printStackTrace();
+		}
+		// Redirect back to the category's services page
+		response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
+	}
 }
