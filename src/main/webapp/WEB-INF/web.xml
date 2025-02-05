@@ -124,12 +124,12 @@
 		<url-pattern>/logout</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>timeSlotLogic</servlet-name>
-		<servlet-class>CONTROLLER.timeSlotLogic</servlet-class>
+		<servlet-name>TimeSlotController</servlet-name>
+		<servlet-class>CONTROLLER.TimeSlotController</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>timeSlotLogic</servlet-name>
-		<url-pattern>/timeSlotLogic</url-pattern>
+		<servlet-name>TimeSlotController</servlet-name>
+		<url-pattern>/TimeSlotController</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>UserServlet</servlet-name>
