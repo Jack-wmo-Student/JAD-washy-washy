@@ -26,7 +26,7 @@ public class categoryService extends HttpServlet {
     private static final String DB_URL = System.getenv("DB_URL");
     private static final String DB_USER = System.getenv("DB_USER");
     private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
-    private static final String DB_CLASS = System.getenv("DB_CLASS"); // Add DB_CLASS here
+    private static final String DB_CLASS = System.getenv("DB_CLASS"); 
 
     public categoryService() {
         super();
@@ -41,7 +41,8 @@ public class categoryService extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+    	
+  
         // Database credentials check
         if (DB_URL == null || DB_USER == null || DB_PASSWORD == null || DB_CLASS == null) {
             System.err.println("Database credentials or DB_CLASS are missing!");

@@ -3,7 +3,7 @@
 <%@ page
 	import="java.util.Calendar, java.text.DateFormatSymbols, java.util.List, jakarta.servlet.http.HttpSession, java.util.Map, java.util.ArrayList, java.util.HashMap"%>
 <%@ page
-	import="MODEL.CLASS.Booking,MODEL.CLASS.TimeSlot,MODEL.CLASS.Category,MODEL.CLASS.Service"%>
+	import="MODEL.CLASS.Booking,MODEL.CLASS.TimeSlot,MODEL.CLASS.Category,MODEL.CLASS.Service, utils.*"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
