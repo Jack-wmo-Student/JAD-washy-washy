@@ -189,4 +189,21 @@
 		<servlet-name>cartHandler</servlet-name>
 		<url-pattern>/cartHandler</url-pattern>
 	</servlet-mapping>
+	<servlet>
+        <servlet-name>ServiceController</servlet-name>
+        <servlet-class>CONTROLLER.ServiceController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ServiceController</servlet-name>
+        <url-pattern>/ServiceController/*</url-pattern>
+    </servlet-mapping>
+    <!-- Category Servlet Configuration -->
+    <servlet>
+        <servlet-name>CategoryController</servlet-name>
+        <servlet-class>CONTROLLER.CategoryController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CategoryController</servlet-name>
+        <url-pattern>/CategoryController/*</url-pattern>
+    </servlet-mapping>
 </web-app>

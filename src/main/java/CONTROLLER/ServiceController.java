@@ -4,13 +4,11 @@ import MODEL.DAO.ServiceDAO;
 import MODEL.CLASS.Category;
 import MODEL.CLASS.Service;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import utils.sessionUtils;
 import java.io.IOException;
 import java.util.*;
 
-@WebServlet("/ServiceServlet/*")
 public class ServiceController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final ServiceDAO serviceDAO;
