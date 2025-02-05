@@ -60,11 +60,11 @@
 		<url-pattern>/feedbackLogic</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>bookingPageLogic</servlet-name>
-		<servlet-class>CONTROLLER.bookingPageLogic</servlet-class>
+		<servlet-name>BookingController</servlet-name>
+		<servlet-class>CONTROLLER.BookingController</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>bookingPageLogic</servlet-name>
+		<servlet-name>BookingController</servlet-name>
 		<url-pattern>/bookingPage</url-pattern>
 	</servlet-mapping>
 	<servlet>
