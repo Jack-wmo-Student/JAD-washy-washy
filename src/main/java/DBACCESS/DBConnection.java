@@ -15,9 +15,15 @@ public class DBConnection {
 		String dbPassword = System.getenv("DB_PASSWORD");
 		String dbClass = System.getenv("DB_CLASS");
 
+		System.out.println("dbUrl: " + dbUrl);
+		System.out.println("dbUser: " + dbUser);
+		System.out.println("dbPassword: " + dbPassword);
+		
+		
 		Connection connection = null;
 		try {
 			Class.forName(dbClass);
+			System.out.println("We are here in DBConnection");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

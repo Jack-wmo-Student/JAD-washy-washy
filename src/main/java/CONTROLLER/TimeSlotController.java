@@ -25,12 +25,7 @@ import utils.sessionUtils;
 
 public class TimeSlotController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	private final String dbClass = System.getenv("DB_CLASS");
-	private final String dbUrl = System.getenv("DB_URL");
-	private final String dbPassword = System.getenv("DB_PASSWORD");
-	private final String dbUser = System.getenv("DB_USER");
-
+	
 	public TimeSlotController() {
 		super();
 	}
