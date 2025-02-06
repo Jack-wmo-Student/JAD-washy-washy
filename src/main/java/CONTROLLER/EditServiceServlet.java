@@ -1,17 +1,20 @@
 package CONTROLLER;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import MODEL.CLASS.Service;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import utils.sessionUtils;
-
-import java.util.*;
-
-import MODEL.CLASS.Service;
 
 public class EditServiceServlet extends HttpServlet {
 
@@ -54,8 +57,8 @@ public class EditServiceServlet extends HttpServlet {
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
 						services.add(new Service(rs.getInt("service_id"), rs.getInt("category_id"),
-								rs.getString("service_name"), rs.getDouble("price"), rs.getInt("duration_in_hour"),
-								rs.getString("service_description")));
+								rs.getInt("status_id"), rs.getString("service_name"), rs.getDouble("price"),
+								rs.getInt("duration_in_hour"), rs.getString("service_description")));
 					}
 				}
 			}

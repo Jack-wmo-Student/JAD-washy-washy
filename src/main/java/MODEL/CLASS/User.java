@@ -45,7 +45,7 @@ public class User {
 	}
 
 	public boolean isIsBlocked() {
-		return is_blocked == 1;
+		return is_blocked != 1;
 	}
 
 	public void setIsBlocked(int is_blocked) {

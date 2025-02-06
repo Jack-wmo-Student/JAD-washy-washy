@@ -1,13 +1,18 @@
 package CONTROLLER;
 
-import MODEL.DAO.ServiceDAO;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import MODEL.CLASS.Category;
 import MODEL.CLASS.Service;
+import MODEL.DAO.ServiceDAO;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import utils.sessionUtils;
-import java.io.IOException;
-import java.util.*;
 
 public class ServiceController extends HttpServlet {
     private static final long serialVersionUID = 1L;

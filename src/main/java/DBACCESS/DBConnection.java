@@ -14,6 +14,10 @@ public class DBConnection {
 		String dbUser = System.getenv("DB_USER");
 		String dbPassword = System.getenv("DB_PASSWORD");
 		String dbClass = System.getenv("DB_CLASS");
+		System.out.println("dbClass: " + dbClass);
+		System.out.println("dbUrl: " + dbUrl);
+		System.out.println("dbUser: " + dbUser);
+		System.out.println("dbPassword: " + dbPassword);
 		
 		
 		Connection connection = null;

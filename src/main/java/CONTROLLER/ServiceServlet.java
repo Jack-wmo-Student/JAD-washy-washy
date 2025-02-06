@@ -1,18 +1,23 @@
 package CONTROLLER;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import MODEL.CLASS.Category;
+import MODEL.CLASS.Service;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import utils.sessionUtils;
-
-import java.io.IOException;
-import java.sql.*;
-import java.util.*;
-
-import MODEL.CLASS.Category;
-import MODEL.CLASS.Service;
 
 public class ServiceServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -76,8 +81,9 @@ public class ServiceServlet extends HttpServlet {
 			try (ResultSet rsServices = psServices.executeQuery()) {
 				while (rsServices.next()) {
 					services.add(new Service(rsServices.getInt("service_id"), rsServices.getInt("category_id"),
-							rsServices.getString("service_name"), rsServices.getDouble("price"),
-							rsServices.getInt("duration_in_hour"), rsServices.getString("service_description")));
+							rsServices.getInt("status_id"), rsServices.getString("service_name"),
+							rsServices.getDouble("price"), rsServices.getInt("duration_in_hour"),
+							rsServices.getString("service_description")));
 				}
 			}
 
@@ -135,8 +141,9 @@ public class ServiceServlet extends HttpServlet {
 			try (ResultSet rsServices = psFetchServices.executeQuery()) {
 				while (rsServices.next()) {
 					updatedServices.add(new Service(rsServices.getInt("service_id"), rsServices.getInt("category_id"),
-							rsServices.getString("service_name"), rsServices.getDouble("price"),
-							rsServices.getInt("duration_in_hour"), rsServices.getString("service_description")));
+							rsServices.getInt("status_id"), rsServices.getString("service_name"),
+							rsServices.getDouble("price"), rsServices.getInt("duration_in_hour"),
+							rsServices.getString("service_description")));
 				}
 			}
 
