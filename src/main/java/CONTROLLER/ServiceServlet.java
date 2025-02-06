@@ -76,8 +76,9 @@ public class ServiceServlet extends HttpServlet {
 			try (ResultSet rsServices = psServices.executeQuery()) {
 				while (rsServices.next()) {
 					services.add(new Service(rsServices.getInt("service_id"), rsServices.getInt("category_id"),
-							rsServices.getString("service_name"), rsServices.getDouble("price"),
-							rsServices.getInt("duration_in_hour"), rsServices.getString("service_description")));
+							rsServices.getInt("status_id"), rsServices.getString("service_name"),
+							rsServices.getDouble("price"), rsServices.getInt("duration_in_hour"),
+							rsServices.getString("service_description")));
 				}
 			}
 
@@ -135,8 +136,9 @@ public class ServiceServlet extends HttpServlet {
 			try (ResultSet rsServices = psFetchServices.executeQuery()) {
 				while (rsServices.next()) {
 					updatedServices.add(new Service(rsServices.getInt("service_id"), rsServices.getInt("category_id"),
-							rsServices.getString("service_name"), rsServices.getDouble("price"),
-							rsServices.getInt("duration_in_hour"), rsServices.getString("service_description")));
+							rsServices.getInt("status_id"), rsServices.getString("service_name"),
+							rsServices.getDouble("price"), rsServices.getInt("duration_in_hour"),
+							rsServices.getString("service_description")));
 				}
 			}
 

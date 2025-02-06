@@ -112,7 +112,34 @@ public class UserDAO {
 			throw new SQLException("Error retrieving user", e);
 		}
 	}
+	
+	public boolean CreateUser(String username, String password) throws SQLException {
+        String sql = "INSERT INTO users (status_id, role_id, username, password) VALUES (?, ?, ?, ?)";
 
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            // Set default values for status and role (modify as needed)
+            stmt.setInt(1, 1); // Default status_id
+            stmt.setInt(2, 2); // Default role_id
+            stmt.setString(3, username);
+            stmt.setString(4, password); // Consider hashing password before storing
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int userId = generatedKeys.getInt(1);
+                        new User(userId, username, 1, 1); // Create User object
+                    }
+                }
+                return true;
+            }
+        }
+
+        return false; // Return the created user or null if failed
+    }
+	
 	public void toggleUserBlock(int userId, int currentUserId) throws SQLException {
 		// Check if trying to block self
 		if (userId == currentUserId) {
@@ -198,6 +225,31 @@ public class UserDAO {
 		} catch (SQLException e) {
 			throw new SQLException("Error checking username availability", e);
 		}
+	}
+
+	public boolean isUsernameExists(String username) {
+		System.out.println("Checking username: " + username);
+		String checkQuery = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
+
+		try (Connection conn = DBConnection.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
+
+			stmt.setString(1, username);
+
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					int count = rs.getInt(1);
+					return count > 0; // Username exists
+				} else {
+					return false; // No results returned, username does not exist
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false; // Username does not exist
 	}
 
 	private User mapResultSetToUser(ResultSet rs) throws SQLException {

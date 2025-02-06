@@ -54,8 +54,8 @@ public class EditServiceServlet extends HttpServlet {
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
 						services.add(new Service(rs.getInt("service_id"), rs.getInt("category_id"),
-								rs.getString("service_name"), rs.getDouble("price"), rs.getInt("duration_in_hour"),
-								rs.getString("service_description")));
+								rs.getInt("status_id"), rs.getString("service_name"), rs.getDouble("price"),
+								rs.getInt("duration_in_hour"), rs.getString("service_description")));
 					}
 				}
 			}
