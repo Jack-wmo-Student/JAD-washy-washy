@@ -16,7 +16,7 @@
         <% if (error != null) { %>
             <p class="error"><%= error %></p>
         <% } %>
-        <form action="<%=request.getContextPath()%>/landingPage" method="POST">
+        <form action="<%=request.getContextPath()%>/landingPage" method="GET">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required>
             
