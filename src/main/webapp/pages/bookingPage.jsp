@@ -19,6 +19,8 @@
 	Calendar calendar = Calendar.getInstance();
 	int currentMonth = calendar.get(Calendar.MONTH); // 0-based
 	int currentYear = calendar.get(Calendar.YEAR);
+	int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+	
 	boolean isCurrentMonth = (currentMonth == Calendar.getInstance().get(Calendar.MONTH))
 			&& (currentYear == Calendar.getInstance().get(Calendar.YEAR));
 	String selectedService = request.getParameter("selectedService");
@@ -203,36 +205,52 @@
 
 			<!-- Days of the Month -->
 			<%
-			// Add empty slots for days before the first day of the month
-			for (int i = 1; i < firstDayOfWeek; i++) {
+				// Add empty slots for days before the first day of the month
+				for (int i = 1; i < firstDayOfWeek; i++) {
 			%>
-			<div class="day empty"></div>
+					<div class="day empty"></div>
 			<%
-			}
+				}
 			%>
 
 			<%
-			// Render days of the month
-			for (int day = 1; day <= daysInMonth; day++) {
-				String dayClass = isCurrentMonth ? "day" : "day disabled";
+				// Render days of the month
+				for (int day = 1; day <= daysInMonth; day++) {
+					String dayClass = "day";
+			        int currentMonthNow = calendar.get(Calendar.MONTH);
+			        int currentYearNow = calendar.get(Calendar.YEAR);
+				
+					// Check if it is current day
+					if(day == currentDay && currentMonth == currentMonthNow && currentYear == currentYearNow) {
+						dayClass += " current-day";
+					}
+					
+					// Check if the date is in the past
+					Calendar checkDate = Calendar.getInstance();
+					checkDate.set(currentYear, currentMonth, day, 0, 0, 0);
+					boolean isPastDate = checkDate.before(calendar);
+					if(isPastDate) {
+						dayClass += " disabled";
+					}
+					
 			%>
-			<div class="<%=dayClass%>"
-				<%=isCurrentMonth ? "onclick='bookSlot(" + day + ", " + (currentMonth + 1) + ", " + currentYear + ")'" : ""%>>
-				<%=day%>
-			</div>
+				<div class="<%=dayClass%>"
+					<%=isCurrentMonth ? "onclick='bookSlot(" + day + ", " + (currentMonth + 1) + ", " + currentYear + ")'" : ""%>>
+					<%=day%>
+				</div>
 			<%
-			}
-			// Calculate and add empty slots after the last day to complete the week
-			int totalCells = firstDayOfWeek - 1 + daysInMonth; // Total cells filled so far
-			int remainingCells = 7 - (totalCells % 7); // Remaining cells to complete the last week
-
-			if (remainingCells < 7) { // Add empty cells only if they are needed
-			for (int i = 0; i < remainingCells; i++) {
+				}
+				// Calculate and add empty slots after the last day to complete the week
+				int totalCells = firstDayOfWeek - 1 + daysInMonth; // Total cells filled so far
+				int remainingCells = 7 - (totalCells % 7); // Remaining cells to complete the last week
+	
+				if (remainingCells < 7) { // Add empty cells only if they are needed
+					for (int i = 0; i < remainingCells; i++) {
 			%>
-			<div class="day empty"></div>
+				<div class="day empty"></div>
 			<%
-			}
-			}
+					}
+				}
 			%>
 		</div>
 	</div>
