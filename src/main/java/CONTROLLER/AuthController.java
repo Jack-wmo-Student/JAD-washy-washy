@@ -51,6 +51,7 @@ public class AuthController extends HttpServlet {
 				// Use session attributes for sensitive user data
 				HttpSession session = request.getSession();
 				session.setAttribute("currentUser", validatedUser);
+				session.setAttribute("isAdmin", validatedUser.isIsAdmin());
 
 				// Redirect to homePage
 				response.sendRedirect(request.getContextPath() + "/pages/homePage.jsp");
