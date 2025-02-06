@@ -21,7 +21,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>categoryService</servlet-name>
-		<servlet-class>CONTROLLER.categoryService</servlet-class>
+		<servlet-class>CONTROLLER.CategoryServiceController</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>categoryService</servlet-name>
