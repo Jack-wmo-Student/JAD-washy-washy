@@ -1,13 +1,6 @@
 
 package CONTROLLER;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +8,11 @@ import java.util.Map;
 import MODEL.CLASS.Category;
 import MODEL.CLASS.Service;
 import MODEL.DAO.CategoryServiceDAO;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 public class CategoryServiceController extends HttpServlet {
 	private static final long serialVersionUID = 1L;

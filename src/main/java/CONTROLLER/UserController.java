@@ -1,14 +1,18 @@
 package CONTROLLER;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
+import java.util.List;
+
 import MODEL.CLASS.User;
 import MODEL.DAO.UserDAO;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import utils.sessionUtils;
-import utils.passwordUtils;
-import java.util.*;
 
 @WebServlet("/user/*")
 public class UserController extends HttpServlet {

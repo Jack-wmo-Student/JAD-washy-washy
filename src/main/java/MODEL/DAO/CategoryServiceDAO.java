@@ -1,10 +1,17 @@
 package MODEL.DAO;
 
-import DBACCESS.DBConnection;
-import MODEL.CLASS.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.sql.*;
-import java.util.*;
+import DBACCESS.DBConnection;
+import MODEL.CLASS.Category;
+import MODEL.CLASS.Service;
 
 public class CategoryServiceDAO {
 

@@ -1,24 +1,19 @@
 package CONTROLLER;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import MODEL.CLASS.Booking;
 import MODEL.CLASS.TimeSlot;
 import MODEL.DAO.BookingDAO;
-
-import java.util.HashMap;
-import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.sql.*;
-import java.util.List;
-
 import utils.sessionUtils;
 
 public class BookingController extends HttpServlet {
