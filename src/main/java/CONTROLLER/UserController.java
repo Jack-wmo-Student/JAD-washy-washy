@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import utils.sessionUtils;
 
-@WebServlet("/user/*")
 public class UserController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final UserDAO userDAO = new UserDAO();
@@ -28,7 +27,7 @@ public class UserController extends HttpServlet {
                 return;
             }
 
-            // Get all users
+            // Get all users using the DAO
             List<User> users = userDAO.getAllUsers();
             request.setAttribute("users", users);
             
@@ -64,11 +63,13 @@ public class UserController extends HttpServlet {
 
             switch (pathInfo) {
                 case "/toggle-block":
-                    handleToggleBlock(targetUserId, currentUserId, response);
+                    userDAO.toggleUserBlock(targetUserId, currentUserId);
+                    sendJsonResponse(response, 200, "User block status updated successfully");
                     break;
                     
                 case "/toggle-admin":
-                    handleToggleAdmin(targetUserId, currentUserId, response);
+                    userDAO.toggleAdminStatus(targetUserId, currentUserId);
+                    sendJsonResponse(response, 200, "User admin status updated successfully");
                     break;
                     
                 case "/update":
@@ -86,46 +87,16 @@ public class UserController extends HttpServlet {
         }
     }
 
-    private void handleToggleBlock(int targetUserId, int currentUserId, HttpServletResponse response) 
-            throws IOException {
-        try {
-            userDAO.toggleUserBlock(targetUserId, currentUserId);
-            sendJsonResponse(response, 200, "User block status updated successfully");
-        } catch (Exception e) {
-            sendJsonResponse(response, 400, e.getMessage());
-        }
-    }
-
-    private void handleToggleAdmin(int targetUserId, int currentUserId, HttpServletResponse response) 
-            throws IOException {
-        try {
-            userDAO.toggleAdminStatus(targetUserId, currentUserId);
-            sendJsonResponse(response, 200, "User admin status updated successfully");
-        } catch (Exception e) {
-            sendJsonResponse(response, 400, e.getMessage());
-        }
-    }
-
     private void handleUpdateUser(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
         try {
-            // Extract parameters
             int userId = Integer.parseInt(request.getParameter("userId"));
             String username = request.getParameter("username");
-            String password = request.getParameter("password");
-            String confirmPassword = request.getParameter("confirmPassword");
 
             // Validate input
             if (username == null || username.trim().isEmpty()) {
                 sendJsonResponse(response, 400, "Username cannot be empty");
                 return;
-            }
-
-            if (password != null && !password.isEmpty()) {
-                if (!password.equals(confirmPassword)) {
-                    sendJsonResponse(response, 400, "Passwords do not match");
-                    return;
-                }
             }
 
             // Check if username is taken
@@ -134,17 +105,13 @@ public class UserController extends HttpServlet {
                 return;
             }
 
-            // Update user
+            // Update user using DAO
             User user = new User();
             user.setUserId(userId);
             user.setUsername(username);
-//            if (password != null && !password.isEmpty()) {
-//                user.setPassword(passwordUtils.hashPassword(password));
-//            }
-
             userDAO.updateUser(user);
+            
             sendJsonResponse(response, 200, "User updated successfully");
-
         } catch (Exception e) {
             sendJsonResponse(response, 400, e.getMessage());
         }
@@ -152,7 +119,6 @@ public class UserController extends HttpServlet {
 
     private boolean validateAdminAccess(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
-        // Check if user is logged in
         if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
             if (isAjaxRequest(request)) {
                 sendJsonResponse(response, 401, "You must be logged in");
@@ -167,7 +133,6 @@ public class UserController extends HttpServlet {
             return false;
         }
 
-        // Check if user is admin
         if (!sessionUtils.isAdmin(request)) {
             if (isAjaxRequest(request)) {
                 sendJsonResponse(response, 403, "Admin access required");
@@ -189,12 +154,7 @@ public class UserController extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(status);
-        
-        // Simple JSON string construction
-        String jsonResponse = String.format("{\"message\": \"%s\"}", 
-            message.replace("\"", "\\\"")  // Escape quotes in message
-        );
-        
-        response.getWriter().write(jsonResponse);
+        response.getWriter().write(String.format("{\"message\": \"%s\"}", 
+            message.replace("\"", "\\\"")));
     }
 }

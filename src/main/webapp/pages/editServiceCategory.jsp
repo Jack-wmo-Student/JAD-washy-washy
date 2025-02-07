@@ -7,8 +7,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Create Category</title>
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/assets/serviceManagement.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<link rel="stylesheet"href="<%=request.getContextPath()%>/assets/serviceManagement.css">
+	<link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css">
 </head>
 <body>
 	<%
@@ -24,8 +25,14 @@
 		return;
 	}
 	%>
+	<div>
+		<%@ include file="/component/navbar.jsp"%>
+	</div>
 	<div class="container">
-		<%@ include file="../component/adminSidebar.jsp"%>
+           <!--  Side bar -->
+		<div>
+    		<%@ include file="../component/adminSidebar.jsp" %>
+    	</div>
 		<h2>Create Service Category</h2>
 
 		<!-- Display success or error messages -->
@@ -45,7 +52,7 @@
 		%>
 
 		<!-- Category form -->
-		<form action="<%=request.getContextPath()%>/CreateCategoryServlet"
+		<form action="<%=request.getContextPath()%>/CategoryController"
 			method="post">
 			<div>
 				<label for="categoryName">Category Name:</label> <input type="text"
@@ -97,10 +104,9 @@
 						</form>
 
 						<!-- Delete Button -->
-						<form action="<%=request.getContextPath()%>/DeleteCategoryServlet"
-							method="post">
-							<input type="hidden" name="categoryId" value="<%=cat.getId()%>" />
-							<button type="submit">Delete Category</button>
+						<form action="<%=request.getContextPath()%>/CategoryController/delete" method="post">
+						    <input type="hidden" name="categoryId" value="<%=cat.getId()%>" />
+						    <button type="submit">Delete Category</button>
 						</form>
 					</div>
 				</td>
