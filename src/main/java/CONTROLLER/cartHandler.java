@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import MODEL.CLASS.CartItem;
+import MODEL.CLASS.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ public class cartHandler extends HttpServlet {
 		super();
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -41,8 +43,8 @@ public class cartHandler extends HttpServlet {
 			session.setAttribute("bookingIdLists", bookingIdLists);
 		}
 		
-
-		Integer userId = (Integer) session.getAttribute("userId");
+		User user = (User) session.getAttribute("currentUser");
+		Integer userId = user.getUserId();
 		if (userId == null) {
 			response.sendRedirect(
 					request.getContextPath() + "/pages/login.jsp?error=Invalid session. Please log in again.");

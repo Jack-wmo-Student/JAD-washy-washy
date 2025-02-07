@@ -140,7 +140,7 @@ public class BookingController extends HttpServlet {
 			};
 
 			
-			request.getRequestDispatcher("/timeSlotLogic").forward(wrappedRequest, response);
+			request.getRequestDispatcher("/TimeSlotController").forward(wrappedRequest, response);
 		}
 	}
 
