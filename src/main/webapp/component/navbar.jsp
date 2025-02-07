@@ -13,7 +13,7 @@
 		<h2>JAD-Washy-Washy</h2>
 		<ul class="nav-links">
 			<!-- Home Link -->
-			<li><a href="<%=request.getContextPath()%>/pages/homePage.jsp">Home</a></li>
+			<li><a href="<%=request.getContextPath()%>/categoryService">Home</a></li>
 
 			<!-- Admin Dashboard Link -->
 			<%
