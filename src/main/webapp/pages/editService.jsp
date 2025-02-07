@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Create Service for <%=matchingCategory.getName()%></title>
+    <title>Create Service for Category</title>
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/serviceManagement.css">
 </head>
 <body>
