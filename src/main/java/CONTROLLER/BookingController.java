@@ -7,6 +7,7 @@ import java.util.Map;
 
 import MODEL.CLASS.Booking;
 import MODEL.CLASS.TimeSlot;
+import MODEL.CLASS.User;
 import MODEL.DAO.BookingDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -30,7 +31,7 @@ public class BookingController extends HttpServlet {
 		// Check if the user is logged in or not
 		HttpSession session = request.getSession(false);
 		// Check if the user is logged in
-		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session==null || session.getAttribute("userId") == null) {
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session==null || session.getAttribute("currentUser") == null) {
 			// Handle invalid login
 			request.setAttribute("error", "You must log in first.");
 			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
@@ -38,7 +39,8 @@ public class BookingController extends HttpServlet {
 		}
 		
 		//Get the user Id 
-		int user_id = (int) session.getAttribute("userId");
+		User user = (User) session.getAttribute("currentUser");
+		int user_id = user.getUserId();
 		
 	  	List<Booking> bookingList = new ArrayList<>();
 		

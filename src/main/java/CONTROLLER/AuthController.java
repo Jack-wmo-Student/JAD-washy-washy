@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import MODEL.CLASS.User;
+import MODEL.DAO.CategoryServiceDAO;
 import MODEL.DAO.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -41,7 +42,7 @@ public class AuthController extends HttpServlet {
 			} else {
 				// Set a lightweight cookie for session validation
 				Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
-				isLoggedInCookie.setPath("/"); // Cookie is valid for the entire domain
+				isLoggedInCookie.setPath(request.getContextPath()); // Cookie is valid for the entire domain
 				isLoggedInCookie.setHttpOnly(true); // Prevent JavaScript access
 				isLoggedInCookie.setSecure(false); // Ensure it's sent only over HTTPS
 				isLoggedInCookie.setMaxAge(60 * 60); // Cookie expiry: 1 hour
@@ -50,10 +51,12 @@ public class AuthController extends HttpServlet {
 
 				// Use session attributes for sensitive user data
 				HttpSession session = request.getSession();
+				// Restore categoryServiceMap if it's missing
 				session.setAttribute("currentUser", validatedUser);
+				session.setAttribute("isAdmin", validatedUser.isIsAdmin());
 
 				// Redirect to homePage
-				response.sendRedirect(request.getContextPath() + "/pages/homePage.jsp");
+				response.sendRedirect(request.getContextPath() + "/categoryService");
 			}
 		} else {
 			// Handle invalid login
@@ -91,8 +94,8 @@ public class AuthController extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-        // Hash the password
+
+		// Hash the password
 		String hashedPassword = passwordUtils.hashPassword(password);
 		// Save user to the database
 		boolean isRegistered = false;
