@@ -12,7 +12,7 @@ public class sessionUtils {
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if (cookieName.equals(cookie.getName())) {
-                    	return cookie!=null && Boolean.parseBoolean(cookie.getValue()); // Return the cookie's value if found
+                    	return Boolean.parseBoolean(cookie.getValue()); // Return the cookie's value if found
                     }
                 }
             }

@@ -14,66 +14,67 @@
 	href="<%=request.getContextPath()%>/assets/navbar.css">
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/assets/bookingPage.css">
+
 <%
-	// Get current month and year dynamically or from request parameters for navigation
-	Calendar calendar = Calendar.getInstance();
-	int currentMonth = calendar.get(Calendar.MONTH); // 0-based
-	int currentYear = calendar.get(Calendar.YEAR);
-	int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-	
-	boolean isCurrentMonth = (currentMonth == Calendar.getInstance().get(Calendar.MONTH))
-			&& (currentYear == Calendar.getInstance().get(Calendar.YEAR));
-	String selectedService = request.getParameter("selectedService");
-	
-	String paramMonth = request.getParameter("month");
-	String paramYear = request.getParameter("year");
-	
-	// Get the Category service map
-	@SuppressWarnings("unchecked")
-	Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
-			.getAttribute("categoryServiceMap");
-	
-	List<Map<String, Object>> serviceLists = new ArrayList<>();
-	
-	// Get all the services from the map
-	for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
-		List<Service> services = entry.getValue();
-	
-		for (Service srv : services) {
-			Map<String, Object> tempMap = new HashMap<>();
-			tempMap.put("service_name", srv.getName().toString());
-			tempMap.put("service_id", srv.getId());
-	
-			serviceLists.add(tempMap);
-		}
+// Get current month and year dynamically or from request parameters for navigation
+Calendar calendar = Calendar.getInstance();
+int currentMonth = calendar.get(Calendar.MONTH); // 0-based
+int currentYear = calendar.get(Calendar.YEAR);
+int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+boolean isCurrentMonth = (currentMonth == Calendar.getInstance().get(Calendar.MONTH))
+		&& (currentYear == Calendar.getInstance().get(Calendar.YEAR));
+String selectedService = request.getParameter("selectedService");
+
+String paramMonth = request.getParameter("month");
+String paramYear = request.getParameter("year");
+
+// Get the Category service map
+@SuppressWarnings("unchecked")
+Map<Category, List<Service>> sessionCategoryServiceMap = (Map<Category, List<Service>>) session
+		.getAttribute("categoryServiceMap");
+
+List<Map<String, Object>> serviceLists = new ArrayList<>();
+
+// Get all the services from the map
+for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
+	List<Service> services = entry.getValue();
+
+	for (Service srv : services) {
+		Map<String, Object> tempMap = new HashMap<>();
+		tempMap.put("service_name", srv.getName().toString());
+		tempMap.put("service_id", srv.getId());
+
+		serviceLists.add(tempMap);
 	}
-	
-	if (paramMonth != null && paramYear != null) {
-		currentMonth = Integer.parseInt(paramMonth) - 1; // Convert to 0-based
-		currentYear = Integer.parseInt(paramYear);
-	}
-	
-	calendar.set(currentYear, currentMonth, 1);
-	int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-	int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-	
-	String monthName = new DateFormatSymbols().getMonths()[currentMonth];
-	
-	// Determine previous and next month/year
-	int prevMonth = currentMonth - 1;
-	int prevYear = currentYear;
-	int nextMonth = currentMonth + 1;
-	int nextYear = currentYear;
-	
-	if (prevMonth < 0) {
-		prevMonth = 11;
-		prevYear--;
-	}
-	
-	if (nextMonth > 11) {
-		nextMonth = 0;
-		nextYear++;
-	}
+}
+
+if (paramMonth != null && paramYear != null) {
+	currentMonth = Integer.parseInt(paramMonth) - 1; // Convert to 0-based
+	currentYear = Integer.parseInt(paramYear);
+}
+
+calendar.set(currentYear, currentMonth, 1);
+int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+String monthName = new DateFormatSymbols().getMonths()[currentMonth];
+
+// Determine previous and next month/year
+int prevMonth = currentMonth - 1;
+int prevYear = currentYear;
+int nextMonth = currentMonth + 1;
+int nextYear = currentYear;
+
+if (prevMonth < 0) {
+	prevMonth = 11;
+	prevYear--;
+}
+
+if (nextMonth > 11) {
+	nextMonth = 0;
+	nextYear++;
+}
 %>
 </head>
 <body>
@@ -135,12 +136,12 @@
 			<%
 			try {
 				// Retrieve the session stuffs
-				if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null) {
-				// Handle invalid login
-				request.setAttribute("error", "You must log in first.");
-				request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
-				return;
-			}
+// 				if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
+// 					// Handle invalid login
+// 					request.setAttribute("error", "You must log in first.");
+// 					request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+// 					return;
+// 				}
 				@SuppressWarnings("unchecked")
 				List<Booking> bookingLists = (List<Booking>) session.getAttribute("bookingLists");
 
@@ -205,52 +206,51 @@
 
 			<!-- Days of the Month -->
 			<%
-				// Add empty slots for days before the first day of the month
-				for (int i = 1; i < firstDayOfWeek; i++) {
+			// Add empty slots for days before the first day of the month
+			for (int i = 1; i < firstDayOfWeek; i++) {
 			%>
-					<div class="day empty"></div>
+			<div class="day empty"></div>
 			<%
-				}
+			}
 			%>
 
 			<%
-				// Render days of the month
-				for (int day = 1; day <= daysInMonth; day++) {
-					String dayClass = "day";
-			        int currentMonthNow = calendar.get(Calendar.MONTH);
-			        int currentYearNow = calendar.get(Calendar.YEAR);
-				
-					// Check if it is current day
-					if(day == currentDay && currentMonth == currentMonthNow && currentYear == currentYearNow) {
-						dayClass += " current-day";
-					}
-					
-					// Check if the date is in the past
-					Calendar checkDate = Calendar.getInstance();
-					checkDate.set(currentYear, currentMonth, day, 0, 0, 0);
-					boolean isPastDate = checkDate.before(calendar);
-					if(isPastDate) {
-						dayClass += " disabled";
-					}
-					
-			%>
-				<div class="<%=dayClass%>"
-					<%=isCurrentMonth ? "onclick='bookSlot(" + day + ", " + (currentMonth + 1) + ", " + currentYear + ")'" : ""%>>
-					<%=day%>
-				</div>
-			<%
+			// Render days of the month
+			for (int day = 1; day <= daysInMonth; day++) {
+				String dayClass = "day";
+				int currentMonthNow = calendar.get(Calendar.MONTH);
+				int currentYearNow = calendar.get(Calendar.YEAR);
+
+				// Check if it is current day
+				if (day == currentDay && currentMonth == currentMonthNow && currentYear == currentYearNow) {
+					dayClass += " current-day";
 				}
-				// Calculate and add empty slots after the last day to complete the week
-				int totalCells = firstDayOfWeek - 1 + daysInMonth; // Total cells filled so far
-				int remainingCells = 7 - (totalCells % 7); // Remaining cells to complete the last week
-	
-				if (remainingCells < 7) { // Add empty cells only if they are needed
-					for (int i = 0; i < remainingCells; i++) {
-			%>
-				<div class="day empty"></div>
-			<%
-					}
+
+				// Check if the date is in the past
+				Calendar checkDate = Calendar.getInstance();
+				checkDate.set(currentYear, currentMonth, day, 0, 0, 0);
+				boolean isPastDate = checkDate.before(calendar);
+				if (isPastDate) {
+					dayClass += " disabled";
 				}
+			%>
+			<div class="<%=dayClass%>"
+				<%=isCurrentMonth ? "onclick='bookSlot(" + day + ", " + (currentMonth + 1) + ", " + currentYear + ")'" : ""%>>
+				<%=day%>
+			</div>
+			<%
+			}
+			// Calculate and add empty slots after the last day to complete the week
+			int totalCells = firstDayOfWeek - 1 + daysInMonth; // Total cells filled so far
+			int remainingCells = 7 - (totalCells % 7); // Remaining cells to complete the last week
+
+			if (remainingCells < 7) { // Add empty cells only if they are needed
+			for (int i = 0; i < remainingCells; i++) {
+			%>
+			<div class="day empty"></div>
+			<%
+			}
+			}
 			%>
 		</div>
 	</div>

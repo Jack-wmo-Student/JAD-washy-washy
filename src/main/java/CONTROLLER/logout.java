@@ -53,7 +53,7 @@ public class logout extends HttpServlet {
 				if ("isLoggedIn".equals(cookie.getName())) {
 					cookie.setValue(""); // Clear the value
 					cookie.setMaxAge(0); // Invalidate the cookie immediately
-					cookie.setPath("/"); // Ensure the path matches the cookie's original path
+					cookie.setPath(request.getContextPath()); // Ensure the path matches the cookie's original path
 					cookie.setSecure(false); // Ensure it's only sent over HTTPS
 					cookie.setHttpOnly(true); // Prevent JavaScript access
 					response.addCookie(cookie); // Add the cleared cookie to the response
