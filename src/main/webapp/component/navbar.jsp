@@ -65,7 +65,7 @@
 		<!-- Login/Logout Button -->
 		<%
 		// Use sessionUtils.isLoggedIn to check login status
-		if (sessionUtils.isLoggedIn(request, "isLoggedIn")) { // Assuming "isLoggedIn" is the cookie name
+		if (sessionUtils.isLoggedIn(request, "isLoggedIn") && request.getSession(false)!= null && session.getAttribute("currentUser") != null) { // Assuming "isLoggedIn" is the cookie name
 		%>
 		<div class="profile-dropdown-container">
 			<select class="dropdown" onchange="handleProfileAction(this.value)">
