@@ -219,6 +219,11 @@
 					String dayClass = "day";
 			        int currentMonthNow = calendar.get(Calendar.MONTH);
 			        int currentYearNow = calendar.get(Calendar.YEAR);
+			        
+			        // Create instance that is 2 weeks in the future
+			        Calendar twoWeeksFromNow = Calendar.getInstance();
+					twoWeeksFromNow.add(Calendar.DAY_OF_MONTH, 14);  // Add 14 days
+
 				
 					// Check if it is current day
 					if(day == currentDay && currentMonth == currentMonthNow && currentYear == currentYearNow) {
@@ -229,7 +234,8 @@
 					Calendar checkDate = Calendar.getInstance();
 					checkDate.set(currentYear, currentMonth, day, 0, 0, 0);
 					boolean isPastDate = checkDate.before(calendar);
-					if(isPastDate) {
+					boolean isLessThanTwoWeeks = checkDate.before(twoWeeksFromNow);
+					if(isPastDate || isLessThanTwoWeeks) {
 						dayClass += " disabled";
 					}
 					

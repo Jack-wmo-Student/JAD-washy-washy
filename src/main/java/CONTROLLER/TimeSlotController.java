@@ -65,9 +65,9 @@ public class TimeSlotController extends HttpServlet {
 		}
 
 		try {
-			// Get the timeslot_id, duration_in_hour and price from 'service_timeslot' using
+			// Get the timeslot_id, created_at, duration_in_hour and price from 'service_timeslot' using
 			// service id and date
-			Map<String, Object> smallInfo = TimeSlotDAO.getSmallInfoByServiceIdAndDate(date, serviceId);
+			Map<String, Object> smallInfo = TimeSlotDAO.getTimeSlotSheets(date, serviceId);
 
 			// Get all the time slots from the 'timeslot'
 			if (smallInfo == null || smallInfo.isEmpty()) {
@@ -81,6 +81,9 @@ public class TimeSlotController extends HttpServlet {
 				return;
 			}
 
+			// Here, I need to show the 
+			
+			
 			List<Integer> timeslots = TimeSlotDAO.getTimeslotsByTimeslotId((int) smallInfo.get("timeslot_id"));
 
 			// add lunch break to timeslots

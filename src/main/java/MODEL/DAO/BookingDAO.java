@@ -18,7 +18,7 @@ public class BookingDAO {
 		List<Map<String, Object>> resultList = new ArrayList<>();
 		
 		String query = """
-	            SELECT 
+	            SELECT
 	                b.booking_id,
 	                b.booked_date,
 	                s.service_name,

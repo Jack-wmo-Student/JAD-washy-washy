@@ -12,13 +12,14 @@ import java.util.Map;
 import DBACCESS.DBConnection;
 
 public class TimeSlotDAO {
-	public static Map<String, Object> getSmallInfoByServiceIdAndDate(String date, int serviceId) throws SQLException {
+	public static Map<String, Object> getTimeSlotSheets(String date, int serviceId) throws SQLException {
 		System.out.println("We are in the model to get the small data");
 
 		// Set the stuffs
 		String query = """
 				SELECT
 					st.timeslot_id,
+					st.created_at  
 					s.service_name,
 					s.duration_in_hour
 				FROM
