@@ -80,7 +80,7 @@
                 %>
                 <div>No timeslots available.</div>
                 <% 
-                    }  
+                    }
                 %>
             </div>
         </form>
