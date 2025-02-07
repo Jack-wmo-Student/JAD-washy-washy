@@ -183,7 +183,7 @@ button:hover {
 			</thead>
 			<tbody>
 				<%
-				List<User> users = (List<User>) request.getAttribute("users");
+				List<User> users = (List<User>)request.getAttribute("users");
 				if (users != null) {
 					for (User user : users) {
 						int currentUserId = (int) session.getAttribute("userId");

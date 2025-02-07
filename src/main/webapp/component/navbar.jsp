@@ -19,7 +19,7 @@
 			<%
 			// Check if user is an admin from the session
 			Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
-			if (isAdmin != null && isAdmin) { // Check if user is an admin
+			if (sessionUtils.isLoggedIn(request, "isLoggedIn") { // Check if user is an admin
 			%>
 
 			<li><a href="<%=request.getContextPath()%>/UserServlet">Admin
