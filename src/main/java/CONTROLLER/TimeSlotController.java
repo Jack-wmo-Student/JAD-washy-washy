@@ -166,57 +166,46 @@ public class TimeSlotController extends HttpServlet {
 //			    to_send_front_end.put(time_range, is_available ? "available" : "unavailable");
 //			});
 
-			for (int i = 0; i < all_time_slots.length; i += service_duration) {
-			    // Check if we have enough remaining slots for the full service duration
-			    if (i + service_duration > all_time_slots.length) {
-			        break;  // Not enough slots remaining
-			    }
-			    
+			for (int i = 0; i < all_time_slots.length - service_duration + 1; i++) {
 			    String start_time = all_time_slots[i];
 			    String end_time = all_time_slots[i + service_duration - 1];
 			    
-			    // Special handling for slots around lunch break
-			    boolean crosses_lunch = false;
-			    for (int j = i; j < i + service_duration; j++) {
-			        if (all_time_slots[j].contains("12pm")) {
-			            crosses_lunch = true;
-			            i = Arrays.asList(all_time_slots).indexOf("1pm-2pm"); // Skip to after lunch
-			            i--; // Compensate for i++ in loop
-			            break;
-			        }
+			    // Only skip if the start time is 12pm
+			    if (start_time.contains("12pm")) {
+			        continue;
 			    }
 			    
-			    if (!crosses_lunch) {
-			        Integer[] availability_array = time_slot_map.get(start_time);
-			        
-			        // Get specific time slots from database
+			    Integer[] availability_array = time_slot_map.get(start_time);
+			    
+			    if (availability_array != null) {
 			        Integer[] specific_time_slots = null;
 			        try {
 			            specific_time_slots = TimeSlotDAO.getSpecificTimeslotsByIds(start_time, time_slot_ids);
+			            
+			            // Update availability array
+			            for (int j = 0; j < specific_time_slots.length; j++) {
+			                if(specific_time_slots[j] == null) {
+			                    availability_array[j] = 0;
+			                } else {
+			                    availability_array[j] = 1;
+			                }
+			            }
+			            
+			            String time_range = start_time.split("-")[0] + "-" + end_time.split("-")[1];
+			            
+			            boolean is_available = false;
+			            if(availability_array.length == 4) {
+			                is_available = availability_array[3] != 1;
+			            } else {
+			                is_available = true;
+			            }
+			            
+			            to_send_front_end.put(time_range, is_available ? "available" : "unavailable");
+			            
 			        } catch (SQLException e) {
 			            e.printStackTrace();
 			            continue;
 			        }
-			        
-			        // Update availability array
-			        for (int j = 0; j < specific_time_slots.length; j++) {
-			            if(specific_time_slots[j] == null) {
-			                availability_array[j] = 0;
-			            } else {
-			                availability_array[j] = 1;
-			            }
-			        }
-			        
-			        String time_range = start_time.split("-")[0] + "-" + end_time.split("-")[1];
-			        
-			        boolean is_available = false;
-			        if(availability_array.length == 4) {
-			            is_available = availability_array[3] != 1;
-			        } else {
-			            is_available = true;
-			        }
-			        
-			        to_send_front_end.put(time_range, is_available ? "available" : "unavailable");
 			    }
 			}
 			
