@@ -18,28 +18,31 @@ public class UserController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final UserDAO userDAO = new UserDAO();
 
+ // In UserController.java
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
+        System.out.println("UserController doGet method called");
         try {
-            // Validate admin access
             if (!validateAdminAccess(request, response)) {
                 return;
             }
 
-            // Get all users using the DAO
             List<User> users = userDAO.getAllUsers();
+            System.out.println("Retrieved " + users.size() + " users");
             request.setAttribute("users", users);
-            
-            // Forward to JSP
             RequestDispatcher dispatcher = request.getRequestDispatcher("/pages/memberManagement.jsp");
             dispatcher.forward(request, response);
 
         } catch (Exception e) {
+            System.out.println("Error in UserController: " + e.getMessage());
+            e.printStackTrace();
             request.setAttribute("error", "Error retrieving users: " + e.getMessage());
             request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
     }
+    
+    
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 

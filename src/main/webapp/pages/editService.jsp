@@ -23,10 +23,10 @@
 
     // Fetching category details
     String requestCategoryId = request.getParameter("categoryId");
-    if (requestCategoryId == null || requestCategoryId.trim().isEmpty()) {
+/*     if (requestCategoryId == null || requestCategoryId.trim().isEmpty()) {
         response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
         return;
-    }
+    } */
 
     @SuppressWarnings("unchecked")
     Map<Category, List<Service>> sessionCategoryServiceMap = 
@@ -40,11 +40,6 @@
             matchingCategory = category;
             break;
         }
-    }
-
-    if (matchingCategory == null) {
-        response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
-        return;
     }
     %>
 

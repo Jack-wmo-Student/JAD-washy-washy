@@ -283,7 +283,7 @@ import MODEL.CLASS.User;
 public class UserDAO {
 	
 	public List<User> getAllUsers() throws SQLException {
-		String sql = "SELECT user_id, username, status_id, role_id FROM users ORDER BY username";
+		String sql = "SELECT user_id, username, status_id, role_id FROM users";
 		List<User> users = new ArrayList<>();
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 			try (ResultSet rs = ps.executeQuery()) {
