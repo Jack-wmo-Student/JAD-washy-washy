@@ -258,30 +258,30 @@ import MODEL.CLASS.User;
 
 public class UserDAO {
 
-	public boolean isUsernameExists(String username) {
-		System.out.println("Checking username: " + username);
-		String checkQuery = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
-
-		try (Connection conn = DBConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
-
-			stmt.setString(1, username);
-
-			try (ResultSet rs = stmt.executeQuery()) {
-				if (rs.next()) {
-					int count = rs.getInt(1);
-					return count > 0; // Username exists
-				} else {
-					return false; // No results returned, username does not exist
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return false; // Username does not exist
-	}
+//	public boolean isUsernameExists(String username) {
+//		System.out.println("Checking username: " + username);
+//		String checkQuery = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
+//
+//		try (Connection conn = DBConnection.getConnection();
+//				PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
+//
+//			stmt.setString(1, username);
+//
+//			try (ResultSet rs = stmt.executeQuery()) {
+//				if (rs.next()) {
+//					int count = rs.getInt(1);
+//					return count > 0; // Username exists
+//				} else {
+//					return false; // No results returned, username does not exist
+//				}
+//			}
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		return false; // Username does not exist
+//	}
 
 	public List<User> getAllUsers() throws SQLException {
 		String sql = "SELECT user_id, username, status_id, role_id FROM users";
@@ -409,26 +409,25 @@ public class UserDAO {
 //        }
 //        return null;
 //    }
-	
+
 	public boolean isUsernameExists(String username) throws SQLException {
-	    String sql = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
-	    
-	    try (Connection conn = DBConnection.getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql)) {
-	        
-	        ps.setString(1, username);
-	        
-	        try (ResultSet rs = ps.executeQuery()) {
-	            if (rs.next()) {
-	                return rs.getInt(1) > 0;
-	            }
-	        }
-	    } catch (SQLException e) {
-	        System.out.println("Error checking username existence: " + e.getMessage());
-	        throw e;
-	    }
-	    
-	    return false;
+		String sql = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
+
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, username);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt(1) > 0;
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("Error checking username existence: " + e.getMessage());
+			throw e;
+		}
+
+		return false;
 	}
 
 	public boolean createUser(String username, String password) throws SQLException {
@@ -464,17 +463,20 @@ public class UserDAO {
 		}
 	}
 
-	public void updateUser(User user) throws SQLException {
-		String sql = "UPDATE users SET username = ? WHERE user_id = ?";
+	public int updateUser(String username, String password, int userid) throws SQLException {
+		String sql = "UPDATE users SET username = ?, password = ? WHERE user_id = ?";
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			ps.setString(1, user.getUsername());
-			ps.setInt(2, user.getUserId());
+			ps.setString(1, username);
+			ps.setString(2, password);
+			ps.setInt(3, userid);
 
 			int rowsAffected = ps.executeUpdate();
 			if (rowsAffected == 0) {
-				throw new SQLException("User not found with ID: " + user.getUserId());
+				throw new SQLException("User not found with ID: " + userid);
+			} else {
+				return rowsAffected;
 			}
 		} catch (SQLException e) {
 			System.out.println("Error in updateUser: " + e.getMessage());

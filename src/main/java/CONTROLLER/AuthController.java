@@ -75,58 +75,58 @@ public class AuthController extends HttpServlet {
 //		}
 //	}
 
-	    @Override
-	    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-	            throws ServletException, IOException {
-	        String username = request.getParameter("username");
-	        String password = request.getParameter("password");
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
 
-	        // Hash the password
-	        String hashedPassword = passwordUtils.hashPassword(password);
+		// Hash the password
+		String hashedPassword = passwordUtils.hashPassword(password);
 
-	        // Validate the user using UserDAO
-	        UserDAO userDAO = new UserDAO();
-	        User validatedUser = userDAO.validateUser(username, hashedPassword);
+		// Validate the user using UserDAO
+		UserDAO userDAO = new UserDAO();
+		User validatedUser = userDAO.validateUser(username, hashedPassword);
 
-	        if (validatedUser != null) {
-	            if (validatedUser.isIsBlocked()) {
-	                request.setAttribute("error", "Your account is blocked. Please contact support.");
-	                request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
-	            } else {
-	                // Create and configure the session
-	                HttpSession session = request.getSession();
-	                
-	                // Store essential user information in session
-	                session.setAttribute("currentUser", validatedUser);
-	                session.setAttribute("isAdmin", validatedUser.isIsAdmin());
-	                
-	                // Set admin cookie if applicable
-	                if (validatedUser.isIsAdmin()) {
-	                    Cookie isAdminCookie = new Cookie("isAdmin", "true");
-	                    isAdminCookie.setPath("/");
-	                    isAdminCookie.setHttpOnly(true);
-	                    isAdminCookie.setSecure(false);
-	                    isAdminCookie.setMaxAge(60 * 60);
-	                    response.addCookie(isAdminCookie);
-	                }
-	                
-	                // Set logged in cookie
-	                Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
-	                isLoggedInCookie.setPath(request.getContextPath());
-	                isLoggedInCookie.setHttpOnly(true);
-	                isLoggedInCookie.setSecure(false);
-	                isLoggedInCookie.setMaxAge(60 * 60);
-	                response.addCookie(isLoggedInCookie);
+		if (validatedUser != null) {
+			if (validatedUser.isIsBlocked()) {
+				request.setAttribute("error", "Your account is blocked. Please contact support.");
+				request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+			} else {
+				// Create and configure the session
+				HttpSession session = request.getSession();
 
-	                response.sendRedirect(request.getContextPath() + "/categoryService");
-	            }
-	        } else {
-	            request.setAttribute("error", "Invalid username or password.");
-	            request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
-	        }
-	    }
+				// Store essential user information in session
+				session.setAttribute("currentUser", validatedUser);
+				session.setAttribute("isAdmin", validatedUser.isIsAdmin());
 
-	    // Rest of your existing doPost method remains the same
+				// Set admin cookie if applicable
+				if (validatedUser.isIsAdmin()) {
+					Cookie isAdminCookie = new Cookie("isAdmin", "true");
+					isAdminCookie.setPath("/");
+					isAdminCookie.setHttpOnly(true);
+					isAdminCookie.setSecure(false);
+					isAdminCookie.setMaxAge(60 * 60);
+					response.addCookie(isAdminCookie);
+				}
+
+				// Set logged in cookie
+				Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
+				isLoggedInCookie.setPath(request.getContextPath());
+				isLoggedInCookie.setHttpOnly(true);
+				isLoggedInCookie.setSecure(false);
+				isLoggedInCookie.setMaxAge(60 * 60);
+				response.addCookie(isLoggedInCookie);
+
+				response.sendRedirect(request.getContextPath() + "/categoryService");
+			}
+		} else {
+			request.setAttribute("error", "Invalid username or password.");
+			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+		}
+	}
+
+	// Rest of your existing doPost method remains the same
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -156,6 +156,9 @@ public class AuthController extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
