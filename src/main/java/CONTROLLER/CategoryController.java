@@ -45,7 +45,7 @@ public class CategoryController extends HttpServlet {
 
         String action = request.getPathInfo();
         if (action == null) {
-            action = "";
+            action = "/create"; // Default to create if no action specified
         }
 
         HttpSession session = request.getSession(false);
@@ -54,20 +54,27 @@ public class CategoryController extends HttpServlet {
             switch (action) {
                 case "/create":
                     handleCreate(request, session);
+                    request.setAttribute("successMessage", session.getAttribute("successMessage"));
+                    session.removeAttribute("successMessage");
                     break;
                 case "/delete":
                     handleDelete(request, session);
+                    request.setAttribute("successMessage", session.getAttribute("successMessage"));
+                    request.setAttribute("errorMessage", session.getAttribute("errorMessage"));
+                    session.removeAttribute("successMessage");
+                    session.removeAttribute("errorMessage");
                     break;
                 default:
-                    session.setAttribute("errorMessage", "Invalid action specified");
+                    request.setAttribute("errorMessage", "Invalid action specified");
                     break;
             }
         } catch (Exception e) {
-            session.setAttribute("errorMessage", "Error processing request: " + e.getMessage());
+            request.setAttribute("errorMessage", "Error processing request: " + e.getMessage());
             e.printStackTrace();
         }
 
-        response.sendRedirect(request.getContextPath() + "/CategoryServlet");
+        // Forward back to the edit page to show messages
+        request.getRequestDispatcher("/pages/editServiceCategory.jsp").forward(request, response);
     }
 
     private void handleCreate(HttpServletRequest request, HttpSession session) throws Exception {

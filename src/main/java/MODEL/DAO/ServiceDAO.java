@@ -73,13 +73,66 @@ public class ServiceDAO {
 	}
 
 	public boolean deleteService(int serviceId) throws SQLException, ClassNotFoundException {
-		String deleteSQL = "DELETE FROM service WHERE service_id = ?";
+	    // SQL to delete associated service timeslots
+	    String deleteServiceTimeslotsSQL = "DELETE FROM service_timeslot WHERE service_id = ?";
+	    
+	    // SQL to delete associated bookings
+	    String deleteBookingsSQL = "DELETE FROM booking WHERE service_id = ?";
+	    
+	    // SQL to delete the service itself
+	    String deleteServiceSQL = "DELETE FROM service WHERE service_id = ?";
 
-		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(deleteSQL)) {
+	    Connection conn = null;
+	    try {
+	        conn = getConnection();
+	        // Disable auto-commit to ensure transaction integrity
+	        conn.setAutoCommit(false);
 
-			ps.setInt(1, serviceId);
-			return ps.executeUpdate() > 0;
-		}
+	        // First, delete associated service timeslots
+	        try (PreparedStatement psServiceTimeslots = conn.prepareStatement(deleteServiceTimeslotsSQL)) {
+	            psServiceTimeslots.setInt(1, serviceId);
+	            int serviceTimeslotsDeleted = psServiceTimeslots.executeUpdate();
+	            System.out.println("Number of service timeslots deleted: " + serviceTimeslotsDeleted);
+	        }
+
+	        // Next, delete associated bookings
+	        try (PreparedStatement psBookings = conn.prepareStatement(deleteBookingsSQL)) {
+	            psBookings.setInt(1, serviceId);
+	            int bookingsDeleted = psBookings.executeUpdate();
+	            System.out.println("Number of bookings deleted: " + bookingsDeleted);
+	        }
+
+	        // Finally, delete the service itself
+	        try (PreparedStatement psService = conn.prepareStatement(deleteServiceSQL)) {
+	            psService.setInt(1, serviceId);
+	            int serviceRowsDeleted = psService.executeUpdate();
+
+	            // Commit the transaction if everything succeeded
+	            conn.commit();
+
+	            return serviceRowsDeleted > 0;
+	        }
+	    } catch (SQLException e) {
+	        // If anything goes wrong, roll back the transaction
+	        if (conn != null) {
+	            try {
+	                conn.rollback();
+	            } catch (SQLException rollbackEx) {
+	                rollbackEx.printStackTrace();
+	            }
+	        }
+	        throw e; // Re-throw the original exception
+	    } finally {
+	        // Restore default auto-commit behavior and close connection
+	        if (conn != null) {
+	            try {
+	                conn.setAutoCommit(true);
+	                conn.close();
+	            } catch (SQLException closeEx) {
+	                closeEx.printStackTrace();
+	            }
+	        }
+	    }
 	}
 
 	public List<Service> getServicesByCategory(int categoryId) throws SQLException, ClassNotFoundException {
