@@ -19,21 +19,17 @@
 			<%
 			// Check if user is an admin from the session
 			Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
-			if (isAdmin != null && isAdmin) { // Check if user is an admin
+			if (sessionUtils.isLoggedIn(request, "isLoggedIn")) { // Fixed missing parenthesis
 			%>
-
-			<li><a href="<%=request.getContextPath()%>/UserServlet">Admin
-
-					Dashboard</a></li>
-
+			    <li><a href="<%=request.getContextPath()%>/UserServlet">Admin Dashboard</a></li>
 			<%
 			}
 			%>
-			<!-- 			<!-- Feedback Tab -->
-			<%-- 			<li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li> --%>
-
-			<li><a href="<%=request.getContextPath()%>/bookingPage">Book
-					now</a></li>
+			
+			<!-- Feedback Tab -->
+			<%-- <li><a href="<%=request.getContextPath()%>/feedbackLogic">Feedback</a></li> --%>
+			
+			<li><a href="<%=request.getContextPath()%>/bookingPage">Book now</a></li>
 
 			<!-- Categories Dropdown using <select> -->
 			<li><select class="category-dropdown"
