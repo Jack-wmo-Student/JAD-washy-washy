@@ -28,30 +28,6 @@
 		<url-pattern>/categoryService</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>CreateCategoryServlet</servlet-name>
-		<servlet-class>CONTROLLER.CreateCategoryServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>CreateCategoryServlet</servlet-name>
-		<url-pattern>/CreateCategoryServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>ServiceServlet</servlet-name>
-		<servlet-class>CONTROLLER.ServiceServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ServiceServlet</servlet-name>
-		<url-pattern>/ServiceServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>EditServiceServlet</servlet-name>
-		<servlet-class>CONTROLLER.EditServiceServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>EditServiceServlet</servlet-name>
-		<url-pattern>/EditServiceServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
 		<servlet-name>feedbackLogic</servlet-name>
 		<servlet-class>CONTROLLER.feedbackLogic</servlet-class>
 	</servlet>
@@ -67,38 +43,6 @@
 		<servlet-name>BookingController</servlet-name>
 		<url-pattern>/bookingPage</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>DeleteCategoryServlet</servlet-name>
-		<servlet-class>CONTROLLER.DeleteCategoryServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DeleteCategoryServlet</servlet-name>
-		<url-pattern>/DeleteCategoryServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>DeleteServiceServlet</servlet-name>
-		<servlet-class>CONTROLLER.DeleteServiceServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DeleteServiceServlet</servlet-name>
-		<url-pattern>/DeleteServiceServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>handleRegisterUser</servlet-name>
-		<servlet-class>CONTROLLER.handleRegisterUser</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>handleRegisterUser</servlet-name>
-		<url-pattern>/handleRegisterUser</url-pattern>
-	</servlet-mapping>
-<!-- 	<servlet>
-		<servlet-name>ManageMemberServlet</servlet-name>
-		<servlet-class>CONTROLLER.ManageMemberServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ManageMemberServlet</servlet-name>
-		<url-pattern>/ManageMemberServlet</url-pattern>
-	</servlet-mapping> -->
 	<servlet>
 		<servlet-name>StatisticsServlet</servlet-name>
 		<servlet-class>CONTROLLER.StatisticsServlet</servlet-class>
@@ -131,64 +75,6 @@
 		<servlet-name>TimeSlotController</servlet-name>
 		<url-pattern>/TimeSlotController</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>UserServlet</servlet-name>
-		<servlet-class>CONTROLLER.UserServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UserServlet</servlet-name>
-		<url-pattern>/UserServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>UserActionServlet</servlet-name>
-		<servlet-class>CONTROLLER.UserActionServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UserActionServlet</servlet-name>
-		<url-pattern>/UserActionServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>PromoteUserServlet</servlet-name>
-		<servlet-class>CONTROLLER.PromoteUserServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>PromoteUserServlet</servlet-name>
-		<url-pattern>/PromoteUserServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>BlockUserServlet</servlet-name>
-	    <servlet-class>CONTROLLER.BlockUserServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-	    <servlet-name>BlockUserServlet</servlet-name>
-	    <url-pattern>/BlockUserServlet</url-pattern>
-	</servlet-mapping>
-		<servlet>
-		<servlet-name>StripeController</servlet-name>
-	    <servlet-class>CONTROLLER.StripeController</servlet-class>
-	</servlet>
-	<servlet-mapping>
-	    <servlet-name>StripeController</servlet-name>
-	    <url-pattern>/StripeController</url-pattern>
-	</servlet-mapping>
-<!-- 	<servlet>
-		<servlet-class>CONTROLLER.BlockUserServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>BlockUserServlet</servlet-name>
-		<url-pattern>/BlockUserServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>washyUsers</servlet-name>
-		<servlet-class>CONTROLLER.washyUsers</servlet-class>
-	</servlet>
-	<servlet-mapping>
-	    <servlet-name>washyUsers</servlet-name>
-	    <url-pattern>/washyUsers</url-pattern>
-	</servlet-mapping> -->
-<!-- 		<servlet-name>washyUsers</servlet-name>
-		<url-pattern>/washyUsers</url-pattern>
-	</servlet-mapping> -->
 	<servlet>
 		<servlet-name>cartHandler</servlet-name>
 		<servlet-class>CONTROLLER.cartHandler</servlet-class>
