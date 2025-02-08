@@ -18,8 +18,8 @@
 				return;
 			}
 		@SuppressWarnings("unchecked")
-		Map<String, Object> timeslotAvailability = (Map<String, Object>) session.getAttribute("timeslot-availability");
-		String bookingDate = (String) timeslotAvailability.get("booking_date");
+		Map<String, String> timeslotAvailability = (Map<String, String>) session.getAttribute("timeslot-availability");
+		String bookingDate = (String) session.getAttribute("booking-date");
 	%>
 </head>
 <body>
@@ -36,26 +36,21 @@
         <form action="<%=request.getContextPath()%>/TimeSlotController" method="post">
             <div class="timeslot-grid">
                 <%               
-                    if (timeslotAvailability != null) {
-                        for (Map.Entry<String, Object> entry : timeslotAvailability.entrySet()) {
+                    if (timeslotAvailability != null && !timeslotAvailability.isEmpty()) {
+                        for (Map.Entry<String, String> entry : timeslotAvailability.entrySet()) {
                             String timeslot = entry.getKey();
-                            if (!(entry.getValue() instanceof Integer)) continue;
-                            int availabilityStatus = (int) entry.getValue();
+                            String availabilityStatus = (String) entry.getValue();
                             
                             String cssClass = "";
                             String statusText = "";
                             boolean isEnabled = false;
 
                             // Handle CSS class, text, and button availability based on the status
-                            if (availabilityStatus == 2) {
+                            if (availabilityStatus == "available") {
                                 cssClass = "timeslot-available";
                                 statusText = "Available";
                                 isEnabled = true;
-                            } else if (availabilityStatus == 1) {
-                                cssClass = "timeslot-partial";
-                                statusText = "Time insufficient";
-                                isEnabled = false;
-                            } else {
+                            }  else {
                                 cssClass = "timeslot-unavailable";
                                 statusText = "Unavailable";
                                 isEnabled = false;
@@ -63,7 +58,10 @@
                 %>
                 <div class="timeslot-item <%= cssClass %>">
                     <div class="timeslot-info">
-                        <%= timeslot %> : <%= statusText %>
+                        <%= timeslot %>
+                        <span class="status-text">
+                            <%= availabilityStatus.substring(0, 1).toUpperCase() + availabilityStatus.substring(1) %>
+                        </span>
                     </div>
                     <button 
                         type="submit" 

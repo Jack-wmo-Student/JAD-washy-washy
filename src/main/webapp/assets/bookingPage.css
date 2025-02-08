@@ -56,6 +56,11 @@ body {
 	transform: scale(1.1); /* Slight zoom effect */
 }
 
+.current-day {
+    background-color: #e6f3ff;
+    border: 2px solid #0066cc;
+}
+
 .current-month-year {
 	width: 170px; /* Adjust width to fit content */
 	padding: 5px 15px;
@@ -178,9 +183,10 @@ body {
 }
 
 .day.disabled {
-	background-color: #e0e0e0; /* Gray background */
+	background-color: #f5f5f5; /* Gray background */
 	color: #999; /* Dimmed text color */
 	pointer-events: none; /* Disable clicking */
+	cursor: not-allowed;
 }
 
 .day.empty {

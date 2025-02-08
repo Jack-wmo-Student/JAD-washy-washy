@@ -134,6 +134,8 @@ public class AuthController extends HttpServlet {
 		// Retrieve form data
 		String username = request.getParameter("username").trim();
 		String password = request.getParameter("password");
+		String accountType = request.getParameter("accountType");
+		int role_id = "business".equals(accountType) ? 2 : 3;
 
 		// Input validation
 		if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
@@ -163,7 +165,7 @@ public class AuthController extends HttpServlet {
 		// Save user to the database
 		boolean isRegistered = false;
 		try {
-			isRegistered = userDAO.CreateUser(username, hashedPassword);
+			isRegistered = userDAO.CreateUser(username, hashedPassword, role_id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

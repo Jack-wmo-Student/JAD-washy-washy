@@ -1,3 +1,5 @@
+<%@ page
+	import="MODEL.CLASS.User"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -16,11 +18,12 @@
 <body>
 	<%@include file="/component/navbar.jsp"%>
 	<%
-	if (session == null || session.getAttribute("username") == null) {
+	if (session == null || session.getAttribute("currentUser") == null) {
 		response.sendRedirect(request.getContextPath() + "/pages/login.jsp");
 		return;
 	}
-	String username = (String) session.getAttribute("username");
+	User user = (User) session.getAttribute("currentUser");
+	String username = user.getUsername();
 	%>
 
 	<form class="settings-form"

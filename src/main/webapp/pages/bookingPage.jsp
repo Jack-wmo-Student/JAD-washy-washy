@@ -206,51 +206,58 @@ if (nextMonth > 11) {
 
 			<!-- Days of the Month -->
 			<%
-			// Add empty slots for days before the first day of the month
-			for (int i = 1; i < firstDayOfWeek; i++) {
-			%>
-			<div class="day empty"></div>
-			<%
-			}
-			%>
-
-			<%
-			// Render days of the month
-			for (int day = 1; day <= daysInMonth; day++) {
-				String dayClass = "day";
-				int currentMonthNow = calendar.get(Calendar.MONTH);
-				int currentYearNow = calendar.get(Calendar.YEAR);
-
-				// Check if it is current day
-				if (day == currentDay && currentMonth == currentMonthNow && currentYear == currentYearNow) {
-					dayClass += " current-day";
-				}
-
-				// Check if the date is in the past
-				Calendar checkDate = Calendar.getInstance();
-				checkDate.set(currentYear, currentMonth, day, 0, 0, 0);
-				boolean isPastDate = checkDate.before(calendar);
-				if (isPastDate) {
-					dayClass += " disabled";
+				// Add empty slots for days before the first day of the month
+				for (int i = 1; i < firstDayOfWeek; i++) {
+					%>
+						<div class="day empty"></div>
+					<%
 				}
 			%>
-			<div class="<%=dayClass%>"
-				<%=isCurrentMonth ? "onclick='bookSlot(" + day + ", " + (currentMonth + 1) + ", " + currentYear + ")'" : ""%>>
-				<%=day%>
-			</div>
-			<%
-			}
-			// Calculate and add empty slots after the last day to complete the week
-			int totalCells = firstDayOfWeek - 1 + daysInMonth; // Total cells filled so far
-			int remainingCells = 7 - (totalCells % 7); // Remaining cells to complete the last week
 
-			if (remainingCells < 7) { // Add empty cells only if they are needed
-			for (int i = 0; i < remainingCells; i++) {
-			%>
-			<div class="day empty"></div>
 			<%
-			}
-			}
+				// Render days of the month
+				for (int day = 1; day <= daysInMonth; day++) {
+					String dayClass = "day";
+			        int currentMonthNow = calendar.get(Calendar.MONTH);
+			        int currentYearNow = calendar.get(Calendar.YEAR);
+			        
+			        // Create instance that is 2 weeks in the future
+			        Calendar twoWeeksFromNow = Calendar.getInstance();
+					twoWeeksFromNow.add(Calendar.DAY_OF_MONTH, 14);  // Add 14 days
+
+				
+					// Check if it is current day
+					if(day == currentDay && currentMonth == currentMonthNow && currentYear == currentYearNow) {
+						dayClass += " current-day";
+					}
+					
+					// Check if the date is in the past
+					Calendar checkDate = Calendar.getInstance();
+					checkDate.set(currentYear, currentMonth, day, 0, 0, 0);
+					boolean isPastDate = checkDate.before(calendar);
+					boolean isLessThanTwoWeeks = checkDate.before(twoWeeksFromNow);
+					if(isPastDate || isLessThanTwoWeeks) {
+						dayClass += " disabled";
+					}
+					
+			%>
+				<div class="<%=dayClass%>"
+					<%=isCurrentMonth ? "onclick='bookSlot(" + day + ", " + (currentMonth + 1) + ", " + currentYear + ")'" : ""%>>
+					<%=day%>
+				</div>
+			<%
+				}
+				// Calculate and add empty slots after the last day to complete the week
+				int totalCells = firstDayOfWeek - 1 + daysInMonth; // Total cells filled so far
+				int remainingCells = 7 - (totalCells % 7); // Remaining cells to complete the last week
+	
+				if (remainingCells < 7) { // Add empty cells only if they are needed
+					for (int i = 0; i < remainingCells; i++) {
+					%>
+					<div class="day empty"></div>
+					<%
+					}
+				}
 			%>
 		</div>
 	</div>
