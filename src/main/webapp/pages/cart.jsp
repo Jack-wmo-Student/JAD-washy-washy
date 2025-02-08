@@ -57,13 +57,13 @@
 			<p class="item-timeslot">
 				Time Slot:
 				<%=item.getTimeslot().getTimeRange()%></p>
-			<form action="<%=request.getContextPath()%>/removeFromCart"
+			<form action="<%=request.getContextPath()%>/cartHandler"
 				method="post">
-				<!-- not done -->
-				<input type="hidden" name="itemId"
-					value="<%=item.getService().getId()%>" />
+				<input type="hidden" name="action" value="remove"> <input
+					type="hidden" name="itemId" value="<%=item.getService().getId()%>" />
 				<button type="submit" class="remove-button">Remove</button>
 			</form>
+
 		</div>
 		<hr>
 		<%
