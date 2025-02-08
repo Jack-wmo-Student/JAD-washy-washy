@@ -77,7 +77,6 @@ public class UserController extends HttpServlet {
 			User currentUser = (User) session.getAttribute("currentUser");
 			int targetUserId = Integer.parseInt(request.getParameter("userId"));
 			String action = request.getParameter("action");
-
 			// Handle different actions
 			String message = null;
 			switch (action) {
@@ -90,6 +89,7 @@ public class UserController extends HttpServlet {
 				userDAO.toggleAdminStatus(targetUserId, currentUser.getUserId());
 				message = "User admin status updated successfully";
 				break;
+
 			default:
 				request.setAttribute("error", "Invalid action");
 				break;
@@ -134,7 +134,6 @@ public class UserController extends HttpServlet {
 		while ((line = reader.readLine()) != null) {
 			jsonData.append(line);
 		}
-
 		// Parse JSON manually
 		String jsonString = jsonData.toString();
 		String username = jsonString.replaceAll(".*\"username\":\"([^\"]+)\".*", "$1");

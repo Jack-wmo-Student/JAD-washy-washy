@@ -39,17 +39,18 @@
                     if (timeslotAvailability != null && !timeslotAvailability.isEmpty()) {
                         for (Map.Entry<String, String> entry : timeslotAvailability.entrySet()) {
                             String timeslot = entry.getKey();
-                            String availabilityStatus = (String) entry.getValue();
+                            String timeslotIdOrStatus = entry.getValue();
                             
                             String cssClass = "";
                             String statusText = "";
                             boolean isEnabled = false;
+                            String timeslotId = "";
 
                             // Handle CSS class, text, and button availability based on the status
-                            if (availabilityStatus == "available") {
+                            if (!timeslotIdOrStatus.equals("unavailable")) {
                                 cssClass = "timeslot-available";
                                 statusText = "Available";
-                                isEnabled = true;
+                                timeslotId = timeslotIdOrStatus; // this is timeslot id
                             }  else {
                                 cssClass = "timeslot-unavailable";
                                 statusText = "Unavailable";
@@ -60,13 +61,13 @@
                     <div class="timeslot-info">
                         <%= timeslot %>
                         <span class="status-text">
-                            <%= availabilityStatus.substring(0, 1).toUpperCase() + availabilityStatus.substring(1) %>
+                            <%= statusText %>
                         </span>
                     </div>
                     <button 
                         type="submit" 
-                        name="timeslot" 
-                        value="<%= timeslot %>" 
+                        name="timeslot" x1
+                        value="<%= timeslot + "," + timeslotId %>"
                         class="timeslot-button" 
                         <%= isEnabled ? "" : "disabled" %>>
                         Add to cart +

@@ -102,9 +102,11 @@ public class TimeSlotDAO {
 		}
 	}
 	
-	public static Integer[] getSpecificTimeslotsByIds (String time_slot, Integer[] time_slot_ids)  throws SQLException {
+	public static List<Integer> getSpecificTimeslotsByIds (String time_slot, Integer[] time_slot_ids)  throws SQLException {
 		// Define variables
-		Integer[] time_slots = new Integer[time_slot_ids.length];
+//		Integer[] time_slots = new Integer[time_slot_ids.length];
+		List<Integer> time_slots = new ArrayList<>();
+		
 		String query = """
 			    SELECT 
 			    	"%s"
@@ -127,9 +129,9 @@ public class TimeSlotDAO {
 			
 			try (ResultSet rs = pstmt.executeQuery()) {
 
-				for (int i = 0; rs.next(); i++) {
-					time_slots[i] = rs.getInt(1);
-					System.out.println("User that booked this time slot: " + rs.getInt(time_slot));
+				while (rs.next()) {
+					time_slots.add(rs.getInt(1));
+					System.out.println("User that booked this time slot: " + rs.getInt(1));
 				}
 				
 				return time_slots;

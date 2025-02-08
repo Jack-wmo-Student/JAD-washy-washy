@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import MODEL.CLASS.User;
-import MODEL.DAO.CategoryServiceDAO;
 import MODEL.DAO.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
