@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,23 +104,16 @@ public class TimeSlotDAO {
 	}
 	
 	public static List<Integer> getSpecificTimeslotsByIds (String time_slot, Integer[] time_slot_ids)  throws SQLException {
-		// Define variables
-//		Integer[] time_slots = new Integer[time_slot_ids.length];
+		// Set up variables and queries
 		List<Integer> time_slots = new ArrayList<>();
-		
+		String placeholders = String.join(",", Collections.nCopies(time_slot_ids.length, "?"));
 		String query = """
-			    SELECT 
-			    	"%s"
-				FROM 
-					timeslot 
-			    WHERE 
-				   timeslot_id 
-				IN 
-					(%s)
-			    """.formatted(
-			        time_slot,
-			        "?,".repeat(time_slot_ids.length).replaceAll(",$", ""));
+			    SELECT %s 
+			    FROM timeslot 
+			    WHERE timeslot_id IN (%s)
+			    """.formatted(time_slot, placeholders);
 		
+		// Query to the database
 		try (Connection conn = DBConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(query)) {
 			// Set the '?'s
@@ -128,10 +122,12 @@ public class TimeSlotDAO {
 			}
 			
 			try (ResultSet rs = pstmt.executeQuery()) {
-
+				// add the results into 'time_slots'
 				while (rs.next()) {
-					time_slots.add(rs.getInt(1));
-					System.out.println("User that booked this time slot: " + rs.getInt(1));
+					Integer value = rs.getObject(1, Integer.class);
+					time_slots.add(value);
+					
+					System.out.println("User that booked this time slot: " + value); // will return null for now
 				}
 				
 				return time_slots;
