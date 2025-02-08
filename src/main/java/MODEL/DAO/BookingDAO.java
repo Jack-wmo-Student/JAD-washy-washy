@@ -28,7 +28,7 @@ public class BookingDAO {
 	            JOIN 
 	                service s ON b.service_id = s.service_id
 	            WHERE 
-	                b.user_id = ?
+	                b.booked_by_user_id = ?
 	            ORDER BY
 	 		    	b.booked_date DESC;
 	        """;

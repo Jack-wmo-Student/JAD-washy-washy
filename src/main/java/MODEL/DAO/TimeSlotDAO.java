@@ -12,14 +12,14 @@ import java.util.Map;
 import DBACCESS.DBConnection;
 
 public class TimeSlotDAO {
-	public static Map<String, Object> getTimeSlotSheets(String date, int serviceId) throws SQLException {
+	public static List<Map<String, Object>> getTimeSlotSheets(String date, int serviceId) throws SQLException {
 		System.out.println("We are in the model to get the small data");
 
-		// Set the stuffs
+		// Set the variables
 		String query = """
 				SELECT
 					st.timeslot_id,
-					st.created_at  
+					st.created_at,
 					s.service_name,
 					s.duration_in_hour
 				FROM
@@ -30,7 +30,7 @@ public class TimeSlotDAO {
 					st.service_id = ? AND
 					st.service_timeslot_date = ?;
 				""";
-		Map<String, Object> info = new HashMap<>();
+		List<Map<String, Object>> timeslot_sheets = new ArrayList<>();
 
 		try (Connection conn = DBConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -39,19 +39,23 @@ public class TimeSlotDAO {
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 
-				if (rs.next()) {
+				while(rs.next()) {
+					Map <String, Object> info = new HashMap<String, Object>();
+					
 					// Retrieve the timeslot_id from the result set
-					info.put("timeslot_id", rs.getInt("timeslot_id"));
-					info.put("service_name", rs.getString("service_name"));
-					info.put("duration", rs.getInt("duration_in_hour"));
-
-					System.out.println("Retrieved Timeslot ID: " + info.get("timeslot_id"));
-				} else {
-					System.out.println("No matching timeslot found.");
+                    info.put("timeslot_id", rs.getInt("timeslot_id"));
+                    info.put("created_at", rs.getDate("created_at"));
+                    info.put("service_name", rs.getString("service_name"));
+                    info.put("duration", rs.getInt("duration_in_hour"));
+                    System.out.println("Retrieved Timeslot ID: " + info.get("timeslot_id"));
+                    
+                    timeslot_sheets.add(info);;
 				}
-				return info;
+				
+				return timeslot_sheets;
 			}
 		} catch (Exception e) {
+			System.out.println("------ Error in getTimeSlotSheets -------");
 			System.out.println("Database connection or query execution failed.");
 			e.printStackTrace();
 			throw e;
@@ -97,7 +101,60 @@ public class TimeSlotDAO {
 			return null;
 		}
 	}
+	
+	public static Integer[] getSpecificTimeslotsByIds (String time_slot, Integer[] time_slot_ids)  throws SQLException {
+		// Define variables
+		Integer[] time_slots = new Integer[time_slot_ids.length];
+		String query = """
+			    SELECT 
+			    	"%s"
+				FROM 
+					timeslot 
+			    WHERE 
+				   timeslot_id 
+				IN 
+					(%s)
+			    """.formatted(
+			        time_slot,
+			        "?,".repeat(time_slot_ids.length).replaceAll(",$", ""));
+		
+		try (Connection conn = DBConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(query)) {
+			// Set the '?'s
+			for(int i = 0; i < time_slot_ids.length; i++) {
+				pstmt.setInt(i + 1, time_slot_ids[i]);
+			}
+			
+			try (ResultSet rs = pstmt.executeQuery()) {
+
+				for (int i = 0; rs.next(); i++) {
+					time_slots[i] = rs.getInt(1);
+					System.out.println("User that booked this time slot: " + rs.getInt(time_slot));
+				}
+				
+				return time_slots;
+			}
+		} 
+		catch (Exception e) {
+			System.out.println("------ Error in getSpecificTimeslotsByIds -------");
+			System.out.println("Database connection or query execution failed.");
+			e.printStackTrace();
+			throw e;
+		}		
+	}
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
