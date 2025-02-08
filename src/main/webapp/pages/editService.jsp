@@ -119,7 +119,7 @@
                     <td><%=service.getDurationInHour()%></td>
                     <td><%=service.getDescription()%></td>
                     <td>
-                        <form action="<%=request.getContextPath()%>/ServiceController" method="get">
+                        <form action="<%=request.getContextPath()%>/pages/serviceEditor.jsp" method="get">
 						    <input type="hidden" name="serviceId" value="<%=service.getId()%>" />
 						    <input type="hidden" name="serviceName" value="<%=service.getName()%>" />
 						    <input type="hidden" name="servicePrice" value="<%=service.getPrice()%>" />
