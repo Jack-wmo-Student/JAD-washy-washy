@@ -1,11 +1,13 @@
 package CONTROLLER;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import MODEL.CLASS.CartItem;
 import MODEL.CLASS.Category;
@@ -42,10 +44,19 @@ public class TimeSlotController extends HttpServlet {
 		
 		System.out.println("We are in doGet of the timeslotPage");
 
-		// Get data from the params
+		// Get data from the params and define variables
 		String date = (String) request.getAttribute("date");
 		String strServiceId = (String) request.getAttribute("serviceId");
 		int serviceId = 0;
+		String[] all_time_slots= {
+				"8am-9am", "9am-10am", "10am-11am", "11am-12pm", 
+				"1pm-2pm", "2pm-3pm", "4pm-5pm", "5pm-6pm"
+		};
+		
+		
+		
+		
+		// Confirm correct date and service id
 		System.out.println("--- Chosen Date: " + date);
 		System.out.println("--- Chosen serviceId: " + strServiceId);
 
@@ -65,54 +76,155 @@ public class TimeSlotController extends HttpServlet {
 		}
 
 		try {
-			// Get the timeslot_id, duration_in_hour and price from 'service_timeslot' using
+			// Get the timeslot_id, created_at, duration_in_hour and price from 'service_timeslot' using
 			// service id and date
-			Map<String, Object> smallInfo = TimeSlotDAO.getSmallInfoByServiceIdAndDate(date, serviceId);
+			List<Map<String, Object>> time_slot_details= TimeSlotDAO.getTimeSlotSheets(date, serviceId);
 
 			// Get all the time slots from the 'timeslot'
-			if (smallInfo == null || smallInfo.isEmpty()) {
+			if (time_slot_details == null || time_slot_details.isEmpty()) {
 				response.sendRedirect(
 						request.getContextPath() + "/pages/bookingPage.jsp?errorMessage=Invalid service ID or date");
 				return;
 			}
-			if (!smallInfo.containsKey("timeslot_id") || !smallInfo.containsKey("duration")) {
-				response.sendRedirect(
-						request.getContextPath() + "/pages/bookingPage.jsp?errorMessage=Incomplete service data");
-				return;
+
+			// Here, I see how long the duration of the service is.
+			int service_duration = (int) time_slot_details.get(0).get("duration"); // 1, 2, 3
+			
+//			Based on the service duration, I need to create a map array to keep track of which timeslots are already occupied already.
+			Map<String, Integer[]> time_slot_map = new LinkedHashMap<>();
+			// Example data
+			// {
+			//	"8am-9am": [null, null, null, null],
+			//	"10am-11am": [null, null, null, null],
+			// }
+//			Create a map to send to front end
+			Map<String, String> to_send_front_end = new LinkedHashMap<>();
+			// Example Data
+			// {
+            //    "8am-10am": ["Booked", "Booked", "Booked", "Booked"],
+            //    "10am-12pm": ["Booked", "Booked", "Booked", "Available"],
+			//	  "1pm-2pm": ["Booked", "Booked", "Available", "Available"] 
+            // }
+			
+			int total_slots = all_time_slots.length;
+			
+			for(int i = 0; i < total_slots; i++) {
+				String start_slot = all_time_slots[i];
+				int end_index = i + service_duration - 1;
+				
+				// Ensure the end index is within the bounds
+				if (end_index < total_slots) {
+					String end_slot = all_time_slots[end_index];
+					
+					// Check if the time slot crosses 12pm - 1pm (lunch break)
+					if(!start_slot.contains("11am-12pm") || end_slot.contains("12pm-1pm")) {
+						time_slot_map.put(start_slot, new Integer[time_slot_details.size()]);
+					} 
+				}	
 			}
+			
+			// Make a list of time slot ids that i will need to pass in
+			Integer[] time_slot_ids = new Integer[time_slot_details.size()];
+			for (int i = 0; i < time_slot_details.size(); i++) {
+					time_slot_ids[i] = (int) time_slot_details.get(i).get("timeslot_id");
+			}
+			 
+			
+			
+			// Now, need to fetch from the database to see which timeslots are empty and which are available.
+			// This will then fill the time_slot_Map
+//			time_slot_map.forEach((start_time, availability_array) -> {
+//				Integer[] specific_time_slots = null;
+//				try {
+//					specific_time_slots = TimeSlotDAO.getSpecificTimeslotsByIds(start_time, time_slot_ids);
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				
+//				for (int i = 0; i < specific_time_slots.length; i++) {
+//					if(specific_time_slots[i] == null) {
+//						availability_array[i] = 0; // Available
+//					}
+//					else {
+//						availability_array[i] = 1; // Booked
+//					}
+//				}
+//				
+//				// Create frontend time range and check availability
+//				int start_index = Arrays.asList(all_time_slots).indexOf(start_time);
+//				String end_time = all_time_slots[start_index + service_duration - 1];
+//			    String time_range = start_time.split("-")[0] + "-" + end_time.split("-")[1];
+//				
+//				// Check availability
+//			    boolean is_available = false;
+//			    if(availability_array.length == 4) {
+//			    	is_available = availability_array[3] != 1;
+//			    }	else is_available = true; 
+//			    
+//			    
+//			    to_send_front_end.put(time_range, is_available ? "available" : "unavailable");
+//			});
 
-			List<Integer> timeslots = TimeSlotDAO.getTimeslotsByTimeslotId((int) smallInfo.get("timeslot_id"));
-
-			// add lunch break to timeslots
-			timeslots.add(4, 999);
-
-			// check the duration of the service and format the data
-			List<Integer> formattedTimeslots = formatTimeslots(timeslots, (int) smallInfo.get("duration"));
-			// This array has either 0, 1, or 2.
-			// 0 if someome booked already,
-			// 1 if the slot is available but not enough time for the service duration
-			// 2 if the slot is available and behind got enough time for the service
-			// duration
-
-			// pass the data to the frontend in linked hashmap
-			Map<String, Object> timeslotAvailability = new LinkedHashMap<>();
-			timeslotAvailability.put("booking_date", date);
-			timeslotAvailability.put("8am-9am", formattedTimeslots.get(0));
-			timeslotAvailability.put("9am-10am", formattedTimeslots.get(1));
-			timeslotAvailability.put("10am-11am", formattedTimeslots.get(2));
-			timeslotAvailability.put("11am-12pm", formattedTimeslots.get(3));
-			timeslotAvailability.put("12pm-1pm", formattedTimeslots.get(4));
-			timeslotAvailability.put("1pm-2pm", formattedTimeslots.get(5));
-			timeslotAvailability.put("2pm-3pm", formattedTimeslots.get(6));
-			timeslotAvailability.put("3pm-4pm", formattedTimeslots.get(7));
-			timeslotAvailability.put("4pm-5pm", formattedTimeslots.get(8));
-			timeslotAvailability.put("5pm-6pm", formattedTimeslots.get(9));
-
+			for (int i = 0; i < all_time_slots.length; i += service_duration) {
+			    // Check if we have enough remaining slots for the full service duration
+			    if (i + service_duration > all_time_slots.length) {
+			        break;  // Not enough slots remaining
+			    }
+			    
+			    String start_time = all_time_slots[i];
+			    String end_time = all_time_slots[i + service_duration - 1];
+			    
+			    // Special handling for slots around lunch break
+			    boolean crosses_lunch = false;
+			    for (int j = i; j < i + service_duration; j++) {
+			        if (all_time_slots[j].contains("12pm")) {
+			            crosses_lunch = true;
+			            i = Arrays.asList(all_time_slots).indexOf("1pm-2pm"); // Skip to after lunch
+			            i--; // Compensate for i++ in loop
+			            break;
+			        }
+			    }
+			    
+			    if (!crosses_lunch) {
+			        Integer[] availability_array = time_slot_map.get(start_time);
+			        
+			        // Get specific time slots from database
+			        Integer[] specific_time_slots = null;
+			        try {
+			            specific_time_slots = TimeSlotDAO.getSpecificTimeslotsByIds(start_time, time_slot_ids);
+			        } catch (SQLException e) {
+			            e.printStackTrace();
+			            continue;
+			        }
+			        
+			        // Update availability array
+			        for (int j = 0; j < specific_time_slots.length; j++) {
+			            if(specific_time_slots[j] == null) {
+			                availability_array[j] = 0;
+			            } else {
+			                availability_array[j] = 1;
+			            }
+			        }
+			        
+			        String time_range = start_time.split("-")[0] + "-" + end_time.split("-")[1];
+			        
+			        boolean is_available = false;
+			        if(availability_array.length == 4) {
+			            is_available = availability_array[3] != 1;
+			        } else {
+			            is_available = true;
+			        }
+			        
+			        to_send_front_end.put(time_range, is_available ? "available" : "unavailable");
+			    }
+			}
+			
+			
 			// Store the list in the session attribute
-
-			session.setAttribute("timeslot-availability", timeslotAvailability);
+			session.setAttribute("timeslot-availability", to_send_front_end);
 			session.setAttribute("service-id", serviceId);
-			session.setAttribute("timeslot-id", smallInfo.get("timeslot_id"));
+			session.setAttribute("booking-date", date);
 
 			// Create the session for the list of carts
 			// Retrieve the cart list from the session, or create a new one if it doesn't
