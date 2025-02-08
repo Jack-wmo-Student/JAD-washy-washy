@@ -21,59 +21,112 @@ public class AuthController extends HttpServlet {
 		super();
 	}
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+//	@Override
+//	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+//			throws ServletException, IOException {
+//		String username = request.getParameter("username");
+//		String password = request.getParameter("password");
+//
+//		// Hash the password
+//		String hashedPassword = passwordUtils.hashPassword(password);
+//
+//		// Validate the user using UserDAO
+//		UserDAO userDAO = new UserDAO();
+//		User validatedUser = userDAO.validateUser(username, hashedPassword);
+//
+//		if (validatedUser != null) {
+//			if (validatedUser.isIsBlocked()) {
+//				// Handle blocked user
+//				request.setAttribute("error", "Your account is blocked. Please contact support.");
+//				request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+//			} else {
+//				
+//				if (validatedUser.isIsAdmin()) {
+//					Cookie isAdminCookie = new Cookie("isAdmin", "true");
+//					isAdminCookie.setPath("/"); // Cookie is valid for the entire domain
+//					isAdminCookie.setHttpOnly(true); // Prevent JavaScript access
+//					isAdminCookie.setSecure(false); // Ensure it's sent only over HTTPS
+//					isAdminCookie.setMaxAge(60 * 60);
+//					response.addCookie(isAdminCookie);
+//				}
+//				
+//				// Set a lightweight cookie for session validation
+//				Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
+//				isLoggedInCookie.setPath(request.getContextPath()); // Cookie is valid for the entire domain
+//				isLoggedInCookie.setHttpOnly(true); // Prevent JavaScript access
+//				isLoggedInCookie.setSecure(false); // Ensure it's sent only over HTTPS
+//				isLoggedInCookie.setMaxAge(60 * 60); // Cookie expiry: 1 hour
+//
+//				response.addCookie(isLoggedInCookie);
+//
+//				// Use session attributes for sensitive user data
+//				HttpSession session = request.getSession();
+//				// Restore categoryServiceMap if it's missing
+//				session.setAttribute("currentUser", validatedUser);
+//				session.setAttribute("isAdmin", validatedUser.isIsAdmin());
+//
+//				// Redirect to homePage
+//				response.sendRedirect(request.getContextPath() + "/categoryService");
+//			}
+//		} else {
+//			// Handle invalid login
+//			request.setAttribute("error", "Invalid username or password.");
+//			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+//		}
+//	}
 
-		// Hash the password
-		String hashedPassword = passwordUtils.hashPassword(password);
+	    @Override
+	    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	            throws ServletException, IOException {
+	        String username = request.getParameter("username");
+	        String password = request.getParameter("password");
 
-		// Validate the user using UserDAO
-		UserDAO userDAO = new UserDAO();
-		User validatedUser = userDAO.validateUser(username, hashedPassword);
+	        // Hash the password
+	        String hashedPassword = passwordUtils.hashPassword(password);
 
-		if (validatedUser != null) {
-			if (validatedUser.isIsBlocked()) {
-				// Handle blocked user
-				request.setAttribute("error", "Your account is blocked. Please contact support.");
-				request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
-			} else {
-				
-				if (validatedUser.isIsAdmin()) {
-					Cookie isAdminCookie = new Cookie("isAdmin", "true");
-					isAdminCookie.setPath("/"); // Cookie is valid for the entire domain
-					isAdminCookie.setHttpOnly(true); // Prevent JavaScript access
-					isAdminCookie.setSecure(false); // Ensure it's sent only over HTTPS
-					isAdminCookie.setMaxAge(60 * 60);
-					response.addCookie(isAdminCookie);
-				}
-				
-				// Set a lightweight cookie for session validation
-				Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
-				isLoggedInCookie.setPath(request.getContextPath()); // Cookie is valid for the entire domain
-				isLoggedInCookie.setHttpOnly(true); // Prevent JavaScript access
-				isLoggedInCookie.setSecure(false); // Ensure it's sent only over HTTPS
-				isLoggedInCookie.setMaxAge(60 * 60); // Cookie expiry: 1 hour
+	        // Validate the user using UserDAO
+	        UserDAO userDAO = new UserDAO();
+	        User validatedUser = userDAO.validateUser(username, hashedPassword);
 
-				response.addCookie(isLoggedInCookie);
+	        if (validatedUser != null) {
+	            if (validatedUser.isIsBlocked()) {
+	                request.setAttribute("error", "Your account is blocked. Please contact support.");
+	                request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+	            } else {
+	                // Create and configure the session
+	                HttpSession session = request.getSession();
+	                
+	                // Store essential user information in session
+	                session.setAttribute("currentUser", validatedUser);
+	                session.setAttribute("isAdmin", validatedUser.isIsAdmin());
+	                
+	                // Set admin cookie if applicable
+	                if (validatedUser.isIsAdmin()) {
+	                    Cookie isAdminCookie = new Cookie("isAdmin", "true");
+	                    isAdminCookie.setPath("/");
+	                    isAdminCookie.setHttpOnly(true);
+	                    isAdminCookie.setSecure(false);
+	                    isAdminCookie.setMaxAge(60 * 60);
+	                    response.addCookie(isAdminCookie);
+	                }
+	                
+	                // Set logged in cookie
+	                Cookie isLoggedInCookie = new Cookie("isLoggedIn", "true");
+	                isLoggedInCookie.setPath(request.getContextPath());
+	                isLoggedInCookie.setHttpOnly(true);
+	                isLoggedInCookie.setSecure(false);
+	                isLoggedInCookie.setMaxAge(60 * 60);
+	                response.addCookie(isLoggedInCookie);
 
-				// Use session attributes for sensitive user data
-				HttpSession session = request.getSession();
-				// Restore categoryServiceMap if it's missing
-				session.setAttribute("currentUser", validatedUser);
-				session.setAttribute("isAdmin", validatedUser.isIsAdmin());
+	                response.sendRedirect(request.getContextPath() + "/categoryService");
+	            }
+	        } else {
+	            request.setAttribute("error", "Invalid username or password.");
+	            request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+	        }
+	    }
 
-				// Redirect to homePage
-				response.sendRedirect(request.getContextPath() + "/categoryService");
-			}
-		} else {
-			// Handle invalid login
-			request.setAttribute("error", "Invalid username or password.");
-			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
-		}
-	}
+	    // Rest of your existing doPost method remains the same
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

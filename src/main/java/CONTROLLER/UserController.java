@@ -7,7 +7,6 @@ import MODEL.CLASS.User;
 import MODEL.DAO.UserDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,19 +17,41 @@ public class UserController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final UserDAO userDAO = new UserDAO();
 
- // In UserController.java
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        System.out.println("UserController doGet method called");
         try {
+            System.out.println("UserController doGet method called");
+
             if (!validateAdminAccess(request, response)) {
+                System.out.println("Admin access validation failed");
+                return;
+            }
+
+            // Get the session and check for userId
+            HttpSession session = request.getSession(false);
+            User userObject = null;
+            Integer userId = null;
+            if (session != null) {
+                userObject = (User) session.getAttribute("currentUser");
+                userId = userObject.getUserId();
+            }
+
+            // If no userId, redirect to login
+            if (userId == null) {
+                System.out.println("No user ID found in session");
+                request.setAttribute("error", "Please log in to access this page");
+                request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
                 return;
             }
 
             List<User> users = userDAO.getAllUsers();
             System.out.println("Retrieved " + users.size() + " users");
+
+            // Set both the users list and the current userId for the JSP
             request.setAttribute("users", users);
+            request.setAttribute("currentUser", userObject);
+            
             RequestDispatcher dispatcher = request.getRequestDispatcher("/pages/memberManagement.jsp");
             dispatcher.forward(request, response);
 
@@ -41,8 +62,6 @@ public class UserController extends HttpServlet {
             request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
     }
-    
-    
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
