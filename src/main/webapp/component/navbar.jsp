@@ -21,7 +21,7 @@
 			Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
 			if (sessionUtils.isLoggedIn(request, "isLoggedIn")) { // Fixed missing parenthesis
 			%>
-			    <li><a href="<%=request.getContextPath()%>/UserServlet">Admin Dashboard</a></li>
+			    <li><a href="<%=request.getContextPath()%>/UserController">Admin Dashboard</a></li>
 			<%
 			}
 			%>

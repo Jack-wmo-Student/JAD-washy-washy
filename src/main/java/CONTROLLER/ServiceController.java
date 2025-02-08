@@ -25,24 +25,27 @@ public class ServiceController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!isAuthorized(request, response)) {
-            return;
-        }
-
-        String categoryId = request.getParameter("categoryId");
-        if (categoryId == null || categoryId.isEmpty()) {
-            request.setAttribute("errorMessage", "Invalid category ID.");
-            request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
-            return;
-        }
-
         try {
+            if (!isAuthorized(request, response)) {
+                return;
+            }
+
+            String categoryId = request.getParameter("categoryId");
+            if (categoryId == null || categoryId.trim().isEmpty()) {
+                request.setAttribute("error", "Invalid category ID.");
+                request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
+                return;
+            }
+
             List<Service> services = serviceDAO.getServicesByCategory(Integer.parseInt(categoryId));
             request.setAttribute("services", services);
             request.setAttribute("categoryId", categoryId);
-            response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
+            request.getRequestDispatcher("/pages/editService.jsp").forward(request, response);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid category ID format");
+            request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         } catch (Exception e) {
-            request.setAttribute("errorMessage", "Error fetching services: " + e.getMessage());
+            request.setAttribute("error", "Error processing request: " + e.getMessage());
             request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
     }
@@ -81,10 +84,10 @@ public class ServiceController extends HttpServlet {
             e.printStackTrace();
         }
 
-        response.sendRedirect(request.getContextPath() + "/pages/editServiceCategory.jsp");
+        response.sendRedirect(request.getContextPath() + "/pages/editService.jsp");
     }
 
-    private void handleCreate(HttpServletRequest request, HttpSession session) throws Exception {
+    private void handleCreate(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws Exception {
         String serviceName = request.getParameter("serviceName");
         int categoryId = Integer.parseInt(request.getParameter("categoryId"));
         double price = Double.parseDouble(request.getParameter("servicePrice"));
@@ -96,9 +99,10 @@ public class ServiceController extends HttpServlet {
         if (generatedId > 0) {
             updateSessionServiceMap(session, categoryId);
             session.setAttribute("successMessage", "Service added successfully!");
-        } else {
-            session.setAttribute("errorMessage", "Failed to add service.");
+            response.sendRedirect(request.getContextPath() + "/pages/editService.jsp?categoryId=" + categoryId);
         }
+        
+        
     }
 
     private void handleUpdate(HttpServletRequest request, HttpSession session) throws Exception {

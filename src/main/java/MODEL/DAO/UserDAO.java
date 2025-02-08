@@ -284,7 +284,7 @@ public class UserDAO {
 	}
 
 	public List<User> getAllUsers() throws SQLException {
-		String sql = "SELECT user_id, username, status_id, role_id FROM users ORDER BY username";
+		String sql = "SELECT user_id, username, status_id, role_id FROM users";
 		List<User> users = new ArrayList<>();
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 			try (ResultSet rs = ps.executeQuery()) {
@@ -409,6 +409,27 @@ public class UserDAO {
 //        }
 //        return null;
 //    }
+	
+	public boolean isUsernameExists(String username) throws SQLException {
+	    String sql = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
+	    
+	    try (Connection conn = DBConnection.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        
+	        ps.setString(1, username);
+	        
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Error checking username existence: " + e.getMessage());
+	        throw e;
+	    }
+	    
+	    return false;
+	}
 
 	public boolean createUser(String username, String password) throws SQLException {
 		String sql = "INSERT INTO users (status_id, role_id, username, password) VALUES (?, ?, ?, ?)";

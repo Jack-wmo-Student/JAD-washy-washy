@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/serviceManagement.css">
 </head>
 <body>
+
     <%
     // Authentication checks
     if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
@@ -23,10 +24,11 @@
 
     // Fetching category details
     String requestCategoryId = request.getParameter("categoryId");
-    if (requestCategoryId == null || requestCategoryId.trim().isEmpty()) {
+    System.out.println(requestCategoryId);
+/*     if (requestCategoryId == null || requestCategoryId.trim().isEmpty()) {
         response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
         return;
-    }
+    } */
 
     @SuppressWarnings("unchecked")
     Map<Category, List<Service>> sessionCategoryServiceMap = 
@@ -40,11 +42,6 @@
             matchingCategory = category;
             break;
         }
-    }
-
-    if (matchingCategory == null) {
-        response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
-        return;
     }
     %>
 
@@ -122,18 +119,19 @@
                     <td><%=service.getDurationInHour()%></td>
                     <td><%=service.getDescription()%></td>
                     <td>
-                        <form action="serviceEditor.jsp" method="get" style="display: inline;">
-                            <input type="hidden" name="serviceId" value="<%=service.getId()%>" />
-                            <input type="hidden" name="serviceName" value="<%=service.getName()%>" />
-                            <input type="hidden" name="servicePrice" value="<%=service.getPrice()%>" />
-                            <input type="hidden" name="serviceDuration" value="<%=service.getDurationInHour()%>" />
-                            <input type="hidden" name="serviceDescription" value="<%=service.getDescription()%>" />
-                            <button type="submit" class="btn btn-edit">Edit</button>
-                        </form>
+                        <form action="<%=request.getContextPath()%>/ServiceController" method="get">
+						    <input type="hidden" name="serviceId" value="<%=service.getId()%>" />
+						    <input type="hidden" name="serviceName" value="<%=service.getName()%>" />
+						    <input type="hidden" name="servicePrice" value="<%=service.getPrice()%>" />
+						    <input type="hidden" name="serviceDuration" value="<%=service.getDurationInHour()%>" />
+						    <input type="hidden" name="serviceDescription" value="<%=service.getDescription()%>" />
+						    <input type="hidden" name="categoryId" value="<%=categoryId%>" />
+						    <button type="submit" class="btn btn-edit">Edit</button>
+						</form>
                         <form action="<%=request.getContextPath()%>/ServiceController/delete" method="post">
                             <input type="hidden" name="serviceId" value="<%=service.getId()%>" />
                             <input type="hidden" name="categoryId" value="<%=categoryId%>" />
-                            <button type="submit" onclick="return confirm('Are you sure you want to delete this service?');">Delete Service</button>
+                            <button type="submit" onclick="return confirm('Are you sure you want to delete this service?');">Delete</button>
                         </form>
                     </td>
                 </tr>

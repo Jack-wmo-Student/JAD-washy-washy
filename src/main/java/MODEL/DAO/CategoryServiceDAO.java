@@ -31,7 +31,6 @@ public class CategoryServiceDAO {
 			// Fetch categories
 			try (PreparedStatement categoryStmt = conn.prepareStatement(categoryQuery);
 					ResultSet categoryRs = categoryStmt.executeQuery()) {
-
 				while (categoryRs.next()) {
 					Category cat = new Category(categoryRs.getInt("category_id"),
 							categoryRs.getString("category_name") != null ? categoryRs.getString("category_name").trim()
@@ -40,6 +39,7 @@ public class CategoryServiceDAO {
 									? categoryRs.getString("category_description").trim()
 									: null);
 					categoryMap.put(cat.getId(), cat);
+					
 					categoryServiceMap.put(cat, new ArrayList<>());
 				}
 			}
