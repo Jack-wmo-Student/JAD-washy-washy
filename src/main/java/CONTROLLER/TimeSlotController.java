@@ -278,7 +278,7 @@ public class TimeSlotController extends HttpServlet {
 		CartItem cartItemObj = new CartItem();
 
 		// Create timeslot obj
-		TimeSlot timeslotObj = new TimeSlot(time_slot_id, chosen_time_slot);
+		TimeSlot timeslotObj = new TimeSlot(time_slot_id, chosen_time_slot);  // "8am-9am", "8am-10am"
 
 		// loop to get the service object
 		Map<String, Object> serviceDetails = new HashMap<>();

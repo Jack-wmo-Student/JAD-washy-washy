@@ -37,16 +37,16 @@
 
 		<!-- Display success or error messages -->
 		<%
-		String successMessage = (String) request.getAttribute("successMessage");
-		String errorMessage = (String) request.getAttribute("errorMessage");
-		if (successMessage != null) {
+			String successMessage = (String) request.getAttribute("successMessage");
+			String errorMessage = (String) request.getAttribute("errorMessage");
+			if (successMessage != null) {
 		%>
-		<p style="color: green;"><%=successMessage%></p>
+			<p style="color: green;"><%=successMessage%></p>
 		<%
 		}
-		if (errorMessage != null) {
+			if (errorMessage != null) {
 		%>
-		<p style="color: red;"><%=errorMessage%></p>
+			<p style="color: red;"><%=errorMessage%></p>
 		<%
 		}
 		%>
@@ -97,8 +97,7 @@
 				<td>
 					<div class="actions">
 						<!-- Edit Button -->
-						<form action="editService.jsp" method="get"
-							style="display: inline;">
+						<form action="editService.jsp" method="get">
 							<input type="hidden" name="categoryId" value="<%=cat.getId()%>" />
 							<button type="submit" class="btn-edit">Edit</button>
 						</form>
@@ -106,7 +105,7 @@
 						<!-- Delete Button -->
 						<form action="<%=request.getContextPath()%>/CategoryController/delete" method="post">
 						    <input type="hidden" name="categoryId" value="<%=cat.getId()%>" />
-						    <button type="submit">Delete Category</button>
+						    <button type="submit">Delete</button>
 						</form>
 					</div>
 				</td>
@@ -115,7 +114,7 @@
 			}
 			%>
 		</table>
-		<%
+		<% 
 		}
 		%>
 	</div>

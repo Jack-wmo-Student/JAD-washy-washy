@@ -7,7 +7,6 @@ import MODEL.CLASS.User;
 import MODEL.DAO.UserDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,20 +21,40 @@ public class UserController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try {
-            // Validate admin access
+            System.out.println("UserController doGet method called");
+
+            // Check if user is logged in and is admin
             if (!validateAdminAccess(request, response)) {
+                System.out.println("Admin access validation failed");
                 return;
             }
 
-            // Get all users using the DAO
+            // Get the current user from session
+            HttpSession session = request.getSession(false);
+            User userObject = null;
+            if (session != null) {
+                userObject = (User) session.getAttribute("currentUser");
+            }
+
+            // Redirect to login if no user found
+            if (userObject == null) {
+                System.out.println("No user found in session");
+                request.setAttribute("error", "Please log in to access this page");
+                request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
+                return;
+            }
+
+            // Get all users and forward to JSP
             List<User> users = userDAO.getAllUsers();
+            System.out.println("Retrieved " + users.size() + " users");
             request.setAttribute("users", users);
             
-            // Forward to JSP
             RequestDispatcher dispatcher = request.getRequestDispatcher("/pages/memberManagement.jsp");
             dispatcher.forward(request, response);
 
         } catch (Exception e) {
+            System.out.println("Error in UserController: " + e.getMessage());
+            e.printStackTrace();
             request.setAttribute("error", "Error retrieving users: " + e.getMessage());
             request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
@@ -50,111 +69,63 @@ public class UserController extends HttpServlet {
             return;
         }
 
-        String pathInfo = request.getPathInfo();
-        if (pathInfo == null) {
-            sendJsonResponse(response, 400, "Invalid request path");
-            return;
-        }
-
         try {
+            // Get the current user and target user IDs
             HttpSession session = request.getSession(false);
-            int currentUserId = (int) session.getAttribute("userId");
+            User currentUser = (User) session.getAttribute("currentUser");
             int targetUserId = Integer.parseInt(request.getParameter("userId"));
+            String action = request.getParameter("action");
 
-            switch (pathInfo) {
-                case "/toggle-block":
-                    userDAO.toggleUserBlock(targetUserId, currentUserId);
-                    sendJsonResponse(response, 200, "User block status updated successfully");
+            // Handle different actions
+            String message = null;
+            switch (action) {
+                case "toggle-block":
+                    userDAO.toggleUserBlock(targetUserId, currentUser.getUserId());
+                    message = "User block status updated successfully";
                     break;
                     
-                case "/toggle-admin":
-                    userDAO.toggleAdminStatus(targetUserId, currentUserId);
-                    sendJsonResponse(response, 200, "User admin status updated successfully");
+                case "toggle-admin":
+                    userDAO.toggleAdminStatus(targetUserId, currentUser.getUserId());
+                    message = "User admin status updated successfully";
                     break;
-                    
-                case "/update":
-                    handleUpdateUser(request, response);
-                    break;
-                    
+          
                 default:
-                    sendJsonResponse(response, 400, "Invalid action");
+                    request.setAttribute("error", "Invalid action");
+                    break;
             }
+
+            // Set success message if action was successful
+            if (message != null) {
+                request.setAttribute("success", message);
+            }
+
+            // Refresh user list and redisplay the page
+            List<User> users = userDAO.getAllUsers();
+            request.setAttribute("users", users);
+            request.getRequestDispatcher("/pages/memberManagement.jsp").forward(request, response);
+
         } catch (NumberFormatException e) {
-            sendJsonResponse(response, 400, "Invalid user ID format");
+            request.setAttribute("error", "Invalid user ID format");
+            request.getRequestDispatcher("/pages/memberManagement.jsp").forward(request, response);
         } catch (Exception e) {
-            sendJsonResponse(response, 500, "Internal server error: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void handleUpdateUser(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException {
-        try {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            String username = request.getParameter("username");
-
-            // Validate input
-            if (username == null || username.trim().isEmpty()) {
-                sendJsonResponse(response, 400, "Username cannot be empty");
-                return;
-            }
-
-            // Check if username is taken
-            if (userDAO.isUsernameTaken(username, userId)) {
-                sendJsonResponse(response, 400, "Username is already taken");
-                return;
-            }
-
-            // Update user using DAO
-            User user = new User();
-            user.setUserId(userId);
-            user.setUsername(username);
-            userDAO.updateUser(user);
-            
-            sendJsonResponse(response, 200, "User updated successfully");
-        } catch (Exception e) {
-            sendJsonResponse(response, 400, e.getMessage());
+            request.setAttribute("error", "Error: " + e.getMessage());
+            request.getRequestDispatcher("/pages/memberManagement.jsp").forward(request, response);
         }
     }
 
     private boolean validateAdminAccess(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException {
+            throws IOException, ServletException {
         if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
-            if (isAjaxRequest(request)) {
-                sendJsonResponse(response, 401, "You must be logged in");
-            } else {
-                request.setAttribute("error", "You must log in first.");
-                try {
-                    request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
-                } catch (ServletException e) {
-                    e.printStackTrace();
-                }
-            }
+            request.setAttribute("error", "You must log in first.");
+            request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
             return false;
         }
 
         if (!sessionUtils.isAdmin(request)) {
-            if (isAjaxRequest(request)) {
-                sendJsonResponse(response, 403, "Admin access required");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
-            }
+            response.sendRedirect(request.getContextPath() + "/pages/forbidden.jsp");
             return false;
         }
 
         return true;
-    }
-
-    private boolean isAjaxRequest(HttpServletRequest request) {
-        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
-    }
-
-    private void sendJsonResponse(HttpServletResponse response, int status, String message) 
-            throws IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.setStatus(status);
-        response.getWriter().write(String.format("{\"message\": \"%s\"}", 
-            message.replace("\"", "\\\"")));
     }
 }
