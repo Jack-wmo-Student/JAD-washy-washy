@@ -88,11 +88,7 @@ public class UserController extends HttpServlet {
                     userDAO.toggleAdminStatus(targetUserId, currentUser.getUserId());
                     message = "User admin status updated successfully";
                     break;
-                    
-                case "update":
-                    handleUpdateUser(request, response);
-                    return; // handleUpdateUser handles its own response
-                    
+          
                 default:
                     request.setAttribute("error", "Invalid action");
                     break;
@@ -113,45 +109,6 @@ public class UserController extends HttpServlet {
             request.getRequestDispatcher("/pages/memberManagement.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Error: " + e.getMessage());
-            request.getRequestDispatcher("/pages/memberManagement.jsp").forward(request, response);
-        }
-    }
-
-    private void handleUpdateUser(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        try {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            String username = request.getParameter("username");
-
-            // Validate input
-            if (username == null || username.trim().isEmpty()) {
-                request.setAttribute("error", "Username cannot be empty");
-                request.getRequestDispatcher("/pages/memberManagement.jsp").forward(request, response);
-                return;
-            }
-
-            // Check if username is taken
-            if (userDAO.isUsernameTaken(username, userId)) {
-                request.setAttribute("error", "Username is already taken");
-                request.getRequestDispatcher("/pages/memberManagement.jsp").forward(request, response);
-                return;
-            }
-
-            // Update user
-            User user = new User();
-            user.setUserId(userId);
-            user.setUsername(username);
-            userDAO.updateUser(user);
-            
-            request.setAttribute("success", "User updated successfully");
-            
-            // Refresh user list and redisplay page
-            List<User> users = userDAO.getAllUsers();
-            request.setAttribute("users", users);
-            request.getRequestDispatcher("/pages/memberManagement.jsp").forward(request, response);
-
-        } catch (Exception e) {
-            request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("/pages/memberManagement.jsp").forward(request, response);
         }
     }

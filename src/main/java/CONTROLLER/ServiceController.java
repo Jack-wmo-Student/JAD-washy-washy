@@ -63,6 +63,7 @@ public class ServiceController extends HttpServlet {
         }
 
         HttpSession session = request.getSession(false);
+        String categoryId = request.getParameter("categoryId");
         
         try {
             switch (action) {
@@ -84,41 +85,96 @@ public class ServiceController extends HttpServlet {
             e.printStackTrace();
         }
 
-        response.sendRedirect(request.getContextPath() + "/pages/editService.jsp");
+        // Improved redirect logic
+        if (categoryId != null) {
+            response.sendRedirect(request.getContextPath() + "/pages/editService.jsp?categoryId=" + categoryId);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
+        }
     }
 
-    private void handleCreate(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws Exception {
+    private void handleCreate(HttpServletRequest request, HttpSession session) throws Exception {
+        // Adding validation to prevent null pointer exceptions
+        if (request == null || session == null) {
+            throw new IllegalArgumentException("Request or session cannot be null");
+        }
+
+        // Get and validate required parameters
         String serviceName = request.getParameter("serviceName");
-        int categoryId = Integer.parseInt(request.getParameter("categoryId"));
-        double price = Double.parseDouble(request.getParameter("servicePrice"));
-        int duration = Integer.parseInt(request.getParameter("serviceDuration"));
+        String categoryIdStr = request.getParameter("categoryId");
+        String servicePriceStr = request.getParameter("servicePrice");
+        String serviceDurationStr = request.getParameter("serviceDuration");
         String description = request.getParameter("serviceDescription");
 
-        int generatedId = serviceDAO.createService(serviceName, categoryId, price, duration, description);
-
-        if (generatedId > 0) {
-            updateSessionServiceMap(session, categoryId);
-            session.setAttribute("successMessage", "Service added successfully!");
-            response.sendRedirect(request.getContextPath() + "/pages/editService.jsp?categoryId=" + categoryId);
+        // Validate all required fields are present
+        if (serviceName == null || categoryIdStr == null || servicePriceStr == null || 
+            serviceDurationStr == null || description == null) {
+            session.setAttribute("errorMessage", "All fields are required");
+            return;
         }
-        
-        
+
+        try {
+            int categoryId = Integer.parseInt(categoryIdStr);
+            double price = Double.parseDouble(servicePriceStr);
+            int duration = Integer.parseInt(serviceDurationStr);
+
+            int generatedId = serviceDAO.createService(serviceName, categoryId, price, duration, description);
+
+            if (generatedId > 0) {
+                updateSessionServiceMap(session, categoryId);
+                session.setAttribute("successMessage", "Service added successfully!");
+                session.setAttribute("categoryId", categoryId); // Store for redirect
+            } else {
+                session.setAttribute("errorMessage", "Failed to add service");
+            }
+        } catch (NumberFormatException e) {
+            session.setAttribute("errorMessage", "Invalid number format in input fields");
+        } catch (Exception e) {
+            session.setAttribute("errorMessage", "Error creating service: " + e.getMessage());
+        }
     }
 
     private void handleUpdate(HttpServletRequest request, HttpSession session) throws Exception {
-        int serviceId = Integer.parseInt(request.getParameter("serviceId"));
+        // Get and validate all parameters
+        String serviceIdStr = request.getParameter("serviceId");
         String serviceName = request.getParameter("serviceName");
-        double price = Double.parseDouble(request.getParameter("servicePrice"));
-        int duration = Integer.parseInt(request.getParameter("serviceDuration"));
+        String servicePriceStr = request.getParameter("servicePrice");
+        String serviceDurationStr = request.getParameter("serviceDuration");
         String description = request.getParameter("serviceDescription");
+        String categoryIdStr = request.getParameter("categoryId");
 
-        boolean updated = serviceDAO.updateService(serviceId, serviceName, price, duration, description);
+        // Validate that all required fields are present
+        if (serviceIdStr == null || serviceName == null || servicePriceStr == null || 
+            serviceDurationStr == null || description == null || categoryIdStr == null) {
+            session.setAttribute("errorMessage", "All fields are required");
+            return;
+        }
 
-        if (updated) {
-            updateSessionServiceMap(session, Integer.parseInt(request.getParameter("categoryId")));
-            session.setAttribute("successMessage", "Service updated successfully!");
-        } else {
-            session.setAttribute("errorMessage", "Failed to update service.");
+        try {
+            // Parse numeric values
+            int serviceId = Integer.parseInt(serviceIdStr);
+            double price = Double.parseDouble(servicePriceStr);
+            int duration = Integer.parseInt(serviceDurationStr);
+            int categoryId = Integer.parseInt(categoryIdStr);
+
+            // Attempt to update the service
+            boolean updated = serviceDAO.updateService(serviceId, serviceName, price, duration, description);
+
+            if (updated) {
+                // Update the session's service map
+                updateSessionServiceMap(session, categoryId);
+                session.setAttribute("successMessage", "Service updated successfully!");
+                
+                // Store parameters for the redirect back to serviceEditor.jsp
+                session.setAttribute("editServiceId", serviceId);
+                session.setAttribute("editCategoryId", categoryId);
+            } else {
+                session.setAttribute("errorMessage", "Failed to update service");
+            }
+        } catch (NumberFormatException e) {
+            session.setAttribute("errorMessage", "Invalid number format in input fields");
+        } catch (Exception e) {
+            session.setAttribute("errorMessage", "Error updating service: " + e.getMessage());
         }
     }
 
