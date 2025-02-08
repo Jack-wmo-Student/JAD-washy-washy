@@ -118,7 +118,7 @@ public class UserDAO {
 		}
 	}
 	
-	public boolean CreateUser(String username, String password) throws SQLException {
+	public boolean CreateUser(String username, String password, int role_id) throws SQLException {
         String sql = "INSERT INTO users (status_id, role_id, username, password) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
@@ -126,7 +126,7 @@ public class UserDAO {
 
             // Set default values for status and role (modify as needed)
             stmt.setInt(1, 1); // Default status_id
-            stmt.setInt(2, 2); // Default role_id
+            stmt.setInt(2, role_id); // Default role_id
             stmt.setString(3, username);
             stmt.setString(4, password); // Consider hashing password before storing
 
