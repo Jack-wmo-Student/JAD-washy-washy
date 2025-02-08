@@ -232,30 +232,6 @@
 //		}
 //	}
 //
-//	public boolean isUsernameExists(String username) {
-//		System.out.println("Checking username: " + username);
-//		String checkQuery = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
-//
-//		try (Connection conn = DBConnection.getConnection();
-//				PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
-//
-//			stmt.setString(1, username);
-//
-//			try (ResultSet rs = stmt.executeQuery()) {
-//				if (rs.next()) {
-//					int count = rs.getInt(1);
-//					return count > 0; // Username exists
-//				} else {
-//					return false; // No results returned, username does not exist
-//				}
-//			}
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//		return false; // Username does not exist
-//	}
 //
 //	private User mapResultSetToUser(ResultSet rs) throws SQLException {
 //		User user = new User();
@@ -281,7 +257,32 @@ import DBACCESS.DBConnection;
 import MODEL.CLASS.User;
 
 public class UserDAO {
-	
+
+	public boolean isUsernameExists(String username) {
+		System.out.println("Checking username: " + username);
+		String checkQuery = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
+
+		try (Connection conn = DBConnection.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
+
+			stmt.setString(1, username);
+
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					int count = rs.getInt(1);
+					return count > 0; // Username exists
+				} else {
+					return false; // No results returned, username does not exist
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false; // Username does not exist
+	}
+
 	public List<User> getAllUsers() throws SQLException {
 		String sql = "SELECT user_id, username, status_id, role_id FROM users ORDER BY username";
 		List<User> users = new ArrayList<>();
@@ -314,34 +315,34 @@ public class UserDAO {
 			throw new SQLException("Error retrieving user", e);
 		}
 	}
-	
-	public boolean CreateUser(String username, String password) throws SQLException {
-        String sql = "INSERT INTO users (status_id, role_id, username, password) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+	public boolean CreateUser(String username, String password, int role_id) throws SQLException {
+		String sql = "INSERT INTO users (status_id, role_id, username, password) VALUES (?, ?, ?, ?)";
 
-            // Set default values for status and role (modify as needed)
-            stmt.setInt(1, 1); // Default status_id
-            stmt.setInt(2, 2); // Default role_id
-            stmt.setString(3, username);
-            stmt.setString(4, password); // Consider hashing password before storing
+		try (Connection conn = DBConnection.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        int userId = generatedKeys.getInt(1);
-                        new User(userId, username, 1, 1); // Create User object
-                    }
-                }
-                return true;
-            }
-        }
+			// Set default values for status and role (modify as needed)
+			stmt.setInt(1, 1); // Default status_id
+			stmt.setInt(2, role_id); // Default role_id
+			stmt.setString(3, username);
+			stmt.setString(4, password); // Consider hashing password before storing
 
-        return false; // Return the created user or null if failed
-    }
-	
+			int affectedRows = stmt.executeUpdate();
+			if (affectedRows > 0) {
+				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+					if (generatedKeys.next()) {
+						int userId = generatedKeys.getInt(1);
+						new User(userId, username, 1, 1); // Create User object
+					}
+				}
+				return true;
+			}
+		}
+
+		return false; // Return the created user or null if failed
+	}
+
 	public User validateUser(String user_name, String password) {
 		User user = null;
 		Connection conn = null;
@@ -371,7 +372,7 @@ public class UserDAO {
 		}
 		return user;
 	}
-	
+
 //    public List<User> getAllUsers() throws SQLException {
 //        List<User> users = new ArrayList<>();
 //        String sql = "SELECT user_id, username, status_id, role_id FROM users ORDER BY username";
@@ -409,137 +410,130 @@ public class UserDAO {
 //        return null;
 //    }
 
-    public boolean createUser(String username, String password) throws SQLException {
-        String sql = "INSERT INTO users (status_id, role_id, username, password) VALUES (?, ?, ?, ?)";
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
-            ps.setInt(1, 1);    // Default status (active)
-            ps.setInt(2, 2);    // Default role (user)
-            ps.setString(3, username);
-            ps.setString(4, password);  // Consider hashing password
-            
-            int affectedRows = ps.executeUpdate();
-            return affectedRows > 0;
-        } catch (SQLException e) {
-            System.out.println("Error in createUser: " + e.getMessage());
-            throw e;
-        }
-    }
+	public boolean createUser(String username, String password) throws SQLException {
+		String sql = "INSERT INTO users (status_id, role_id, username, password) VALUES (?, ?, ?, ?)";
 
-    public boolean deleteUser(int userId) throws SQLException {
-        String sql = "DELETE FROM users WHERE user_id = ?";
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setInt(1, userId);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            System.out.println("Error in deleteUser: " + e.getMessage());
-            throw e;
-        }
-    }
+		try (Connection conn = DBConnection.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-    public void updateUser(User user) throws SQLException {
-        String sql = "UPDATE users SET username = ? WHERE user_id = ?";
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setString(1, user.getUsername());
-            ps.setInt(2, user.getUserId());
-            
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new SQLException("User not found with ID: " + user.getUserId());
-            }
-        } catch (SQLException e) {
-            System.out.println("Error in updateUser: " + e.getMessage());
-            throw e;
-        }
-    }
+			ps.setInt(1, 1); // Default status (active)
+			ps.setInt(2, 2); // Default role (user)
+			ps.setString(3, username);
+			ps.setString(4, password); // Consider hashing password
 
-    public void toggleUserBlock(int userId, int currentUserId) throws SQLException {
-        if (userId == currentUserId) {
-            throw new SQLException("You cannot block yourself.");
-        }
+			int affectedRows = ps.executeUpdate();
+			return affectedRows > 0;
+		} catch (SQLException e) {
+			System.out.println("Error in createUser: " + e.getMessage());
+			throw e;
+		}
+	}
 
-        User targetUser = getUserById(userId);
-        if (targetUser == null) {
-            throw new SQLException("User not found");
-        }
-        if (targetUser.isIsAdmin()) {
-            throw new SQLException("You cannot block an administrator.");
-        }
+	public boolean deleteUser(int userId) throws SQLException {
+		String sql = "DELETE FROM users WHERE user_id = ?";
 
-        String sql = "UPDATE users SET status_id = CASE WHEN status_id = 1 THEN 2 ELSE 1 END WHERE user_id = ?";
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setInt(1, userId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error in toggleUserBlock: " + e.getMessage());
-            throw e;
-        }
-    }
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    public void toggleAdminStatus(int userId, int currentUserId) throws SQLException {
-        if (userId == currentUserId) {
-            throw new SQLException("You cannot modify your own admin status.");
-        }
+			ps.setInt(1, userId);
+			int rowsAffected = ps.executeUpdate();
+			return rowsAffected > 0;
+		} catch (SQLException e) {
+			System.out.println("Error in deleteUser: " + e.getMessage());
+			throw e;
+		}
+	}
 
-        User targetUser = getUserById(userId);
-        if (targetUser == null) {
-            throw new SQLException("User not found");
-        }
-        if (targetUser.isIsBlocked()) {
-            throw new SQLException("Cannot modify admin status of a blocked user.");
-        }
+	public void updateUser(User user) throws SQLException {
+		String sql = "UPDATE users SET username = ? WHERE user_id = ?";
 
-        String sql = "UPDATE users SET role_id = CASE WHEN role_id = 1 THEN 2 ELSE 1 END WHERE user_id = ?";
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setInt(1, userId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error in toggleAdminStatus: " + e.getMessage());
-            throw e;
-        }
-    }
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    public boolean isUsernameTaken(String username, int excludeUserId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?) AND user_id != ?";
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setString(1, username);
-            ps.setInt(2, excludeUserId);
-            
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next() && rs.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            System.out.println("Error in isUsernameTaken: " + e.getMessage());
-            throw e;
-        }
-    }
+			ps.setString(1, user.getUsername());
+			ps.setInt(2, user.getUserId());
 
-    private User mapResultSetToUser(ResultSet rs) throws SQLException {
-        User user = new User();
-        user.setUserId(rs.getInt("user_id"));
-        user.setUsername(rs.getString("username"));
-        user.setIsAdmin(rs.getInt("role_id"));
-        user.setIsBlocked(rs.getInt("status_id"));
-        return user;
-    }
+			int rowsAffected = ps.executeUpdate();
+			if (rowsAffected == 0) {
+				throw new SQLException("User not found with ID: " + user.getUserId());
+			}
+		} catch (SQLException e) {
+			System.out.println("Error in updateUser: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	public void toggleUserBlock(int userId, int currentUserId) throws SQLException {
+		if (userId == currentUserId) {
+			throw new SQLException("You cannot block yourself.");
+		}
+
+		User targetUser = getUserById(userId);
+		if (targetUser == null) {
+			throw new SQLException("User not found");
+		}
+		if (targetUser.isIsAdmin()) {
+			throw new SQLException("You cannot block an administrator.");
+		}
+
+		String sql = "UPDATE users SET status_id = CASE WHEN status_id = 1 THEN 2 ELSE 1 END WHERE user_id = ?";
+
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, userId);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("Error in toggleUserBlock: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	public void toggleAdminStatus(int userId, int currentUserId) throws SQLException {
+		if (userId == currentUserId) {
+			throw new SQLException("You cannot modify your own admin status.");
+		}
+
+		User targetUser = getUserById(userId);
+		if (targetUser == null) {
+			throw new SQLException("User not found");
+		}
+		if (targetUser.isIsBlocked()) {
+			throw new SQLException("Cannot modify admin status of a blocked user.");
+		}
+
+		String sql = "UPDATE users SET role_id = CASE WHEN role_id = 1 THEN 2 ELSE 1 END WHERE user_id = ?";
+
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, userId);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("Error in toggleAdminStatus: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	public boolean isUsernameTaken(String username, int excludeUserId) throws SQLException {
+		String sql = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?) AND user_id != ?";
+
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, username);
+			ps.setInt(2, excludeUserId);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() && rs.getInt(1) > 0;
+			}
+		} catch (SQLException e) {
+			System.out.println("Error in isUsernameTaken: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	private User mapResultSetToUser(ResultSet rs) throws SQLException {
+		User user = new User();
+		user.setUserId(rs.getInt("user_id"));
+		user.setUsername(rs.getString("username"));
+		user.setIsAdmin(rs.getInt("role_id"));
+		user.setIsBlocked(rs.getInt("status_id"));
+		return user;
+	}
 }
-
-

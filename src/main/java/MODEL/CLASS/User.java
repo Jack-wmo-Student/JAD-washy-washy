@@ -51,4 +51,8 @@ public class User {
 	public void setIsBlocked(int is_blocked) {
 		this.is_blocked = is_blocked;
 	}
+
+	public boolean isIsBusiness() {
+		return this.is_admin == 2;
+	}
 }
