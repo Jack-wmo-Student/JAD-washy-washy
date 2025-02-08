@@ -21,6 +21,8 @@ public class ServiceController extends HttpServlet {
     public ServiceController() {
         this.serviceDAO = new ServiceDAO();
     }
+    
+    
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -117,8 +119,9 @@ public class ServiceController extends HttpServlet {
             int categoryId = Integer.parseInt(categoryIdStr);
             double price = Double.parseDouble(servicePriceStr);
             int duration = Integer.parseInt(serviceDurationStr);
+            int status_id = 4;
 
-            int generatedId = serviceDAO.createService(serviceName, categoryId, price, duration, description);
+            int generatedId = serviceDAO.createService(serviceName, categoryId, price, duration, description, status_id);
 
             if (generatedId > 0) {
                 updateSessionServiceMap(session, categoryId);
@@ -130,7 +133,7 @@ public class ServiceController extends HttpServlet {
         } catch (NumberFormatException e) {
             session.setAttribute("errorMessage", "Invalid number format in input fields");
         } catch (Exception e) {
-            session.setAttribute("errorMessage", "Error creating service: " + e.getMessage());
+            session.setAttribute("errorMessage", "Error creating service");
         }
     }
 

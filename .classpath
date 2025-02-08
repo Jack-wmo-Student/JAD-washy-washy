@@ -3,15 +3,6 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="src/main/webapp/WEB-INF/lib/jakarta.servlet-api-5.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="src/main/webapp/WEB-INF/lib/postgresql-42.7.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/wmo20/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.18.2/jackson-databind-2.18.2.jar" sourcepath="C:/Users/wmo20/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.18.2/jackson-databind-2.18.2-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="com.fasterxml.jackson.core"/>
-			<attribute name="maven.artifactId" value="jackson-databind"/>
-			<attribute name="maven.version" value="2.18.2"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -20,26 +11,6 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/apache-tomcat-10.0.27">
 		<attributes>
 			<attribute name="owner.project.facets" value="jst.web"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/wmo20/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar" sourcepath="C:/Users/wmo20/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.groupId" value="com.vaadin.external.google"/>
-			<attribute name="maven.artifactId" value="android-json"/>
-			<attribute name="maven.version" value="0.0.20131108.vaadin1"/>
-			<attribute name="maven.scope" value="test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/wmo20/.m2/repository/net/minidev/json-smart/2.5.1/json-smart-2.5.1.jar" sourcepath="C:/Users/wmo20/.m2/repository/net/minidev/json-smart/2.5.1/json-smart-2.5.1-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.groupId" value="net.minidev"/>
-			<attribute name="maven.artifactId" value="json-smart"/>
-			<attribute name="maven.version" value="2.5.1"/>
-			<attribute name="maven.scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="src/main/webapp/WEB-INF/classes"/>

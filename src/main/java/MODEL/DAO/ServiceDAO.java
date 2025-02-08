@@ -29,30 +29,44 @@ public class ServiceDAO {
 		return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 	}
 
-	public int createService(String serviceName, int categoryId, double price, int duration, String description)
-			throws SQLException, ClassNotFoundException {
-		String insertSQL = "INSERT INTO service (service_name, category_id, price, duration_in_hour, service_description) "
-				+ "VALUES (?, ?, ?, ?, ?)";
+	public int createService(String serviceName, int categoryId, double price, int duration, String description, int status_id)
+	        throws SQLException, ClassNotFoundException {
+		System.out.println("serviceName: " + serviceName);
+        
+        System.out.println("currentCategoryId: " + categoryId);
+        
+        System.out.println("price: " + price);
+   
+        System.out.println("duration: " + duration);
+        
+        System.out.println("description: " + description);
+        
+	    // Explicitly list all columns to ensure correct ordering
+	    String insertSQL = "INSERT INTO service (category_id, status_id, service_name, price, duration_in_hour, service_description) VALUES (?, ?, ?, ?, ?, ?)";
 
-		try (Connection conn = getConnection();
-				PreparedStatement ps = conn.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
+	    	
+	    	ps.setInt(1, categoryId);
+	    	ps.setInt(2, status_id);
+	    	ps.setDouble(4, price);
+	        ps.setString(3, serviceName);
+	        ps.setInt(5, duration);
+	        ps.setString(6, description);
+	       
 
-			ps.setString(1, serviceName);
-			ps.setInt(2, categoryId);
-			ps.setDouble(3, price);
-			ps.setInt(4, duration);
-			ps.setString(5, description);
-
-			int rowsAffected = ps.executeUpdate();
-			if (rowsAffected > 0) {
-				try (ResultSet rs = ps.getGeneratedKeys()) {
-					if (rs.next()) {
-						return rs.getInt(1);
-					}
-				}
-			}
-		}
-		return 0;
+	        int rowsAffected = ps.executeUpdate();
+	        System.out.println("Rows affected: " + rowsAffected);
+	        
+	        if (rowsAffected > 0) {
+	            try (ResultSet rs = ps.getGeneratedKeys()) {
+	                if (rs.next()) {
+	                    return rs.getInt(1);
+	                }
+	            }
+	        }
+	    }
+	    return 0;
 	}
 
 	public boolean updateService(int serviceId, String serviceName, double price, int duration, String description)

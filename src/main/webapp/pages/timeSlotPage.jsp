@@ -22,7 +22,25 @@
 		String bookingDate = (String) session.getAttribute("booking-date");
 	%>
 </head>
+
 <body>
+		
+		<%
+		System.out.println("\n=== TimeSlot Page Processing ===");
+		System.out.println("Retrieved map from session: " + 
+		    (timeslotAvailability != null ? timeslotAvailability.size() + " slots" : "null"));
+		if (timeslotAvailability != null) {
+		    timeslotAvailability.forEach((timeRange, availability) -> {
+		        System.out.println(timeRange + " -> " + availability);
+		    });
+		}
+		%>
+	<script>
+	    function logTimeSlotNavigation() {
+	        console.log("Date being sent: " + document.querySelector('[name="date"]').value);
+	        console.log("Service ID being sent: " + document.querySelector('[name="serviceId"]').value);
+	    }
+	</script>
 	<!-- Include the Navbar -->
 	<div>
 		<%@ include file="/component/navbar.jsp" %>
@@ -86,3 +104,4 @@
     </div>
 </body>
 </html>
+
