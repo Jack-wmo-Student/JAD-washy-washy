@@ -24,16 +24,17 @@
     %>
 </head>
 <body>
+	<!-- Include the Navbar -->
+	<div>
+		<%@ include file="/component/navbar.jsp"%>
+	</div>
+	
+	<!--  Side bar -->
+	<div>
+   		<%@ include file="../component/adminSidebar.jsp" %>
+   	</div>
+   	
 	<div class="container mt-1">
-		<!-- Include the Navbar -->
-		<div>
-			<%@ include file="/component/navbar.jsp"%>
-		</div>
-		
-		<!--  Side bar -->
-		<div>
-    		<%@ include file="../component/adminSidebar.jsp" %>
-    	</div>
 		
 	    <h1>Business Dashboard</h1>
 	    <hr>

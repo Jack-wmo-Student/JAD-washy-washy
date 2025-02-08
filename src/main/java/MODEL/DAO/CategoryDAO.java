@@ -53,11 +53,36 @@ public class CategoryDAO {
         return generatedId;
     }
 
-    public boolean deleteCategory(int categoryId) throws SQLException, ClassNotFoundException {
-        String deleteSQL = "DELETE FROM category WHERE category_id = ?";
+    public boolean canDeleteCategory(int categoryId) throws SQLException, ClassNotFoundException {
+        String checkServicesSQL = "SELECT COUNT(*) FROM service WHERE category_id = ?";
         
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(deleteSQL)) {
+             PreparedStatement ps = conn.prepareStatement(checkServicesSQL)) {
+            
+            ps.setInt(1, categoryId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int serviceCount = rs.getInt(1);
+                    return serviceCount == 0;
+                }
+            }
+            
+            // If no result was found, consider it a invalid category
+            return false;
+        }
+    }
+
+    public boolean deleteCategory(int categoryId) throws SQLException, ClassNotFoundException {
+        // First, check if the category can be safely deleted
+        if (!canDeleteCategory(categoryId)) {
+            throw new SQLException("Cannot delete category: It has associated services");
+        }
+        
+        String deleteCategorySQL = "DELETE FROM category WHERE category_id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(deleteCategorySQL)) {
             
             ps.setInt(1, categoryId);
             int rowsDeleted = ps.executeUpdate();

@@ -163,6 +163,14 @@
 	    <servlet-name>BlockUserServlet</servlet-name>
 	    <url-pattern>/BlockUserServlet</url-pattern>
 	</servlet-mapping>
+		<servlet>
+		<servlet-name>StripeController</servlet-name>
+	    <servlet-class>CONTROLLER.StripeController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>StripeController</servlet-name>
+	    <url-pattern>/StripeController</url-pattern>
+	</servlet-mapping>
 <!-- 	<servlet>
 		<servlet-class>CONTROLLER.BlockUserServlet</servlet-class>
 	</servlet>
@@ -203,7 +211,15 @@
         <servlet-class>CONTROLLER.CategoryController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>CategoryController</servlet-name>
-        <url-pattern>/CategoryController/*</url-pattern>
-    </servlet-mapping>
+	    <servlet-name>CategoryController</servlet-name>
+	    <url-pattern>/CategoryController/*</url-pattern>
+	</servlet-mapping>
+    <servlet>
+		<servlet-name>UserController</servlet-name>
+		<servlet-class>CONTROLLER.UserController</servlet-class>
+	</servlet>
+	<servlet-mapping> 
+		<servlet-name>UserController</servlet-name>
+		<url-pattern>/UserController</url-pattern>
+	</servlet-mapping>
 </web-app>
