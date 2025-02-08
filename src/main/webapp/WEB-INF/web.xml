@@ -83,14 +83,8 @@
 		<servlet-name>DeleteServiceServlet</servlet-name>
 		<url-pattern>/DeleteServiceServlet</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>handleRegisterUser</servlet-name>
-		<servlet-class>CONTROLLER.handleRegisterUser</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>handleRegisterUser</servlet-name>
-		<url-pattern>/handleRegisterUser</url-pattern>
-	</servlet-mapping>
+
+
 <!-- 	<servlet>
 		<servlet-name>ManageMemberServlet</servlet-name>
 		<servlet-class>CONTROLLER.ManageMemberServlet</servlet-class>
@@ -162,14 +156,6 @@
 	<servlet-mapping>
 	    <servlet-name>BlockUserServlet</servlet-name>
 	    <url-pattern>/BlockUserServlet</url-pattern>
-	</servlet-mapping>
-		<servlet>
-		<servlet-name>StripeController</servlet-name>
-	    <servlet-class>CONTROLLER.StripeController</servlet-class>
-	</servlet>
-	<servlet-mapping>
-	    <servlet-name>StripeController</servlet-name>
-	    <url-pattern>/StripeController</url-pattern>
 	</servlet-mapping>
 <!-- 	<servlet>
 		<servlet-class>CONTROLLER.BlockUserServlet</servlet-class>
