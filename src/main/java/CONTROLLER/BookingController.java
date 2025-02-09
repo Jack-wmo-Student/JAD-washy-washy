@@ -90,13 +90,14 @@ public class BookingController extends HttpServlet {
 					// Create the timeslot class
 					timeslot.setTimeSlotId(timeslotId);
 					timeslot.setTimeRange(finalisedTimeSlot);
-				} else if(timeslots.size() ==1) {
+				} else if (timeslots.size() == 0) {
+					break;
+				} else {
 					System.out.println("There are this many timeslots: " + timeslots.size());
 					timeslot.setTimeSlotId(timeslotId);
 					timeslot.setTimeRange((String) timeslots.get(0));
-				} else {
-					
 				}
+				;
 
 				// Create the booking object and add to the list
 				Booking bookingObj = new Booking(bookingId, (String) eachBooking.get("service_name"), timeslot,
@@ -124,7 +125,8 @@ public class BookingController extends HttpServlet {
 		// Check if the user is logged in or not
 		HttpSession session = request.getSession(false);
 		// Check if the user is logged in
-		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session.getAttribute("currentUser") == null) {
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null
+				|| session.getAttribute("currentUser") == null) {
 			// Handle invalid login
 			request.setAttribute("error", "You must log in first.");
 			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
