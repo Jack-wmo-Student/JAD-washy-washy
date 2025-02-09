@@ -1,0 +1,68 @@
+.progress-container {
+	text-align: center;
+	margin: 20px auto;
+	padding: 20px;
+	width: 80%;
+	max-width: 600px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	background: #f9f9f9;
+}
+
+.progress-tracker {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 20px;
+	position: relative;
+	padding-bottom: 20px;
+}
+
+.progress-step {
+	text-align: center;
+	position: relative;
+	flex: 1;
+}
+
+.step-icon {
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	border-radius: 50%;
+	display: inline-block;
+	background: #ddd;
+	color: #fff;
+	font-weight: bold;
+}
+
+/* Highlight completed steps */
+.completed {
+	background: #28a745 !important;
+}
+
+/* Highlight the current step */
+.current {
+	background: #007bff !important;
+}
+
+/* Line connecting the steps */
+.progress-tracker::before {
+	content: "";
+	position: absolute;
+	top: 20px;
+	left: 0;
+	width: 100%;
+	height: 5px;
+	background: #ddd;
+	z-index: -1;
+}
+
+.progress-step.completed+.progress-step::before {
+	content: "";
+	position: absolute;
+	top: 20px;
+	left: 0;
+	width: 100%;
+	height: 5px;
+	background: #28a745;
+	z-index: -1;
+}

@@ -108,7 +108,7 @@ public class TimeSlotDAO {
 		List<Integer> time_slots = new ArrayList<>();
 		String placeholders = String.join(",", Collections.nCopies(time_slot_ids.length, "?"));
 		String query = """
-			    SELECT %s 
+			    SELECT "%s" 
 			    FROM timeslot 
 			    WHERE timeslot_id IN (%s)
 			    """.formatted(time_slot, placeholders);

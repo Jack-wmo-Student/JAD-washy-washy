@@ -1,26 +1,48 @@
 @charset "UTF-8";
 
+/* Ensure navbar does not overlap */
 body {
 	font-family: Arial, sans-serif;
 	background-color: #f4f4f4;
 	margin: 0;
-	padding: 0;
+	padding-top: 100px; /* Increased space to prevent navbar overlap */
 	display: flex;
 	justify-content: center;
-	align-items: center;
-	height: 100vh;
+	min-height: 100vh;
 }
 
+/* Main layout container */
+.container {
+	display: flex;
+	gap: 30px;
+	width: 90%;
+	max-width: 1300px;
+	align-items: flex-start; /* Ensures alignment from top */
+}
+
+/* Left Panel - Centered Settings Form */
+.left-panel {
+	flex: 1;
+	min-width: 400px;
+	max-width: 450px;
+	display: flex;
+	justify-content: center; /* Centers form horizontally */
+	align-items: center; /* Centers vertically */
+	height: 100%; /* Ensures proper height */
+}
+
+/* Enlarged Settings Form */
 .settings-form {
-	background: #fff;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-	width: 400px;
+	background: white;
+	padding: 25px;
+	border-radius: 10px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	max-width: 450px;
 }
 
 .settings-form h2 {
-	margin-bottom: 20px;
+	margin-bottom: 25px;
 	color: #333;
 }
 
@@ -31,39 +53,166 @@ body {
 	color: #555;
 }
 
-.settings-form input[type="text"], .settings-form input[type="password"]
-	{
+.settings-form input {
 	width: 100%;
-	padding: 10px;
-	margin-bottom: 15px;
+	padding: 12px;
+	margin-bottom: 20px;
 	border: 1px solid #ddd;
-	border-radius: 5px;
-	font-size: 14px;
-	box-sizing: border-box;
+	border-radius: 6px;
+	font-size: 15px;
 }
 
 .settings-form button {
 	background-color: #007bff;
 	color: white;
 	border: none;
-	padding: 10px 15px;
+	padding: 12px 18px;
 	cursor: pointer;
-	border-radius: 5px;
-	font-size: 14px;
+	border-radius: 6px;
+	font-size: 15px;
 	width: 100%;
+	font-weight: bold;
 }
 
 .settings-form button:hover {
 	background-color: #0056b3;
 }
 
-*, *::before, *::after {
-	box-sizing: border-box;
-	/* Ensure padding and borders are included in the element's width and height */
+/* Right Panel - Status Update + Transaction Table */
+.right-panel {
+	flex: 2;
+	display: flex;
+	flex-direction: column;
+	gap: 25px;
+	align-items: stretch;
 }
 
-.error {
-	color: red;
+/* Status Update Section (Top Right) */
+.status-section {
+	background: white;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 	text-align: center;
-	margin-bottom: 1rem;
+	min-height: 120px;
+}
+
+.status-section h3 {
+	margin-bottom: 12px;
+	color: #333;
+}
+
+.status-section p {
+	font-size: 15px;
+	color: #555;
+}
+
+.status-section button {
+	background-color: #28a745;
+	color: white;
+	border: none;
+	padding: 12px 18px;
+	cursor: pointer;
+	border-radius: 6px;
+	font-size: 15px;
+	margin-top: 12px;
+}
+
+.status-section button:hover {
+	background-color: #218838;
+}
+
+/* Transaction History Section (Bottom Right) */
+.transaction-section {
+	background: white;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+	overflow-y: auto;
+	min-height: 350px;
+}
+
+.transaction-section h3 {
+	margin-bottom: 15px;
+	color: #333;
+}
+
+/* Transaction Table */
+.transaction-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.95rem;
+}
+
+.transaction-table th, .transaction-table td {
+	padding: 14px;
+	text-align: left;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.transaction-table th {
+	background-color: #f5f5f5;
+	font-weight: bold;
+}
+
+.transaction-table tr:hover {
+	background-color: #f8f8f8;
+}
+
+/* Status badges */
+.status-badge {
+	padding: 5px 10px;
+	border-radius: 4px;
+	font-size: 0.85rem;
+	font-weight: 500;
+}
+
+.status-completed {
+	background: #e8f5e9;
+	color: #2e7d32;
+}
+
+.status-pending {
+	background: #fff3e0;
+	color: #ef6c00;
+}
+
+.status-cancelled {
+	background: #ffebee;
+	color: #c62828;
+}
+
+/* No transactions message */
+.no-transactions {
+	text-align: center;
+	padding: 20px;
+	color: #666;
+}
+
+/* Ensure sections align properly */
+.status-section, .transaction-section {
+	width: 100%;
+}
+
+/* Responsive Layout */
+@media ( max-width : 1024px) {
+	.container {
+		flex-direction: column;
+		align-items: center;
+	}
+	.left-panel, .right-panel {
+		width: 100%;
+	}
+	.left-panel {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.settings-form {
+		width: 90%;
+		max-width: 500px;
+	}
+	.right-panel {
+		align-items: center;
+	}
 }
