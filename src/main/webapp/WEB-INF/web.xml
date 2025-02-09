@@ -52,6 +52,14 @@
 		<url-pattern>/StatisticsServlet</url-pattern>
 	</servlet-mapping>
 	<servlet>
+		<servlet-name>BookingStatus</servlet-name>
+		<servlet-class>CONTROLLER.BookingStatusController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BookingStatus</servlet-name>
+		<url-pattern>/bookingStatus</url-pattern>
+	</servlet-mapping>
+	<servlet>
 		<servlet-name>logout</servlet-name>
 		<servlet-class>CONTROLLER.logout</servlet-class>
 	</servlet>
@@ -101,11 +109,11 @@
 		<url-pattern>/UserController</url-pattern>
 	</servlet-mapping>
 	<servlet>
-    <servlet-name>ServiceStatisticsController</servlet-name>
-    <servlet-class>CONTROLLER.ServiceStatisticsController</servlet-class>
-</servlet>
-<servlet-mapping>
-    <servlet-name>ServiceStatisticsController</servlet-name>
-    <url-pattern>/statistics</url-pattern>
-</servlet-mapping>
+		<servlet-name>ServiceStatisticsController</servlet-name>
+		<servlet-class>CONTROLLER.ServiceStatisticsController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServiceStatisticsController</servlet-name>
+		<url-pattern>/statistics</url-pattern>
+	</servlet-mapping>
 </web-app>
