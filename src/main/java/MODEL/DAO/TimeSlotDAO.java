@@ -12,6 +12,7 @@ import java.util.Map;
 
 import DBACCESS.DBConnection;
 
+
 public class TimeSlotDAO {
 	public static List<Map<String, Object>> getTimeSlotSheets(String date, int serviceId) throws SQLException {
 		System.out.println("We are in the model to get the small data");
@@ -63,6 +64,44 @@ public class TimeSlotDAO {
 		}
 	}
 
+	public static List<Integer> getSpecificTimeslotsByIds (String time_slot, Integer[] time_slot_ids)  throws SQLException {
+		// Set up variables and queries
+		List<Integer> time_slots = new ArrayList<>();
+		String placeholders = String.join(",", Collections.nCopies(time_slot_ids.length, "?"));
+		String query = """
+			    SELECT "%s"
+			    FROM timeslot 
+			    WHERE timeslot_id IN (%s)
+			    """.formatted(time_slot, placeholders);
+		
+		// Query to the database
+		try (Connection conn = DBConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(query)) {
+			// Set the '?'s
+			for(int i = 0; i < time_slot_ids.length; i++) {
+				pstmt.setInt(i + 1, time_slot_ids[i]);
+			}
+			
+			try (ResultSet rs = pstmt.executeQuery()) {
+				// add the results into 'time_slots'
+				while (rs.next()) {
+					Integer value = rs.getObject(1, Integer.class);
+					time_slots.add(value);
+					
+					System.out.println("User that booked this time slot: " + value); // will return null for now
+				}
+				
+				return time_slots;
+			}
+		} 
+		catch (Exception e) {
+			System.out.println("------ Error in getSpecificTimeslotsByIds -------");
+			System.out.println("Database connection or query execution failed.");
+			e.printStackTrace();
+			throw e;
+		}		
+	}
+	
 	public static List<Integer> getTimeslotsByTimeslotId(int timeslot_id) throws SQLException {
 		System.out.println("We are in the function to get the timeslots ");
 
@@ -101,44 +140,6 @@ public class TimeSlotDAO {
 			e.printStackTrace();
 			return null;
 		}
-	}
-	
-	public static List<Integer> getSpecificTimeslotsByIds (String time_slot, Integer[] time_slot_ids)  throws SQLException {
-		// Set up variables and queries
-		List<Integer> time_slots = new ArrayList<>();
-		String placeholders = String.join(",", Collections.nCopies(time_slot_ids.length, "?"));
-		String query = """
-			    SELECT %s 
-			    FROM timeslot 
-			    WHERE timeslot_id IN (%s)
-			    """.formatted(time_slot, placeholders);
-		
-		// Query to the database
-		try (Connection conn = DBConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(query)) {
-			// Set the '?'s
-			for(int i = 0; i < time_slot_ids.length; i++) {
-				pstmt.setInt(i + 1, time_slot_ids[i]);
-			}
-			
-			try (ResultSet rs = pstmt.executeQuery()) {
-				// add the results into 'time_slots'
-				while (rs.next()) {
-					Integer value = rs.getObject(1, Integer.class);
-					time_slots.add(value);
-					
-					System.out.println("User that booked this time slot: " + value); // will return null for now
-				}
-				
-				return time_slots;
-			}
-		} 
-		catch (Exception e) {
-			System.out.println("------ Error in getSpecificTimeslotsByIds -------");
-			System.out.println("Database connection or query execution failed.");
-			e.printStackTrace();
-			throw e;
-		}		
 	}
 	
 	
