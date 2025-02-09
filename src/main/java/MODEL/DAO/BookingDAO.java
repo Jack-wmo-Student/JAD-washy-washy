@@ -62,6 +62,7 @@ public class BookingDAO {
 	public static List<String> fetchBookedTimeSlots(int bookingId, int timeSlotId) throws SQLException {
 		// Initialize stuffs
 		List<String> resultList = new ArrayList<>();
+		System.out.println("----- we are in fetchBookedTimeSlots ------");
 		
 		String query = """
 		        SELECT 
@@ -94,6 +95,7 @@ public class BookingDAO {
 		        pstmt.setInt(10, timeSlotId);
 
 		        try (ResultSet rs = pstmt.executeQuery()) {
+		        	System.out.println("----- Successful query ------");
 		            while (rs.next()) {
 		                String bookedTimeslot = rs.getString("booked_timeslot");
 		                if (bookedTimeslot != null) {

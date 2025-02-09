@@ -69,6 +69,7 @@
                                 cssClass = "timeslot-available";
                                 statusText = "Available";
                                 timeslotId = timeslotIdOrStatus; // this is timeslot id
+                                isEnabled = true;
                             }  else {
                                 cssClass = "timeslot-unavailable";
                                 statusText = "Unavailable";
@@ -84,7 +85,7 @@
                     </div>
                     <button 
                         type="submit" 
-                        name="timeslot" x1
+                        name="timeslot" 
                         value="<%= timeslot + "," + timeslotId %>"
                         class="timeslot-button" 
                         <%= isEnabled ? "" : "disabled" %>>

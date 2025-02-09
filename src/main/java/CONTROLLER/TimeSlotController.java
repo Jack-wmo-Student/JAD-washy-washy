@@ -24,7 +24,7 @@ import utils.sessionUtils;
 
 public class TimeSlotController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	
 	public TimeSlotController() {
 		super();
 	}
@@ -32,199 +32,213 @@ public class TimeSlotController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		// Check login status first
+		
+		// Check if the user is logged in or not
 		HttpSession session = request.getSession(false);
-		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null) {
+		// Check if the user is logged in
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session==null) {
+			// Handle invalid login
 			request.setAttribute("error", "You must log in first.");
 			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);
 			return;
 		}
+		
+		System.out.println("We are in doGet of the timeslotPage");
 
-		// Get data from parameters instead of attributes
-		String date = request.getParameter("date");
-		String strServiceId = request.getParameter("serviceId");
-		String[] all_time_slots = { "8am-9am", "9am-10am", "10am-11am", "11am-12pm", "1pm-2pm", "2pm-3pm", "4pm-5pm",
-		"5pm-6pm" };
+		// Get data from the params and define variables
+		String date = (String) request.getAttribute("date");
+		String strServiceId = (String) request.getAttribute("serviceId");
+		int serviceId = 0;
+		String[] all_time_slots= {
+				"8am-9am", "9am-10am", "10am-11am", "11am-12pm", 
+				"1pm-2pm", "2pm-3pm", "4pm-5pm", "5pm-6pm"
+		};
+		
+		
+		
+		
+		// Confirm correct date and service id
+		System.out.println("--- Chosen Date: " + date);
+		System.out.println("--- Chosen serviceId: " + strServiceId);
 
-		// Add debug logging
-		System.out.println("Date parameter: " + date);
-		System.out.println("ServiceId parameter: " + strServiceId);
-
-		// Validate parameters
-		if (date == null || date.trim().isEmpty() || strServiceId == null || strServiceId.trim().isEmpty()) {
-			System.out.println("Missing required parameters - date or serviceId");
-			response.sendRedirect(
-					request.getContextPath() + "/pages/bookingPage.jsp?errorMessage=Missing required parameters");
-			return;
-		}
-
-		int serviceId;
-		try {
-			serviceId = Integer.parseInt(strServiceId);
-		} catch (NumberFormatException e) {
-			System.out.println("Invalid serviceId format: " + strServiceId);
-			response.sendRedirect(
-					request.getContextPath() + "/pages/bookingPage.jsp?errorMessage=Invalid service ID format");
-			return;
-		}
-
-		try {
-			// Get timeslot details
-			List<Map<String, Object>> time_slot_details = TimeSlotDAO.getTimeSlotSheets(date, serviceId);
-			System.out.println(
-					"Retrieved timeslot details: " + (time_slot_details != null ? time_slot_details.size() : "null"));
-
-			if (time_slot_details == null || time_slot_details.isEmpty()) {
-				System.out.println("No timeslot details found");
+		if (date != null && strServiceId != null) {
+			try {
+				serviceId = Integer.parseInt(strServiceId);
+			} catch (NumberFormatException e) {
+				System.out.printf("Failed to parse to integer. ", e);
 				response.sendRedirect(
-						request.getContextPath() + "/pages/bookingPage.jsp?errorMessage=No timeslots available");
+						request.getContextPath() + "/pages/bookingPage.jsp?errorMessage=Invalid service ID");
+			}
+		} else {
+			System.out.println("Did not have the params");
+			response.sendRedirect(request.getContextPath()
+					+ "/pages/bookingPage.jsp?errorMessage=Does not have the necessary params");
+			;
+		}
+
+		try {
+			// Get the timeslot_id, created_at, duration_in_hour and price from 'service_timeslot' using
+			// service id and date
+			List<Map<String, Object>> time_slot_details = TimeSlotDAO.getTimeSlotSheets(date, serviceId);
+
+			time_slot_details.sort((o1, o2) -> {
+			    Date date1 = (Date) o1.get("created_at");
+			    Date date2 = (Date) o2.get("created_at");
+			    return date1.compareTo(date2);
+			});
+			
+			// Get all the time slots from the 'timeslot'
+			if (time_slot_details == null || time_slot_details.isEmpty()) {
+				response.sendRedirect(
+						request.getContextPath() + "/pages/bookingPage.jsp?errorMessage=Invalid service ID or date");
 				return;
 			}
 
 			// Here, I see how long the duration of the service is.
 			int service_duration = (int) time_slot_details.get(0).get("duration"); // 1, 2, 3
-
-//	     			Based on the service duration, I need to create a map array to keep track of which timeslots are already occupied already.
+			
+//			Based on the service duration, I need to create a map array to keep track of which timeslots are already occupied already.
 			Map<String, Integer[]> time_slot_map = new LinkedHashMap<>();
 			// Example data
 			// {
-			// "8am-9am": [null, null, null, null],
-			// "10am-11am": [null, null, null, null],
+			//	"8am-9am": [null, null, null, null],
+			//	"10am-11am": [null, null, null, null],
 			// }
-//	     			Create a map to send to front end
+//			Create a map to send to front end
 			Map<String, String> to_send_front_end = new LinkedHashMap<>();
 			// Example Data
 			// {
-			// "8am-10am": ["Booked", "Booked", "Booked", "Booked"],
-			// "10am-12pm": ["Booked", "Booked", "Booked", "Available"],
-			// "1pm-2pm": ["Booked", "Booked", "Available", "Available"]
-			// }
-
+            //    "8am-10am": ["Booked", "Booked", "Booked", "Booked"],
+            //    "10am-12pm": ["Booked", "Booked", "Booked", "Available"],
+			//	  "1pm-2pm": ["Booked", "Booked", "Available", "Available"] 
+            // }
 			
 			int total_slots = all_time_slots.length;
-
-			for (int i = 0; i < total_slots; i++) {
+			
+			for(int i = 0; i < total_slots; i++) {
 				String start_slot = all_time_slots[i];
 				int end_index = i + service_duration - 1;
-
+				
 				// Ensure the end index is within the bounds
 				if (end_index < total_slots) {
 					String end_slot = all_time_slots[end_index];
-
+					
 					// Check if the time slot crosses 12pm - 1pm (lunch break)
-					if (!start_slot.contains("11am-12pm") || end_slot.contains("12pm-1pm")) {
+					if(!start_slot.contains("11am-12pm") || end_slot.contains("12pm-1pm")) {
 						time_slot_map.put(start_slot, new Integer[time_slot_details.size()]);
-					}
-				}
+					} 
+				}	
 			}
-
+			
 			// Make a list of time slot ids that i will need to pass in
 			Integer[] time_slot_ids = new Integer[time_slot_details.size()];
 			for (int i = 0; i < time_slot_details.size(); i++) {
-				time_slot_ids[i] = (int) time_slot_details.get(i).get("timeslot_id");
+					time_slot_ids[i] = (int) time_slot_details.get(i).get("timeslot_id");
 			}
-
+			 
+			
 			// Loop through to send to the front end
 			for (int i = 0; i < all_time_slots.length - service_duration + 1; i += service_duration) {
-				String start_time = all_time_slots[i];
-				if (i + service_duration - 1 >= all_time_slots.length) {
-					break;
-				}
-				String end_time = all_time_slots[i + service_duration - 1];
+			    String start_time = all_time_slots[i];
+			    if (i + service_duration - 1 >= all_time_slots.length) {
+			        break;
+			    }
+			    String end_time = all_time_slots[i + service_duration - 1];
 
-				// Skip slots that cross lunch break (12pm-1pm)
-				boolean crossesLunchBreak = false;
-				for (int j = i; j <= i + service_duration - 1; j++) {
-					if (all_time_slots[j].split("-")[0].contains("12pm")) {
-						crossesLunchBreak = true;
-						break;
-					}
-				}
+			    // Skip slots that cross lunch break (12pm-1pm)
+			    boolean crossesLunchBreak = false;
+			    for (int j = i; j <= i + service_duration - 1; j++) {
+			        if (all_time_slots[j].split("-")[0].contains("12pm")) {
+			            crossesLunchBreak = true;
+			            break;
+			        }
+			    }
+			    
+			    if (!crossesLunchBreak) {
+			        time_slot_map.put(start_time, new Integer[time_slot_details.size()]);
+			        System.out.println("Added slot to map: " + start_time);
+			    }
+			    
+			    if (crossesLunchBreak) {
+			        continue;
+			    }
 
-				if (!crossesLunchBreak) {
-					time_slot_map.put(start_time, new Integer[time_slot_details.size()]);
-					System.out.println("Added slot to map: " + start_time);
-				}
+			    Integer[] availability_array = time_slot_map.get(start_time);
 
-				if (crossesLunchBreak) {
-					continue;
-				}
+			    if (availability_array != null) {
+			        try {
+			            List<Integer> specific_time_slots = TimeSlotDAO.getSpecificTimeslotsByIds(start_time, time_slot_ids);
+			            
+			            
+//			            System.out.println("Successful model" + specific_time_slots);
+			            // Reset availability array
+			            Arrays.fill(availability_array, 0);  // Default to available
 
-				Integer[] availability_array = time_slot_map.get(start_time);
+			            // Update availability array based on specific time slots
+			            System.out.println(specific_time_slots.size());
+			            for (int j = 0; j < specific_time_slots.size(); j++) {
+			                if (specific_time_slots.get(j) != null) {
+			                    availability_array[j] = 1;  // Mark as booked
+			                }
+			            }
 
-				if (availability_array != null) {
-					try {
-						List<Integer> specific_time_slots = TimeSlotDAO.getSpecificTimeslotsByIds(start_time,
-								time_slot_ids);
+			            String time_range = start_time.split("-")[0] + "-" + end_time.split("-")[1];
 
-//	     			            System.out.println("Successful model" + specific_time_slots);
-						// Reset availability array
-						Arrays.fill(availability_array, 0); // Default to available
+			            // Check if the time slot is available
+			            boolean is_available = true;
+			            if (availability_array.length == 4) {  // Check if array has 4 items
+			                if (availability_array[3] == 1) {  // Check if last item is 1
+			                    is_available = false;
+			                }
+			            }
 
-						// Update availability array based on specific time slots
-						System.out.println(specific_time_slots.size());
-						for (int j = 0; j < specific_time_slots.size(); j++) {
-							if (specific_time_slots.get(j) != null) {
-								availability_array[j] = 1; // Mark as booked
-							}
-						}
+			            if (is_available) {
+			                // Find the highest available timeslot_id (the rightmost 0)
+			                int availableTimeslotId = -1;
+			                for (int k = availability_array.length - 1; k >= 0; k--) {
+			                    if (availability_array[k] == 0) {
+			                        // Adding 1 because your timeslot_ids are 1-based (1 to 4)
+			                        availableTimeslotId = k + 1;
+			                        break;
+			                    }
+			                }
+			                if (availableTimeslotId != -1) {
+			                    to_send_front_end.put(time_range, String.valueOf(availableTimeslotId));
+			                }
+			            } else {
+			                to_send_front_end.put(time_range, "unavailable");
+			            }
+			            
 
-						String time_range = start_time.split("-")[0] + "-" + end_time.split("-")[1];
-
-						// Check if the time slot is available
-						boolean is_available = true;
-						if (availability_array.length == 4) { // Check if array has 4 items
-							if (availability_array[3] == 1) { // Check if last item is 1
-								is_available = false;
-							}
-						}
-
-						if (is_available) {
-							// Find the highest available timeslot_id (the rightmost 0)
-							int availableTimeslotId = -1;
-							for (int k = availability_array.length - 1; k >= 0; k--) {
-								if (availability_array[k] == 0) {
-									// Adding 1 because your timeslot_ids are 1-based (1 to 4)
-									availableTimeslotId = k + 1;
-									break;
-								}
-							}
-							if (availableTimeslotId != -1) {
-								to_send_front_end.put(time_range, String.valueOf(availableTimeslotId));
-							}
-						} else {
-							to_send_front_end.put(time_range, "unavailable");
-						}
-
-					} catch (SQLException e) {
-						System.out.println("Error checking availability for time slot: " + start_time);
-						e.printStackTrace();
-						continue;
-					}
-				}
+			        } catch (SQLException e) {
+			            System.out.println("Error checking availability for time slot: " + start_time);
+			            e.printStackTrace();
+			            continue;
+			        }
+			    }
 			}
-
-			// Before setting session attributes, log the data
-			System.out.println("Setting session attributes:");
-			System.out.println("timeslot-availability size: " + to_send_front_end.size());
-			System.out.println("service-id: " + serviceId);
-			System.out.println("booking-date: " + date);
-
-			// Store data in session
+			
+			
+			// Store the list in the session attribute
 			session.setAttribute("timeslot-availability", to_send_front_end);
 			session.setAttribute("service-id", serviceId);
 			session.setAttribute("booking-date", date);
 
-			// Forward to the page
-			response.sendRedirect(request.getContextPath() + "/pages/timeSlotPage.jsp");
+			// Create the session for the list of carts
+			// Retrieve the cart list from the session, or create a new one if it doesn't
+			// exist
+			@SuppressWarnings("unchecked")
+			List<CartItem> cartItemLists = (List<CartItem>) session.getAttribute("cart-item-list");
+			if (cartItemLists == null) {
+				cartItemLists = new ArrayList<>(); // Initialize a new list if it's null
+				session.setAttribute("cart-item-list", cartItemLists); // Store it back in the session
+			}
 
+			response.sendRedirect(request.getContextPath() + "/pages/timeSlotPage.jsp");
 		} catch (Exception e) {
-			System.out.println("Error processing timeslot request: " + e.getMessage());
 			e.printStackTrace();
-			request.setAttribute("error", "Error processing timeslot request");
-			request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
 		}
+
 	}
 
 	@Override
@@ -240,9 +254,10 @@ public class TimeSlotController extends HttpServlet {
 		// Get the data
 		String combined_value = request.getParameter("timeslot");
 		String[] time_slot_data = combined_value.split(",");
-		String chosen_time_slot = time_slot_data[0]; // e.g., "8am-9am"
-		int time_slot_id = Integer.valueOf(time_slot_data[1]); // e.g., 4
-
+		String chosen_time_slot = time_slot_data[0]; 	 				// e.g., "8am-9am"
+		int time_slot_id = Integer.valueOf(time_slot_data[1]);			// e.g., 4
+		
+		
 		// Retrieve the booking date from the session
 		String bookingDate = (String) session.getAttribute("booking-date");
 
@@ -263,7 +278,7 @@ public class TimeSlotController extends HttpServlet {
 		CartItem cartItemObj = new CartItem();
 
 		// Create timeslot obj
-		TimeSlot timeslotObj = new TimeSlot(time_slot_id, chosen_time_slot); // "8am-9am", "8am-10am"
+		TimeSlot timeslotObj = new TimeSlot(time_slot_id, chosen_time_slot);  // "8am-9am", "8am-10am"
 
 		// loop to get the service object
 		Map<String, Object> serviceDetails = new HashMap<>();
