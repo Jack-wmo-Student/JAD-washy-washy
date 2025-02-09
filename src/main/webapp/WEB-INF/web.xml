@@ -28,12 +28,12 @@
 		<url-pattern>/categoryService</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>feedbackLogic</servlet-name>
-		<servlet-class>CONTROLLER.feedbackLogic</servlet-class>
+		<servlet-name>FeedbackController</servlet-name>
+		<servlet-class>CONTROLLER.FeedbackController</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>feedbackLogic</servlet-name>
-		<url-pattern>/feedbackLogic</url-pattern>
+		<servlet-name>FeedbackController</servlet-name>
+		<url-pattern>/FeedbackController</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>BookingController</servlet-name>

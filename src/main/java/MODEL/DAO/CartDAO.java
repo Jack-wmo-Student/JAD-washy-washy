@@ -36,7 +36,7 @@ public class CartDAO {
 
 	private int insertBooking(Connection connection, int userId, CartItem item) throws SQLException {
 		String query = """
-				    INSERT INTO booking (user_id, timeslot_id, service_id, status_id, booked_date, feedback_id)
+				    INSERT INTO booking (booked_by_user_id, timeslot_id, service_id, status_id, booked_date, feedback_id)
 				    VALUES (?, ?, ?, ?, ?, NULL)
 				    RETURNING booking_id
 				""";
@@ -50,6 +50,7 @@ public class CartDAO {
 
 			try (ResultSet rs = stmt.executeQuery()) {
 				if (rs.next()) {
+					System.out.println("Successful checkout!");
 					return rs.getInt("booking_id");
 				} else {
 					throw new SQLException("Failed to retrieve booking_id.");
@@ -63,7 +64,8 @@ public class CartDAO {
 		String[] timeRanges = { "8am-9am", "9am-10am", "10am-11am", "11am-12pm", "1pm-2pm", "2pm-3pm", "3pm-4pm",
 				"4pm-5pm", "5pm-6pm" };
 		String selectedTimeRange = item.getTimeslot().getTimeRange();
-		int startIndex = Arrays.asList(timeRanges).indexOf(selectedTimeRange);
+		String formattedTimeRange = getStartTimeSlot(selectedTimeRange);
+		int startIndex = Arrays.asList(timeRanges).indexOf(formattedTimeRange);
 
 		if (startIndex == -1 || startIndex + duration > timeRanges.length) {
 			throw new SQLException("Invalid time range or duration exceeds available slots.");
@@ -78,5 +80,21 @@ public class CartDAO {
 				stmt.executeUpdate();
 			}
 		}
+	}
+	
+	private String getStartTimeSlot (String input_time_slot) {
+		String startTime = input_time_slot.split("-")[0];
+		
+		String[] all_time_slots= {
+				"8am-9am", "9am-10am", "10am-11am", "11am-12pm", 
+				"1pm-2pm", "2pm-3pm", "3pm-4pm", "4pm-5pm", "5pm-6pm"
+		};
+		
+		for (String slot : all_time_slots) {
+	        if (slot.startsWith(startTime)) {
+	            return slot;
+	        }
+	    }
+	    return null; 
 	}
 }
