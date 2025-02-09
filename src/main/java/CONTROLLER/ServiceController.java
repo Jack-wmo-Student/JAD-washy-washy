@@ -1,6 +1,8 @@
 package CONTROLLER;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 import utils.sessionUtils;
 
 public class ServiceController extends HttpServlet {
@@ -96,44 +99,39 @@ public class ServiceController extends HttpServlet {
     }
 
     private void handleCreate(HttpServletRequest request, HttpSession session) throws Exception {
-        // Adding validation to prevent null pointer exceptions
-        if (request == null || session == null) {
-            throw new IllegalArgumentException("Request or session cannot be null");
-        }
-
-        // Get and validate required parameters
         String serviceName = request.getParameter("serviceName");
         String categoryIdStr = request.getParameter("categoryId");
         String servicePriceStr = request.getParameter("servicePrice");
         String serviceDurationStr = request.getParameter("serviceDuration");
         String description = request.getParameter("serviceDescription");
 
-        // Validate all required fields are present
-        if (serviceName == null || categoryIdStr == null || servicePriceStr == null || 
-            serviceDurationStr == null || description == null) {
-            session.setAttribute("errorMessage", "All fields are required");
-            return;
-        }
+        Part filePart = request.getPart("serviceImage"); // Retrieves file input
+        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+        String uploadPath = getServletContext().getRealPath("") + "uploads" + File.separator + fileName;
+        
+        File uploadDir = new File(getServletContext().getRealPath("") + "uploads");
+        if (!uploadDir.exists()) uploadDir.mkdir(); // Ensure directory exists
+
+        filePart.write(uploadPath); // Save file to server
+
+        String imageUrl = "uploads/" + fileName;
 
         try {
             int categoryId = Integer.parseInt(categoryIdStr);
             double price = Double.parseDouble(servicePriceStr);
             int duration = Integer.parseInt(serviceDurationStr);
-            int status_id = 4;
+            int statusId = 4;
 
-            int generatedId = serviceDAO.createService(serviceName, categoryId, price, duration, description, status_id);
+            int generatedId = serviceDAO.createService(serviceName, categoryId, price, duration, description, statusId, imageUrl);
 
             if (generatedId > 0) {
                 updateSessionServiceMap(session, categoryId);
                 session.setAttribute("successMessage", "Service added successfully!");
-                session.setAttribute("categoryId", categoryId); // Store for redirect
             } else {
                 session.setAttribute("errorMessage", "Failed to add service");
             }
-        } catch (NumberFormatException e) {
-            session.setAttribute("errorMessage", "Invalid number format in input fields");
         } catch (Exception e) {
-            session.setAttribute("errorMessage", "Error creating service");
+            session.setAttribute("errorMessage", "Error creating service: " + e.getMessage());
         }
     }
 
@@ -145,6 +143,7 @@ public class ServiceController extends HttpServlet {
         String serviceDurationStr = request.getParameter("serviceDuration");
         String description = request.getParameter("serviceDescription");
         String categoryIdStr = request.getParameter("categoryId");
+        String imageStr = request.getParameter("serviceImage");
 
         // Validate that all required fields are present
         if (serviceIdStr == null || serviceName == null || servicePriceStr == null || 
@@ -161,7 +160,7 @@ public class ServiceController extends HttpServlet {
             int categoryId = Integer.parseInt(categoryIdStr);
 
             // Attempt to update the service
-            boolean updated = serviceDAO.updateService(serviceId, serviceName, price, duration, description);
+            boolean updated = serviceDAO.updateService(serviceId, serviceName, price, duration, description, imageStr);
 
             if (updated) {
                 // Update the session's service map

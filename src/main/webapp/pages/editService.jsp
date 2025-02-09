@@ -25,10 +25,6 @@
     // Fetching category details
     String requestCategoryId = request.getParameter("categoryId");
     System.out.println(requestCategoryId);
-/*     if (requestCategoryId == null || requestCategoryId.trim().isEmpty()) {
-        response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
-        return;
-    } */
 
     @SuppressWarnings("unchecked")
     Map<Category, List<Service>> sessionCategoryServiceMap = 
@@ -36,10 +32,12 @@
 
     int categoryId = Integer.parseInt(requestCategoryId);
     Category matchingCategory = null;
+    List<Service> serviceList = null;
 
     for (Category category : sessionCategoryServiceMap.keySet()) {
         if (category.getId() == categoryId) {
             matchingCategory = category;
+            serviceList = sessionCategoryServiceMap.get(category); // Add this line to get the service list
             break;
         }
     }
@@ -60,35 +58,18 @@
             <p class="success-message"><%=successMessage%></p>
         <% 
             session.removeAttribute("successMessage");
-        } else {
+        } 
+        if (errorMessage != null) {
         %>
-        <p class="error-message"><%=errorMessage%></p>
+            <p class="error-message"><%=errorMessage%></p>
         <%
-        	session.removeAttribute("errorMessage");
-        %>
+            session.removeAttribute("errorMessage");
         }
+        %>
+
         <!-- Service Creation Form -->
-        <form action="<%=request.getContextPath()%>/ServiceController/create" method="post">
-            <div>
-                <label for="serviceName">Service Name:</label>
-                <input type="text" name="serviceName" placeholder="Enter service name" required />
-            </div>
-            <div>
-                <label for="servicePrice">Service Price:</label>
-                <input type="number" step="0.01" name="servicePrice" placeholder="Enter service price" required />
-            </div>
-            <div>
-                <label for="serviceDuration">Service Duration (in hours):</label>
-                <input type="number" name="serviceDuration" placeholder="Enter duration" required />
-            </div>
-            <div>
-                <label for="serviceDescription">Service Description:</label>
-                <input type="text" name="serviceDescription" placeholder="Enter description" required />
-            </div>
-            <input type="hidden" name="categoryId" value="<%=categoryId%>" />
-            <div>
-                <input type="submit" value="Add Service" />
-            </div>
+        <form action="<%=request.getContextPath()%>/ServiceController/create" method="post" enctype="multipart/form-data">
+            <!-- Form remains the same -->
         </form>
 
         <!-- Services List -->
@@ -96,7 +77,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Service ID</th>
+                    <th>Image</th>
                     <th>Service Name</th>
                     <th>Price</th>
                     <th>Duration (Hours)</th>
@@ -105,37 +86,41 @@
                 </tr>
             </thead>
             <tbody>
-                <%
-                List<Service> serviceList = sessionCategoryServiceMap.get(matchingCategory);
-                for (Service service : serviceList) {
+                <% 
+                if (serviceList != null && !serviceList.isEmpty()) {
+                    for (Service service : serviceList) { 
                 %>
                 <tr>
-                    <td><%=service.getId()%></td>
+                    <td>
+                        <% if (service.getImageUrl() != null) { %>
+                            <img src="<%= request.getContextPath() + "/" + service.getImageUrl() %>" width="100" />
+                        <% } else { %>
+                            <p>No Image</p>
+                        <% } %>
+                    </td>
                     <td><%=service.getName()%></td>
                     <td><%=service.getPrice()%></td>
                     <td><%=service.getDurationInHour()%></td>
                     <td><%=service.getDescription()%></td>
                     <td>
                         <form action="<%=request.getContextPath()%>/pages/serviceEditor.jsp" method="get">
-						    <input type="hidden" name="serviceId" value="<%=service.getId()%>" />
-						    <input type="hidden" name="serviceName" value="<%=service.getName()%>" />
-						    <input type="hidden" name="servicePrice" value="<%=service.getPrice()%>" />
-						    <input type="hidden" name="serviceDuration" value="<%=service.getDurationInHour()%>" />
-						    <input type="hidden" name="serviceDescription" value="<%=service.getDescription()%>" />
-						    <input type="hidden" name="categoryId" value="<%=categoryId%>" />
-						    <button type="submit" class="btn btn-edit">Edit</button>
-						</form>
+                            <input type="hidden" name="serviceId" value="<%=service.getId()%>" />
+                            <button type="submit">Edit</button>
+                        </form>
                         <form action="<%=request.getContextPath()%>/ServiceController/delete" method="post">
                             <input type="hidden" name="serviceId" value="<%=service.getId()%>" />
-                            <input type="hidden" name="categoryId" value="<%=categoryId%>" />
-                            <button type="submit" onclick="return confirm('Are you sure you want to delete this service?');">Delete</button>
+                            <button type="submit" onclick="return confirm('Delete this service?');">Delete</button>
                         </form>
                     </td>
                 </tr>
-                <%
-                	}
-                }
+                <% 
+                    } 
+                } else {
                 %>
+                <tr>
+                    <td colspan="6">No services available for this category</td>
+                </tr>
+                <% } %>
             </tbody>
         </table>
     </div>

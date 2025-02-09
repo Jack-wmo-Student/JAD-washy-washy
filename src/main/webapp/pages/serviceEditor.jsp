@@ -28,6 +28,7 @@
     String servicePrice = request.getParameter("servicePrice");
     String serviceDuration = request.getParameter("serviceDuration");
     String serviceDescription = request.getParameter("serviceDescription");
+    String serviceImage = request.getParameter("serviceImage");
     String categoryId = request.getParameter("categoryId");
 
     // Validate input parameters
@@ -67,48 +68,47 @@
         }  
         %>
         
-        <form action="<%= request.getContextPath() %>/ServiceController/update" method="post">
-		    <input type="hidden" name="serviceId" value="<%= serviceIdStr %>" />
-		    <input type="hidden" name="categoryId" value="<%= categoryId %>" />
-		    
-		    <div class="form-group">
-		        <label for="serviceName">Service Name:</label>
-		        <div class="input-wrapper">
-		            <span class="current-value">Current: <%= serviceName %></span>
-		            <input type="text" name="serviceName" value="<%= serviceName %>" required />
-		        </div>
-		    </div>
-		    
-		    <div class="form-group">
-		        <label for="servicePrice">Service Price:</label>
-		        <div class="input-wrapper">
-		            <span class="current-value">Current: $<%= servicePrice %></span>
-		            <input type="number" name="servicePrice" step="0.01" value="<%= servicePrice %>" required />
-		        </div>
-		    </div>
-		    
-		    <div class="form-group">
+        <form action="<%= request.getContextPath() %>/ServiceController/update" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="serviceId" value="<%= serviceIdStr %>" />
+            <input type="hidden" name="categoryId" value="<%= categoryId %>" />
+            
+            <div class="form-group">
+                <label for="serviceName">Service Name:</label>
+                <input type="text" name="serviceName" value="<%= serviceName %>" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="servicePrice">Service Price:</label>
+                <input type="number" name="servicePrice" step="0.01" value="<%= servicePrice %>" required />
+            </div>
+            
+            <div class="form-group">
                 <label for="serviceDuration">Service Duration (in hours):</label>
-                <div class="input-wrapper">
-                    <span class="current-value">Current: <%= serviceDuration %> hours</span>
-                    <input type="number" name="serviceDuration" value="<%= serviceDuration %>" required />
-                </div>
+                <input type="number" name="serviceDuration" value="<%= serviceDuration %>" required />
             </div>
             
             <div class="form-group">
                 <label for="serviceDescription">Service Description:</label>
-                <div class="input-wrapper">
-                    <span class="current-value">Current: <%= serviceDescription %></span>
-                    <input type="text" name="serviceDescription" value="<%= serviceDescription %>" required />
-                </div>
+                <input type="text" name="serviceDescription" value="<%= serviceDescription %>" required />
             </div>
-		    
-		    <div class="form-actions">
-		        <input type="submit" value="Update Service" class="btn btn-primary" />
-		        <a href="<%= request.getContextPath() %>/pages/editService.jsp?categoryId=<%= categoryId %>" 
-		           class="btn btn-secondary">Cancel</a>
-		    </div>
-		</form>
+            
+            <div class="form-group">
+                <label for="serviceImage">Service Image:</label>
+                <% if (serviceImage != null && !serviceImage.trim().isEmpty()) { %>
+                    <div>
+                        <img src="<%= request.getContextPath() + "/" + serviceImage %>" width="100" />
+                        <p>Current Image</p>
+                    </div>
+                <% } %>
+                <input type="file" name="serviceImage" accept="image/*" />
+            </div>
+            
+            <div class="form-actions">
+                <input type="submit" value="Update Service" class="btn btn-primary" />
+                <a href="<%= request.getContextPath() %>/pages/editService.jsp?categoryId=<%= categoryId %>" 
+                   class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
 </body>
 </html>

@@ -6,9 +6,14 @@ public class ServiceStatistics {
     private double totalRevenue;
     private int totalBookings;
     private double profitMargin;
-    private String timeframe; // e.g., "This Month", "Last Month", etc.
+    private String timeframe;
+    // New fields for trends
+    private double previousRevenue;
+    private int previousBookings;
+    private double revenueGrowth;
+    private double bookingGrowth;
 
-    // Constructor
+    // Original constructor
     public ServiceStatistics(int serviceId, String serviceName, double totalRevenue, 
                            int totalBookings, double profitMargin, String timeframe) {
         this.serviceId = serviceId;
@@ -19,7 +24,7 @@ public class ServiceStatistics {
         this.timeframe = timeframe;
     }
 
-    // Getters and Setters
+    // Original getters and setters
     public int getServiceId() {
         return serviceId;
     }
@@ -66,5 +71,38 @@ public class ServiceStatistics {
 
     public void setTimeframe(String timeframe) {
         this.timeframe = timeframe;
+    }
+
+    // New getters and setters for trend fields
+    public double getPreviousRevenue() {
+        return previousRevenue;
+    }
+
+    public void setPreviousRevenue(double previousRevenue) {
+        this.previousRevenue = previousRevenue;
+    }
+
+    public int getPreviousBookings() {
+        return previousBookings;
+    }
+
+    public void setPreviousBookings(int previousBookings) {
+        this.previousBookings = previousBookings;
+    }
+
+    public double getRevenueGrowth() {
+        return revenueGrowth;
+    }
+
+    public void setRevenueGrowth(double revenueGrowth) {
+        this.revenueGrowth = revenueGrowth;
+    }
+
+    public double getBookingGrowth() {
+        return bookingGrowth;
+    }
+
+    public void setBookingGrowth(double bookingGrowth) {
+        this.bookingGrowth = bookingGrowth;
     }
 }
