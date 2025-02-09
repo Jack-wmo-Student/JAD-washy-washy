@@ -128,7 +128,7 @@ public class BookingDAO {
 				if (rs.next()) {
 					// Return a map containing service_id and status_id
 					Map<String, Integer> result = new HashMap<>();
-					result.put("booking_Id", rs.getInt("booking_id"));
+					result.put("booking_id", rs.getInt("booking_id"));
 					result.put("service_id", rs.getInt("service_id"));
 					result.put("status_id", rs.getInt("status_id"));
 					return result;
@@ -207,7 +207,7 @@ public class BookingDAO {
 			String username;
 			String password = null;
 			if (rs4.next()) {
-				username = rs4.getString("user_id");
+				username = rs4.getString("username");
 				password = rs4.getString("password");
 				resultMap.put("username", username);
 				resultMap.put("password", password);

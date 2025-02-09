@@ -31,10 +31,6 @@
 		return;
 	}
 
-	if (request.getAttribute("fromController") == null) {
-		response.sendRedirect(request.getContextPath() + "/bookingStatus");
-		return;
-	}
 	User user = (User) session.getAttribute("currentUser");
 	String username = user.getUsername();
 	%>
@@ -159,6 +155,11 @@
 
 	<!-- Form Submission Script -->
 	<script>
+
+    if (performance.navigation.type === 1) {
+        window.location.href = "<%=request.getContextPath()%>/bookingStatus";
+    }
+
     document.getElementById("settingsForm").addEventListener("submit", function(event) {
         event.preventDefault(); // Prevent normal form submission
 

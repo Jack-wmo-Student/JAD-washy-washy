@@ -10,7 +10,9 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import MODEL.DAO.BookingDAO;
@@ -50,51 +52,84 @@ public class AcknowledgeController extends HttpServlet {
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
 		HttpSession session = request.getSession(false);
-		Map<String, Integer> booking_service_status_id = (Map<String, Integer>) session
-				.getAttribute("currentTrackedService");
+		if (session == null) {
+			request.setAttribute("err", "Session Expired. Please log in again.");
+			RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
+			rd.forward(request, response);
+			return;
+		}
 
+		Map<String, Integer> booking_service_status_id;
 		BookingDAO bookingDAO = new BookingDAO();
 		Map<String, Object> bookingDetails;
 
 		try {
+			booking_service_status_id = (Map<String, Integer>) session.getAttribute("currentTrackedService");
+			if (booking_service_status_id == null || !booking_service_status_id.containsKey("service_id")
+					|| !booking_service_status_id.containsKey("booking_id")) {
+				request.setAttribute("err", "Invalid session data.");
+				RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
+				rd.forward(request, response);
+				return;
+			}
+
 			bookingDetails = bookingDAO.getBookingDetails(booking_service_status_id.get("service_id"),
 					booking_service_status_id.get("booking_id"));
-			// Create request body
+
+			if (bookingDetails == null || !bookingDetails.containsKey("price")
+					|| !bookingDetails.containsKey("username") || !bookingDetails.containsKey("password")) {
+				request.setAttribute("err", "Booking details not found.");
+				RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
+				rd.forward(request, response);
+				return;
+			}
+
+			System.out.println("Booking Details: " + bookingDetails);
+
+			// Create request body as a list
+			List<Map<String, Object>> requestBodyList = new ArrayList<>();
 			Map<String, Object> requestBody = new HashMap<>();
 			requestBody.put("bookingId", booking_service_status_id.get("booking_id"));
 			requestBody.put("amount", bookingDetails.get("price"));
 			requestBody.put("currency", "SGD");
 			requestBody.put("quantity", 1);
+			requestBodyList.add(requestBody);
 
 			// Set headers
-			String businessId = request.getHeader("X-Username");
-			String secret = request.getHeader("X-Secret");
-			String thirdParty = request.getHeader("X-third-party");
-
 			invocationBuilder.header("X-Username", bookingDetails.get("username"));
 			invocationBuilder.header("X-Secret", bookingDetails.get("password"));
-			invocationBuilder.header("X-third-party", false);
+			invocationBuilder.header("X-third-party", "false"); // Ensure correct format
 
-			Response resp = invocationBuilder.post(Entity.entity(requestBody, MediaType.APPLICATION_JSON));
-			System.out.println("status: " + resp.getStatus());
+			// Send request with a list
+			Response resp = invocationBuilder.post(Entity.entity(requestBodyList, MediaType.APPLICATION_JSON));
+			System.out.println("Status: " + resp.getStatus());
+			System.out.println("Response Body: " + resp.readEntity(String.class)); // Print response for debugging
 
 			if (resp.getStatus() == Response.Status.OK.getStatusCode()) {
-				System.out.println("success");
-				Map<String, Object> responseMap = (Map<String, Object>) resp.readEntity(Map.class);
-				String paymentUrl = (String) responseMap.get("sessionUrl");
-
-				response.sendRedirect(paymentUrl);
+				System.out.println("Success");
+				Map<String, Object> responseMap = resp.readEntity(Map.class);
+				if (responseMap != null && responseMap.containsKey("sessionUrl")) {
+					String paymentUrl = (String) responseMap.get("sessionUrl");
+					response.sendRedirect(paymentUrl);
+				} else {
+					throw new IOException("Invalid response from payment service.");
+				}
 			} else {
-				System.out.println("failed");
-				request.setAttribute("err", "NotFound");
-				String url = request.getContextPath() + "/pages/error.jsp";
-				RequestDispatcher rd = request.getRequestDispatcher(url);
+				System.out.println("Failed");
+				request.setAttribute("err", "Payment processing failed.");
+				RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
 				rd.forward(request, response);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			request.setAttribute("err", "Database error: " + e.getMessage());
+			RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
+			rd.forward(request, response);
+		} catch (IOException e) {
+			e.printStackTrace();
+			request.setAttribute("err", "Internal error: " + e.getMessage());
+			RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
+			rd.forward(request, response);
 		}
-
 	}
 }
