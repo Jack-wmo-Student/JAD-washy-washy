@@ -6,6 +6,39 @@
     <meta charset="UTF-8">
     <title>Edit Service</title>
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/serviceManagement.css">
+    
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('previewContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function validateImage(input) {
+            const file = input.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (file) {
+                if (file.size > maxSize) {
+                    alert('File is too large. Maximum size is 5MB.');
+                    input.value = '';
+                    return false;
+                }
+                
+                if (!file.type.match('image.*')) {
+                    alert('Only image files are allowed.');
+                    input.value = '';
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
     <%
@@ -30,17 +63,6 @@
     String serviceDescription = request.getParameter("serviceDescription");
     String serviceImage = request.getParameter("serviceImage");
     String categoryId = request.getParameter("categoryId");
-
-    // Validate input parameters
-    if (serviceIdStr == null || serviceIdStr.trim().isEmpty() || 
-        serviceName == null || serviceName.trim().isEmpty() || 
-        servicePrice == null || servicePrice.trim().isEmpty() || 
-        serviceDuration == null || serviceDuration.trim().isEmpty() || 
-        serviceDescription == null || serviceDescription.trim().isEmpty() ||
-        categoryId == null || categoryId.trim().isEmpty()) {
-        response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
-        return;
-    }
     %>
 
     <div class="container">
@@ -71,6 +93,7 @@
         <form action="<%= request.getContextPath() %>/ServiceController/update" method="post" enctype="multipart/form-data">
             <input type="hidden" name="serviceId" value="<%= serviceIdStr %>" />
             <input type="hidden" name="categoryId" value="<%= categoryId %>" />
+            <input type="hidden" name="currentImageUrl" value="<%= serviceImage %>" />
             
             <div class="form-group">
                 <label for="serviceName">Service Name:</label>
@@ -95,12 +118,18 @@
             <div class="form-group">
                 <label for="serviceImage">Service Image:</label>
                 <% if (serviceImage != null && !serviceImage.trim().isEmpty()) { %>
-                    <div>
-                        <img src="<%= request.getContextPath() + "/" + serviceImage %>" width="100" />
+                    <div class="image-container">
+                        <img src="<%= serviceImage %>" width="100" alt="Current Image" />
                         <p>Current Image</p>
                     </div>
                 <% } %>
-                <input type="file" name="serviceImage" accept="image/*" />
+                <div id="previewContainer" style="display: none;">
+                    <img id="imagePreview" src="#" alt="Preview" style="max-width: 100px; margin-top: 10px;"/>
+                    <p>Preview</p>
+                </div>
+                <input type="file" name="serviceImage" accept="image/*" 
+                       onchange="if(validateImage(this)) previewImage(this)" />
+                <p class="help-text">Leave empty to keep current image</p>
             </div>
             
             <div class="form-actions">

@@ -6,9 +6,41 @@
     <meta charset="UTF-8">
     <title>Create Service for Category</title>
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/serviceManagement.css">
+    
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('previewContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function validateImage(input) {
+            const file = input.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (file) {
+                if (file.size > maxSize) {
+                    alert('File is too large. Maximum size is 5MB.');
+                    input.value = '';
+                    return false;
+                }
+                
+                if (!file.type.match('image.*')) {
+                    alert('Only image files are allowed.');
+                    input.value = '';
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
-
     <%
     // Authentication checks
     if (!sessionUtils.isLoggedIn(request, "isLoggedIn")) {
@@ -37,7 +69,7 @@
     for (Category category : sessionCategoryServiceMap.keySet()) {
         if (category.getId() == categoryId) {
             matchingCategory = category;
-            serviceList = sessionCategoryServiceMap.get(category); // Add this line to get the service list
+            serviceList = sessionCategoryServiceMap.get(category);
             break;
         }
     }
@@ -69,7 +101,35 @@
 
         <!-- Service Creation Form -->
         <form action="<%=request.getContextPath()%>/ServiceController/create" method="post" enctype="multipart/form-data">
-            <!-- Form remains the same -->
+            <div class="form-group">
+                <label for="serviceName">Service Name:</label>
+                <input type="text" name="serviceName" required />
+            </div>
+            <div class="form-group">
+                <label for="servicePrice">Service Price:</label>
+                <input type="number" step="0.01" name="servicePrice" required />
+            </div>
+            <div class="form-group">
+                <label for="serviceDuration">Duration (in hours):</label>
+                <input type="number" name="serviceDuration" required />
+            </div>
+            <div class="form-group">
+                <label for="serviceDescription">Description:</label>
+                <input type="text" name="serviceDescription" required />
+            </div>
+            <div class="form-group">
+                <label for="serviceImage">Upload Image:</label>
+                <div id="previewContainer" style="display: none;">
+                    <img id="imagePreview" src="#" alt="Preview" style="max-width: 100px; margin-top: 10px;"/>
+                    <p>Preview</p>
+                </div>
+                <input type="file" name="serviceImage" accept="image/*" 
+                       onchange="if(validateImage(this)) previewImage(this)" required />
+            </div>
+            <input type="hidden" name="categoryId" value="<%=categoryId%>" />
+            <div class="form-actions">
+                <input type="submit" value="Add Service" class="btn btn-primary" />
+            </div>
         </form>
 
         <!-- Services List -->
@@ -91,9 +151,9 @@
                     for (Service service : serviceList) { 
                 %>
                 <tr>
-                    <td>
-                        <% if (service.getImageUrl() != null) { %>
-                            <img src="<%= request.getContextPath() + "/" + service.getImageUrl() %>" width="100" />
+                    <td class="image-container">
+                        <% if (service.getImageUrl() != null && !service.getImageUrl().trim().isEmpty()) { %>
+                            <img src="<%= service.getImageUrl() %>" width="100" alt="<%= service.getName() %>" />
                         <% } else { %>
                             <p>No Image</p>
                         <% } %>
@@ -105,11 +165,19 @@
                     <td>
                         <form action="<%=request.getContextPath()%>/pages/serviceEditor.jsp" method="get">
                             <input type="hidden" name="serviceId" value="<%=service.getId()%>" />
-                            <button type="submit">Edit</button>
+                            <input type="hidden" name="serviceName" value="<%=service.getName()%>" />
+                            <input type="hidden" name="servicePrice" value="<%=service.getPrice()%>" />
+                            <input type="hidden" name="serviceDuration" value="<%=service.getDurationInHour()%>" />
+                            <input type="hidden" name="serviceDescription" value="<%=service.getDescription()%>" />
+                            <input type="hidden" name="serviceImage" value="<%=service.getImageUrl()%>" />
+                            <input type="hidden" name="categoryId" value="<%=categoryId%>" />
+                            <button type="submit" class="btn btn-edit">Edit</button>
                         </form>
                         <form action="<%=request.getContextPath()%>/ServiceController/delete" method="post">
                             <input type="hidden" name="serviceId" value="<%=service.getId()%>" />
-                            <button type="submit" onclick="return confirm('Delete this service?');">Delete</button>
+                            <input type="hidden" name="categoryId" value="<%=categoryId%>" />
+                            <button type="submit" class="btn btn-delete" 
+                                    onclick="return confirm('Delete this service?');">Delete</button>
                         </form>
                     </td>
                 </tr>
