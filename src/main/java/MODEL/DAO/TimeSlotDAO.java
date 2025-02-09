@@ -13,10 +13,8 @@ import java.util.Map;
 import DBACCESS.DBConnection;
 
 public class TimeSlotDAO {
-	public static List<Map<String, Object>> getTimeSlotSheets(String date, int serviceId) 
-	        throws SQLException {
-	    System.out.println("\n=== TimeSlotDAO Execution ===");
-	    System.out.println("Executing query with date: " + date + ", serviceId: " + serviceId);
+	public static List<Map<String, Object>> getTimeSlotSheets(String date, int serviceId) throws SQLException {
+		System.out.println("We are in the model to get the small data");
 
 		// Set the variables
 		String query = """
@@ -52,7 +50,7 @@ public class TimeSlotDAO {
                     info.put("duration", rs.getInt("duration_in_hour"));
                     System.out.println("Retrieved Timeslot ID: " + info.get("timeslot_id"));
                     
-                    timeslot_sheets.add(info);
+                    timeslot_sheets.add(info);;
 				}
 				
 				return timeslot_sheets;
