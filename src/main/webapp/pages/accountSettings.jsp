@@ -30,6 +30,11 @@
 		response.sendRedirect(request.getContextPath() + "/pages/login.jsp");
 		return;
 	}
+
+	if (request.getAttribute("fromController") == null) {
+		response.sendRedirect(request.getContextPath() + "/bookingStatus");
+		return;
+	}
 	User user = (User) session.getAttribute("currentUser");
 	String username = user.getUsername();
 	%>

@@ -113,7 +113,7 @@ public class BookingDAO {
 
 	public Map<String, Integer> getClosestFutureBooking(int userId) {
 		String query = """
-				    SELECT service_id, status_id
+				    SELECT booking_id, service_id, status_id
 				    FROM booking
 				    WHERE booked_by_user_id = ? AND booked_date > NOW()
 				    ORDER BY booked_date ASC
@@ -128,6 +128,7 @@ public class BookingDAO {
 				if (rs.next()) {
 					// Return a map containing service_id and status_id
 					Map<String, Integer> result = new HashMap<>();
+					result.put("booking_Id", rs.getInt("booking_id"));
 					result.put("service_id", rs.getInt("service_id"));
 					result.put("status_id", rs.getInt("status_id"));
 					return result;
@@ -138,5 +139,104 @@ public class BookingDAO {
 		}
 
 		return null; // Return null if no future bookings are found
+	}
+
+	public Map<String, Object> getBookingDetails(int serviceId, int bookingId) throws SQLException {
+		// Query 1: Get timeslot details for the given service_id
+		String query1 = "SELECT timeslot_id FROM booking WHERE service_id = ? AND booking_id = ?";
+
+		// Query 2: Get service price for the given service_id
+		String query2 = "SELECT price FROM service WHERE service_id = ?";
+
+		// Query 3: Get taken_by_user_id from service_timeslot for the given service_id
+		String query3 = "SELECT taken_by_user_id FROM service_timeslot WHERE service_id = ? AND timeslot_id = ?";
+
+		// Query 4: Get user details using the taken_by_user_id
+		String query4 = "SELECT username, password FROM users WHERE user_id = ?";
+
+		Connection conn = null;
+		PreparedStatement pstmt1 = null, pstmt2 = null, pstmt3 = null, pstmt4 = null;
+		ResultSet rs1 = null, rs2 = null, rs3 = null, rs4 = null;
+
+		// Create a Map to store results
+		Map<String, Object> resultMap = new HashMap<>();
+
+		try {
+			conn = DBConnection.getConnection(); // Assuming you have a DB connection utility
+
+			// Query 1: Get timeslot_id
+			pstmt1 = conn.prepareStatement(query1);
+			pstmt1.setInt(1, serviceId);
+			pstmt1.setInt(2, bookingId);
+			rs1 = pstmt1.executeQuery();
+
+			int timeslotId = -1;
+			if (rs1.next()) {
+				timeslotId = rs1.getInt("timeslot_id");
+				resultMap.put("timeslot_id", timeslotId);
+			}
+
+			// Query 2: Get service price
+			pstmt2 = conn.prepareStatement(query2);
+			pstmt2.setInt(1, serviceId);
+			rs2 = pstmt2.executeQuery();
+
+			double price = 0.0;
+			if (rs2.next()) {
+				price = rs2.getDouble("price");
+				resultMap.put("price", price);
+			}
+
+			// Query 3: Get taken_by_user_id
+			pstmt3 = conn.prepareStatement(query3);
+			pstmt3.setInt(1, serviceId);
+			pstmt3.setInt(2, timeslotId);
+			rs3 = pstmt3.executeQuery();
+
+			int takenByUserId = -1;
+			if (rs3.next()) {
+				takenByUserId = rs3.getInt("taken_by_user_id");
+				resultMap.put("taken_by_user_id", takenByUserId);
+			}
+
+			// Query 4: Get user details
+			pstmt4 = conn.prepareStatement(query4);
+			pstmt4.setInt(1, takenByUserId);
+			rs4 = pstmt4.executeQuery();
+
+			String username;
+			String password = null;
+			if (rs4.next()) {
+				username = rs4.getString("user_id");
+				password = rs4.getString("password");
+				resultMap.put("username", username);
+				resultMap.put("password", password);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Close resources
+			close(rs1, pstmt1);
+			close(rs2, pstmt2);
+			close(rs3, pstmt3);
+			close(rs4, pstmt4);
+			if (conn != null)
+				conn.close();
+		}
+
+		return resultMap;
+	}
+
+	// Utility method to close resources
+	private void close(ResultSet rs, PreparedStatement pstmt) {
+		try {
+			if (rs != null)
+				rs.close();
+			if (pstmt != null)
+				pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
