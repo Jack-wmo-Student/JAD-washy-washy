@@ -60,16 +60,13 @@
             <p class="success-message"><%=successMessage%></p>
         <% 
             session.removeAttribute("successMessage");
+        } else {
+        %>
+        <p class="error-message"><%=errorMessage%></p>
+        <%
+        	session.removeAttribute("errorMessage");
+        %>
         }
-        
-        if (errorMessage != null) {
-        %>
-            <p class="error-message"><%=errorMessage%></p>
-        <% 
-            session.removeAttribute("errorMessage");
-        } 
-        %>
-
         <!-- Service Creation Form -->
         <form action="<%=request.getContextPath()%>/ServiceController/create" method="post">
             <div>
@@ -136,6 +133,7 @@
                     </td>
                 </tr>
                 <%
+                	}
                 }
                 %>
             </tbody>
