@@ -52,14 +52,6 @@
 		<url-pattern>/StatisticsServlet</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>handleUpdateUser</servlet-name>
-		<servlet-class>CONTROLLER.handleUpdateUser</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>handleUpdateUser</servlet-name>
-		<url-pattern>/handleUpdateUser</url-pattern>
-	</servlet-mapping>
-	<servlet>
 		<servlet-name>logout</servlet-name>
 		<servlet-class>CONTROLLER.logout</servlet-class>
 	</servlet>
@@ -84,27 +76,27 @@
 		<url-pattern>/cartHandler</url-pattern>
 	</servlet-mapping>
 	<servlet>
-        <servlet-name>ServiceController</servlet-name>
-        <servlet-class>CONTROLLER.ServiceController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ServiceController</servlet-name>
-        <url-pattern>/ServiceController/*</url-pattern>
-    </servlet-mapping>
-    <!-- Category Servlet Configuration -->
-    <servlet>
-        <servlet-name>CategoryController</servlet-name>
-        <servlet-class>CONTROLLER.CategoryController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-	    <servlet-name>CategoryController</servlet-name>
-	    <url-pattern>/CategoryController/*</url-pattern>
+		<servlet-name>ServiceController</servlet-name>
+		<servlet-class>CONTROLLER.ServiceController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServiceController</servlet-name>
+		<url-pattern>/ServiceController/*</url-pattern>
 	</servlet-mapping>
-    <servlet>
+	<!-- Category Servlet Configuration -->
+	<servlet>
+		<servlet-name>CategoryController</servlet-name>
+		<servlet-class>CONTROLLER.CategoryController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CategoryController</servlet-name>
+		<url-pattern>/CategoryController/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
 		<servlet-name>UserController</servlet-name>
 		<servlet-class>CONTROLLER.UserController</servlet-class>
 	</servlet>
-	<servlet-mapping> 
+	<servlet-mapping>
 		<servlet-name>UserController</servlet-name>
 		<url-pattern>/UserController</url-pattern>
 	</servlet-mapping>
