@@ -104,6 +104,7 @@ public class BookingController extends HttpServlet {
 						eachBooking.get("booked_date").toString());
 				bookingList.add(bookingObj);
 			}
+			
 
 			// Set the session
 			session.setAttribute("bookingLists", bookingList);
