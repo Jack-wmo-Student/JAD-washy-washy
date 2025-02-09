@@ -148,10 +148,10 @@ if (nextMonth > 11) {
 				if (bookingLists != null && !bookingLists.isEmpty()) {
 					for (Booking booking : bookingLists) {
 				// Extract the booking details
-				String serviceName = booking.getServiceName();
-				String bookedDate = booking.getBookedDate().toString();
-				String timeRange = booking.getTimeSlot().getTimeRange();
-				int bookingId = booking.getBookingId();
+				String serviceName = booking.getService_name();
+				String bookedDate = booking.getBooked_date().toString();
+				String timeRange = booking.getTime_slot().getTimeRange();
+				int bookingId = booking.getBooking_id();
 			%>
 			<!-- Display if have -->
 			<div class="booking-item" data-booking-id="<%=bookingId%>"

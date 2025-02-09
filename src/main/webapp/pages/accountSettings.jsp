@@ -73,14 +73,14 @@
 			<!-- Right Panel: Status & Transactions -->
 			<div class="col-md-8">
 				<div class="status-section mb-3 p-3 bg-white shadow-sm rounded">
+					<%
+					Integer status_id = (Integer) request.getAttribute("statusId");
+					%>
+
 					<%@include file="/component/bookingProgress.jsp"%>
 					<%
-					TransactionHistoryDAO transactionDAO = new TransactionHistoryDAO();
-					List<TransactionHistory> transactions = transactionDAO.getUserTransactions(user.getUserId());
-
-					boolean hasPendingAcknowledgment = transactions.stream()
-							.anyMatch(t -> t.getBookingStatus().equalsIgnoreCase("Completed"));
-
+					status_id = (Integer) request.getAttribute("statusId");
+					boolean hasPendingAcknowledgment = status_id != null && status_id == 8;
 					if (hasPendingAcknowledgment) {
 					%>
 					<p>Your booking has been completed.</p>
@@ -100,6 +100,10 @@
 				</div>
 
 				<div class="transaction-section p-3 bg-white shadow-sm rounded">
+					<%
+					TransactionHistoryDAO transactionDAO = new TransactionHistoryDAO();
+					List<TransactionHistory> transactions = transactionDAO.getUserTransactions(user.getUserId());
+					%>
 					<h3>Transaction History</h3>
 					<%
 					if (!transactions.isEmpty()) {
