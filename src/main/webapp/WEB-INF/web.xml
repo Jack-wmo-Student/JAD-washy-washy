@@ -100,4 +100,12 @@
 		<servlet-name>UserController</servlet-name>
 		<url-pattern>/UserController</url-pattern>
 	</servlet-mapping>
+	<servlet>
+    <servlet-name>ServiceStatisticsController</servlet-name>
+    <servlet-class>CONTROLLER.ServiceStatisticsController</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>ServiceStatisticsController</servlet-name>
+    <url-pattern>/statistics</url-pattern>
+</servlet-mapping>
 </web-app>

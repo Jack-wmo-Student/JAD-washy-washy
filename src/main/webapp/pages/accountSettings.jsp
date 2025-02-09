@@ -1,31 +1,7 @@
 <%@ page import="MODEL.CLASS.User"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Account Settings</title>
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/assets/navbar.css">
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/assets/accountSettings.css">
-<link rel="icon"
-	href="<%=request.getContextPath()%>/assets/icons/favicon.ico"
-	type="image/x-icon">
-</head>
-<body>
-	<%@include file="/component/navbar.jsp"%>
-	<%
-	if (session == null || session.getAttribute("currentUser") == null) {
-		response.sendRedirect(request.getContextPath() + "/pages/login.jsp");
-		return;
-	}
-	User user = (User) session.getAttribute("currentUser");
-	String username = user.getUsername();
-	%>
-	
-	<%@ page import="MODEL.CLASS.User"%>
+<%@ page import="java.util.List"%>
+<%@ page import="MODEL.DAO.TransactionHistoryDAO"%>
+<%@ page import="MODEL.CLASS.TransactionHistory"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -36,7 +12,7 @@
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/navbar.css">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/accountSettings.css">
     <link rel="icon" href="<%=request.getContextPath()%>/assets/icons/favicon.ico" type="image/x-icon">
-    <!-- Add this style section for the transaction table -->
+    <!-- Transaction table styles -->
     <style>
         .transaction-section {
             margin-top: 2rem;
@@ -89,13 +65,46 @@
 </head>
 <body>
     <%@include file="/component/navbar.jsp"%>
-    
-    <!-- Your existing account settings form -->
+    <%@include file="/component/bookingProgress.jsp"%>
+    <%
+    if (session == null || session.getAttribute("currentUser") == null) {
+        response.sendRedirect(request.getContextPath() + "/pages/login.jsp");
+        return;
+    }
+    User user = (User) session.getAttribute("currentUser");
+    String username = user.getUsername();
+    %>
+
+    <!-- Account Settings Form -->
     <form id="settingsForm" class="settings-form">
-        <!-- ... existing form content ... -->
+        <h2>Account Settings</h2>
+
+        <%-- Display error message if exists --%>
+        <%
+        String error = request.getParameter("error");
+        if (error != null) {
+        %>
+        <p class="error" style="color: red; font-weight: bold;"><%=error%></p>
+        <% } %>
+
+        <!-- Username -->
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="<%=username%>" required>
+
+        <!-- Password -->
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter a new password">
+
+        <!-- Confirm Password -->
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" name="confirmPassword" 
+               placeholder="Confirm your new password">
+
+        <!-- Save Changes Button -->
+        <button type="submit">Update Details</button>
     </form>
 
-    <!-- Add the transaction history section -->
+    <!-- Transaction History Section -->
     <div class="transaction-section">
         <h2>Transaction History</h2>
         <%
@@ -137,74 +146,31 @@
         <% } %>
     </div>
 
-    <!-- Keep your existing script -->
+    <!-- Form submission script -->
     <script>
-        document.getElementById("settingsForm").addEventListener("submit", function(event) {
-            // ... your existing form submission code ...
+    document.getElementById("settingsForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent normal form submission
+
+        const formData = new FormData(this);
+        const jsonData = JSON.stringify(Object.fromEntries(formData)); // Convert form data to JSON
+
+        fetch('<%=request.getContextPath()%>/UserController', {
+            method: 'PUT',
+            body: jsonData,
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                alert("Unexpected response from server.");
+            }
+        })
+        .catch(error => {
+            console.error("Request Failed:", error);
+            alert("Error updating user details. Please try again.");
         });
+    });
     </script>
-</body>
-</html>
-
-	<form id="settingsForm" class="settings-form">
-		<h2>Account Settings</h2>
-
-		<%-- Display error message if exists --%>
-		<%
-		String error = request.getParameter("error");
-		%>
-		<%
-		if (error != null) {
-		%>
-		<p class="error" style="color: red; font-weight: bold;"><%=error%></p>
-		<%
-		}
-		%>
-
-
-		<!-- Username -->
-		<label for="username">Username</label> <input type="text"
-			id="username" name="username" value="<%=username%>" required>
-
-		<!-- Password -->
-		<label for="password">Password</label> <input type="password"
-			id="password" name="password" placeholder="Enter a new password">
-
-		<!-- Confirm Password -->
-		<label for="confirm-password">Confirm Password</label> <input
-			type="password" id="confirm-password" name="confirmPassword"
-			placeholder="Confirm your new password">
-
-		<!-- Save Changes Button -->
-		<button type="submit">Update Details</button>
-	</form>
-
-	<script>
-	document.getElementById("settingsForm").addEventListener("submit", function(event) {
-	    event.preventDefault(); // Prevent normal form submission
-
-	    const formData = new FormData(this);
-	    const jsonData = JSON.stringify(Object.fromEntries(formData)); // Convert form data to JSON
-
-	    fetch('<%=request.getContextPath()%>/UserController', {
-	        method: 'PUT', // ✅ Send a real PUT request
-	        body: jsonData,
-	        headers: { 'Content-Type': 'application/json' }
-	    })
-	    .then(response => {
-	        // ✅ Redirects are now handled by the server
-	        if (response.redirected) {
-	            window.location.href = response.url; // Redirect to success/error page
-	        } else {
-	            alert("Unexpected response from server.");
-	        }
-	    })
-	    .catch(error => {
-	        console.error("Request Failed:", error);
-	        alert("Error updating user details. Please try again.");
-	    });
-	});
-</script>
-
 </body>
 </html>
