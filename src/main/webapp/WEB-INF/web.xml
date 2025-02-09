@@ -28,12 +28,12 @@
 		<url-pattern>/categoryService</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>feedbackLogic</servlet-name>
-		<servlet-class>CONTROLLER.feedbackLogic</servlet-class>
+		<servlet-name>FeedbackController</servlet-name>
+		<servlet-class>CONTROLLER.FeedbackController</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>feedbackLogic</servlet-name>
-		<url-pattern>/feedbackLogic</url-pattern>
+		<servlet-name>FeedbackController</servlet-name>
+		<url-pattern>/FeedbackController</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>BookingController</servlet-name>
@@ -100,4 +100,12 @@
 		<servlet-name>UserController</servlet-name>
 		<url-pattern>/UserController</url-pattern>
 	</servlet-mapping>
+	<servlet>
+    <servlet-name>ServiceStatisticsController</servlet-name>
+    <servlet-class>CONTROLLER.ServiceStatisticsController</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>ServiceStatisticsController</servlet-name>
+    <url-pattern>/statistics</url-pattern>
+</servlet-mapping>
 </web-app>

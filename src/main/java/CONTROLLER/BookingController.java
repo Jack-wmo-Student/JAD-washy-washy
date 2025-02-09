@@ -56,7 +56,7 @@ public class BookingController extends HttpServlet {
 			// Fetch the first data that we need. Booking_id, date, service_name and
 			// timeslot_id
 			List<Map<String, Object>> resultLists = BookingDAO.fetchUserBookings(user_id); // Need to change to dynamic
-
+//			System.out.println("result lists: " + resultLists);
 //	  		Example result that we want to return to the front end
 //	  		[
 //	  		 	{
@@ -79,7 +79,9 @@ public class BookingController extends HttpServlet {
 				// Fetch the timeslots now
 				List<String> timeslots = BookingDAO.fetchBookedTimeSlots(bookingId, timeslotId);
 
-				if (timeslots.size() != 1) {
+//				System.out.println("-----------");
+//				System.out.println("timeslots: " + timeslots);
+				if (timeslots.size() != 1 && timeslots.size() > 0) {
 					String[] firstPart = timeslots.get(0).split("-");
 					String[] lastPart = timeslots.get(timeslots.size() - 1).split("-");
 
@@ -89,6 +91,7 @@ public class BookingController extends HttpServlet {
 					timeslot.setTimeSlotId(timeslotId);
 					timeslot.setTimeRange(finalisedTimeSlot);
 				} else {
+					System.out.println("There are this many timeslots: " + timeslots.size());
 					timeslot.setTimeSlotId(timeslotId);
 					timeslot.setTimeRange((String) timeslots.get(0));
 				}
