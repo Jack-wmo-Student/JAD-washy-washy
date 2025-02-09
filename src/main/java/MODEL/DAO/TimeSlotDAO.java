@@ -62,6 +62,50 @@ public class TimeSlotDAO {
 		}
 	}
 
+	public static List<Integer> getSpecificTimeslotsByIds (String time_slot, Integer[] time_slot_ids)  throws SQLException {
+		// Define variables
+//		Integer[] time_slots = new Integer[time_slot_ids.length];
+		List<Integer> time_slots = new ArrayList<>();
+		
+		String query = """
+			    SELECT 
+			    	"%s"	
+				FROM 
+					timeslot 
+			    WHERE 
+				   timeslot_id 
+				IN 
+					(%s)
+			    """.formatted(
+			        time_slot,
+			        "?,".repeat(time_slot_ids.length).replaceAll(",$", ""));
+		
+		try (Connection conn = DBConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(query)) {
+			// Set the '?'s
+			for(int i = 0; i < time_slot_ids.length; i++) {
+				pstmt.setInt(i + 1, time_slot_ids[i]);
+			}
+			
+			try (ResultSet rs = pstmt.executeQuery()) {
+
+				while (rs.next()) {
+					time_slots.add(rs.getInt(1));
+					System.out.println("User that booked this time slot: " + rs.getInt(1));
+				}
+				
+				return time_slots;
+			}
+		} 
+		catch (Exception e) {
+			System.out.println("------ Error in getSpecificTimeslotsByIds -------");
+			System.out.println("Database connection or query execution failed.");
+			e.printStackTrace();
+			throw e;
+		}		
+	}
+	
+	
 	public static List<Integer> getTimeslotsByTimeslotId(int timeslot_id) throws SQLException {
 		System.out.println("We are in the function to get the timeslots ");
 
@@ -101,50 +145,6 @@ public class TimeSlotDAO {
 			return null;
 		}
 	}
-	
-	public static List<Integer> getSpecificTimeslotsByIds (String time_slot, Integer[] time_slot_ids)  throws SQLException {
-		// Define variables
-//		Integer[] time_slots = new Integer[time_slot_ids.length];
-		List<Integer> time_slots = new ArrayList<>();
-		
-		String query = """
-			    SELECT 
-			    	"%s"
-				FROM 
-					timeslot 
-			    WHERE 
-				   timeslot_id 
-				IN 
-					(%s)
-			    """.formatted(
-			        time_slot,
-			        "?,".repeat(time_slot_ids.length).replaceAll(",$", ""));
-		
-		try (Connection conn = DBConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(query)) {
-			// Set the '?'s
-			for(int i = 0; i < time_slot_ids.length; i++) {
-				pstmt.setInt(i + 1, time_slot_ids[i]);
-			}
-			
-			try (ResultSet rs = pstmt.executeQuery()) {
-
-				while (rs.next()) {
-					time_slots.add(rs.getInt(1));
-					System.out.println("User that booked this time slot: " + rs.getInt(1));
-				}
-				
-				return time_slots;
-			}
-		} 
-		catch (Exception e) {
-			System.out.println("------ Error in getSpecificTimeslotsByIds -------");
-			System.out.println("Database connection or query execution failed.");
-			e.printStackTrace();
-			throw e;
-		}		
-	}
-	
 	
 }
 
