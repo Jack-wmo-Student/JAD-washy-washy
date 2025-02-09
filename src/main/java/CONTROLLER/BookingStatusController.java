@@ -31,11 +31,12 @@ public class BookingStatusController extends HttpServlet {
 		}
 		int userId = user.getUserId();
 
-		Map<String, Integer> service_status_id = bookingDAO.getClosestFutureBooking(userId);
-		if (service_status_id != null) {
+		Map<String, Integer> booking_service_status_id = bookingDAO.getClosestFutureBooking(userId);
+		if (booking_service_status_id != null) {
 			// Store serviceId in request scope so included JSPs can access it
-			int statusId = service_status_id.get("status_id");
+			int statusId = booking_service_status_id.get("status_id");
 			request.setAttribute("statusId", statusId);
+			session.setAttribute("currentTrackedService", booking_service_status_id);
 		}
 
 		// Forward to the main JSP that includes bookingProgress.jsp
