@@ -13,7 +13,7 @@ import java.util.Map;
 import DBACCESS.DBConnection;
 
 
-public class TimeSlotDAO {
+public class TimeSlotDAO { 
 	public static List<Map<String, Object>> getTimeSlotSheets(String date, int serviceId) throws SQLException {
 		System.out.println("We are in the model to get the small data");
 
