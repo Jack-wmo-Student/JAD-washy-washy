@@ -59,8 +59,8 @@
 				<%=item.getTimeslot().getTimeRange()%></p>
 			<form action="<%=request.getContextPath()%>/cartHandler"
 				method="post">
-				<input type="hidden" name="action" value="remove"> <input
-					type="hidden" name="itemId" value="<%=item.getService().getId()%>" />
+				<input type="hidden" name="action" value="remove"> 
+				<input type="hidden" name="itemId" value="<%=item.getService().getId()%>" />
 				<button type="submit" class="remove-button">Remove</button>
 			</form>
 
@@ -72,15 +72,20 @@
 		<div class="cart-summary">
 			<form action="<%=request.getContextPath()%>/pages/bookingPage.jsp"
 				method="get">
-				<button type="submit" class="add-more-button">Add More
-					Items</button>
+				 
+				<button type="submit">
+					Add More Items
+				</button>
 			</form>
-			<h3>
-				Total Price: $<%=totalPrice%></h3>
+			<h3> Total Price: $<%=totalPrice%> </h3>
+			
+			<!-- Checkout (redirect to payment) -->
 			<form action="<%=request.getContextPath()%>/cartHandler"
 				method="post">
+				<input type="hidden" name="action" value="checkout">
 				<button type="submit" class="checkout-button">Proceed to
-					Checkout</button>
+					Checkout
+				</button>
 			</form>
 		</div>
 		<%

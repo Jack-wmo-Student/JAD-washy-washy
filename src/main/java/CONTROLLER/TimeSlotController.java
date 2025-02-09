@@ -275,15 +275,14 @@ public class TimeSlotController extends HttpServlet {
 		if (cartItemLists == null) {
 			cartItemLists = new ArrayList<>();
 		}
-
+		
 		// Create cartItemObj
 		CartItem cartItemObj = new CartItem();
-
+		
+		
 		// Create timeslot obj
 		TimeSlot timeslotObj = new TimeSlot(time_slot_id, chosen_time_slot);  // "8am-9am", "8am-10am"
 
-		// loop to get the service object
-		Map<String, Object> serviceDetails = new HashMap<>();
 
 		for (Map.Entry<Category, List<Service>> entry : sessionCategoryServiceMap.entrySet()) {
 			List<Service> services = entry.getValue();
@@ -292,6 +291,7 @@ public class TimeSlotController extends HttpServlet {
 				if (srv.getId() == serviceId) {
 					// if we arrive here, it means the service is correct now
 					// set everything inside the cartItem
+					System.out.println("Booked Date: " + bookingDate);
 					cartItemObj.setBookedDate(bookingDate);
 					cartItemObj.setTimeslot(timeslotObj);
 					cartItemObj.setService(srv);

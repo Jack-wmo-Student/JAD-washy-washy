@@ -24,7 +24,7 @@ public class cartHandler extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		System.out.println("in cart");
 		HttpSession session = request.getSession(false);
 		if (session == null || session.getAttribute("cart-item-list") == null) {
 			response.sendRedirect(request.getContextPath() + "/pages/login.jsp");
@@ -37,8 +37,11 @@ public class cartHandler extends HttpServlet {
 		if ("remove".equals(action)) {
 			removeItemFromCart(request, response, session);
 		} else if ("checkout".equals(action)) {
+			System.out.println("chose to check out");
 			processCheckout(request, response, session);
 		} else {
+			System.out.println("in error");
+			
 			response.sendRedirect(request.getContextPath() + "/pages/cart.jsp?error=Invalid action.");
 		}
 	}
@@ -97,7 +100,7 @@ public class cartHandler extends HttpServlet {
 			bookingIdLists = cartModel.processCartItems(userId, cartItems);
 			session.setAttribute("bookingIdLists", bookingIdLists);
 			session.removeAttribute("cart-item-list"); // Clear cart after booking
-			response.sendRedirect(request.getContextPath() + "/feedbackLogic");
+			response.sendRedirect(request.getContextPath() + "/FeedbackController");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			request.setAttribute("error", "An error occurred while processing your booking. Please try again.");
