@@ -15,8 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import MODEL.DAO.BookingDAO;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -31,21 +33,17 @@ import jakarta.ws.rs.core.Response;
 public class AcknowledgeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
 	public AcknowledgeController() {
 		super();
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
+
 		Client client = ClientBuilder.newClient();
 		String restUrl = "https://jad-wapi-wapi-ca2.onrender.com/wapi-wapi/payments/checkout";
 		WebTarget target = client.target(restUrl);
@@ -53,9 +51,9 @@ public class AcknowledgeController extends HttpServlet {
 
 		HttpSession session = request.getSession(false);
 		if (session == null) {
-			request.setAttribute("err", "Session Expired. Please log in again.");
-			RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
-			rd.forward(request, response);
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			out.print("{\"error\": \"Session Expired. Please log in again.\"}");
+			out.flush();
 			return;
 		}
 
@@ -67,9 +65,9 @@ public class AcknowledgeController extends HttpServlet {
 			booking_service_status_id = (Map<String, Integer>) session.getAttribute("currentTrackedService");
 			if (booking_service_status_id == null || !booking_service_status_id.containsKey("service_id")
 					|| !booking_service_status_id.containsKey("booking_id")) {
-				request.setAttribute("err", "Invalid session data.");
-				RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
-				rd.forward(request, response);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				out.print("{\"error\": \"Invalid session data.\"}");
+				out.flush();
 				return;
 			}
 
@@ -78,9 +76,9 @@ public class AcknowledgeController extends HttpServlet {
 
 			if (bookingDetails == null || !bookingDetails.containsKey("price")
 					|| !bookingDetails.containsKey("username") || !bookingDetails.containsKey("password")) {
-				request.setAttribute("err", "Booking details not found.");
-				RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
-				rd.forward(request, response);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				out.print("{\"error\": \"Booking details not found.\"}");
+				out.flush();
 				return;
 			}
 
@@ -98,38 +96,52 @@ public class AcknowledgeController extends HttpServlet {
 			// Set headers
 			invocationBuilder.header("X-Username", bookingDetails.get("username"));
 			invocationBuilder.header("X-Secret", bookingDetails.get("password"));
-			invocationBuilder.header("X-third-party", "false"); // Ensure correct format
+			invocationBuilder.header("X-third-party", "false");
 
 			// Send request with a list
 			Response resp = invocationBuilder.post(Entity.entity(requestBodyList, MediaType.APPLICATION_JSON));
+
+			// Read entity only once
+			String jsonResponse = resp.readEntity(String.class);
 			System.out.println("Status: " + resp.getStatus());
-			System.out.println("Response Body: " + resp.readEntity(String.class)); // Print response for debugging
+			System.out.println("Response Body: " + jsonResponse);
+
+			// Convert JSON string to a Map
+			ObjectMapper objectMapper = new ObjectMapper();
+			Map<String, Object> responseMap = objectMapper.readValue(jsonResponse,
+					new TypeReference<Map<String, Object>>() {
+					});
 
 			if (resp.getStatus() == Response.Status.OK.getStatusCode()) {
 				System.out.println("Success");
-				Map<String, Object> responseMap = resp.readEntity(Map.class);
-				if (responseMap != null && responseMap.containsKey("sessionUrl")) {
+
+				if (responseMap.containsKey("sessionUrl")) {
 					String paymentUrl = (String) responseMap.get("sessionUrl");
-					response.sendRedirect(paymentUrl);
+					System.out.println("Returning redirect URL to client: " + paymentUrl);
+					response.setStatus(HttpServletResponse.SC_OK);
+					out.print("{\"redirectUrl\": \"" + paymentUrl + "\"}");
+					out.flush();
 				} else {
-					throw new IOException("Invalid response from payment service.");
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					out.print("{\"error\": \"Invalid response from payment service.\"}");
+					out.flush();
 				}
 			} else {
 				System.out.println("Failed");
-				request.setAttribute("err", "Payment processing failed.");
-				RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
-				rd.forward(request, response);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				out.print("{\"error\": \"Payment processing failed.\"}");
+				out.flush();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			request.setAttribute("err", "Database error: " + e.getMessage());
-			RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
-			rd.forward(request, response);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			out.print("{\"error\": \"Database error: " + e.getMessage() + "\"}");
+			out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
-			request.setAttribute("err", "Internal error: " + e.getMessage());
-			RequestDispatcher rd = request.getRequestDispatcher("/pages/error.jsp");
-			rd.forward(request, response);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			out.print("{\"error\": \"Internal error: " + e.getMessage() + "\"}");
+			out.flush();
 		}
 	}
 }
