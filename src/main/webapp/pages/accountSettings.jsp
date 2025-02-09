@@ -186,26 +186,27 @@
 
     // Acknowledge Completion button click (Optional AJAX-based handling)
     document.getElementById("acknowledgeBtn")?.addEventListener("click", function(event) {
-        event.preventDefault();
+    event.preventDefault();
 
-        fetch('<%=request.getContextPath()%>/AcknowledgeServlet', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `userId=<%=user.getUserId()%>`
-        })
-        .then(response => {
-            if (response.ok) {
-                alert("Acknowledgement successful!");
-                location.reload(); // Refresh page
-            } else {
-                alert("Error acknowledging completion.");
-            }
-        })
-        .catch(error => {
-            console.error("Request Failed:", error);
-            alert("Network error, please try again.");
-        });
+    fetch('<%=request.getContextPath()%>/AcknowledgeServlet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `userId=<%=user.getUserId()%>`
+    })
+    .then(response => response.json()) // Convert response to JSON
+    .then(data => {
+        if (data.redirectUrl) {
+            window.location.href = data.redirectUrl; // Redirect to Stripe Checkout
+        } else {
+            alert("Error acknowledging completion.");
+        }
+    })
+    .catch(error => {
+        console.error("Request Failed:", error);
+        alert("Network error, please try again.");
     });
+});
+
     </script>
 </body>
 </html>
