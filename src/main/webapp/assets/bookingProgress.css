@@ -1,0 +1,117 @@
+/* Booking Progress Container */
+.progress-container {
+	text-align: center;
+	margin: 15px auto; /* Adjusted margin for stacking */
+	padding: 20px;
+	width: 100%; /* Take full width inside parent */
+	max-width: 650px; /* Increased width */
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	background: #f9f9f9;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	/* Slight shadow for better separation */
+}
+
+/* Booking Progress Tracker */
+.progress-tracker {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 15px;
+	position: relative;
+	padding-bottom: 25px;
+}
+
+/* Progress Step */
+.progress-step {
+	text-align: center;
+	position: relative;
+	flex: 1;
+}
+
+/* Step Icon */
+.step-icon {
+	width: 45px;
+	height: 45px;
+	line-height: 45px;
+	border-radius: 50%;
+	display: inline-block;
+	background: #ddd;
+	color: #fff;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+/* Highlight Completed Steps */
+.completed {
+	background: #28a745 !important;
+}
+
+/* Highlight the Current Step */
+.current {
+	background: #007bff !important;
+}
+
+/* Line Connecting the Steps */
+.progress-tracker::before {
+	content: "";
+	position: absolute;
+	top: 22px;
+	left: 5%;
+	width: 90%;
+	height: 4px;
+	background: #ddd;
+	z-index: -1;
+}
+
+/* Fill Line for Completed Steps */
+.progress-step.completed+.progress-step::before {
+	content: "";
+	position: absolute;
+	top: 22px;
+	left: 0;
+	width: 100%;
+	height: 4px;
+	background: #28a745;
+	z-index: -1;
+}
+
+/* Acknowledge Button Alignment */
+.acknowledge-container {
+	display: flex;
+	justify-content: flex-end; /* Align button to the right */
+	margin-top: 10px;
+}
+
+/* Ensure Acknowledge Button Looks Consistent */
+.acknowledge-button {
+	background-color: #28a745;
+	color: white;
+	border: none;
+	padding: 12px 18px;
+	cursor: pointer;
+	border-radius: 6px;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.acknowledge-button:hover {
+	background-color: #218838;
+}
+
+/* Responsive Adjustments */
+@media ( max-width : 768px) {
+	.progress-container {
+		max-width: 100%;
+		padding: 15px;
+	}
+	.progress-tracker {
+		flex-direction: column;
+		align-items: center;
+	}
+	.progress-step {
+		margin-bottom: 10px;
+	}
+	.progress-tracker::before {
+		display: none; /* Hide the horizontal line on smaller screens */
+	}
+}

@@ -45,7 +45,7 @@ public class CartDAO {
 			stmt.setInt(1, userId);
 			stmt.setInt(2, item.getTimeslot().getTimeSlotId());
 			stmt.setInt(3, item.getService().getId());
-			stmt.setInt(4, 1); // Assuming status_id 1 is for booked.
+			stmt.setInt(4, 6); // Assuming status_id 1 is for booked.
 			stmt.setDate(5, java.sql.Date.valueOf(item.getBookedDate()));
 
 			try (ResultSet rs = stmt.executeQuery()) {

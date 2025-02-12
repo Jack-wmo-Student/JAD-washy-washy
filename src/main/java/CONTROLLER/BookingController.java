@@ -56,7 +56,7 @@ public class BookingController extends HttpServlet {
 			// Fetch the first data that we need. Booking_id, date, service_name and
 			// timeslot_id
 			List<Map<String, Object>> resultLists = BookingDAO.fetchUserBookings(user_id); // Need to change to dynamic
-//			System.out.println("result lists: " + resultLists);
+			System.out.println("result lists: " + resultLists);
 //	  		Example result that we want to return to the front end
 //	  		[
 //	  		 	{
@@ -90,17 +90,21 @@ public class BookingController extends HttpServlet {
 					// Create the timeslot class
 					timeslot.setTimeSlotId(timeslotId);
 					timeslot.setTimeRange(finalisedTimeSlot);
+				} else if (timeslots.size() == 0) {
+					break;
 				} else {
 					System.out.println("There are this many timeslots: " + timeslots.size());
 					timeslot.setTimeSlotId(timeslotId);
 					timeslot.setTimeRange((String) timeslots.get(0));
 				}
+				;
 
 				// Create the booking object and add to the list
 				Booking bookingObj = new Booking(bookingId, (String) eachBooking.get("service_name"), timeslot,
 						eachBooking.get("booked_date").toString());
 				bookingList.add(bookingObj);
 			}
+			
 
 			// Set the session
 			session.setAttribute("bookingLists", bookingList);
@@ -122,7 +126,8 @@ public class BookingController extends HttpServlet {
 		// Check if the user is logged in or not
 		HttpSession session = request.getSession(false);
 		// Check if the user is logged in
-		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null) {
+		if (!sessionUtils.isLoggedIn(request, "isLoggedIn") || session == null
+				|| session.getAttribute("currentUser") == null) {
 			// Handle invalid login
 			request.setAttribute("error", "You must log in first.");
 			request.getRequestDispatcher("/pages/login.jsp").forward(request, response);

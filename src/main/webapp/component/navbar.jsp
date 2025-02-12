@@ -67,7 +67,7 @@
 			<select class="dropdown" onchange="handleProfileAction(this.value)">
 				<option value="" disabled selected hidden>Profile</option>
 				<option
-					value="<%=request.getContextPath()%>/pages/accountSettings.jsp">Account
+					value="<%=request.getContextPath()%>/bookingStatus">Account
 					Settings</option>
 				<option value="<%=request.getContextPath()%>/logout">Log
 					Out</option>
