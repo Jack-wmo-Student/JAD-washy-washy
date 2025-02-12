@@ -105,7 +105,7 @@
 						<!-- Delete Button -->
 						<form action="<%=request.getContextPath()%>/CategoryController/delete" method="post">
 						    <input type="hidden" name="categoryId" value="<%=cat.getId()%>" />
-						    <button type="submit">Delete</button>
+						    <button type="submit" class="btn-delete">Delete</button>
 						</form>
 					</div>
 				</td>

@@ -1,25 +1,29 @@
-package utils;
+ package utils;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.cloudinary.utils.StringUtils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
 public class CloudinaryUtil {
-    private static final String CLOUD_NAME = "djq1slhwp";
-    private static final String API_KEY = "291691227825547";
-    private static final String API_SECRET = "EznEyZx1XyoHk_zgbbEUNpG8BHA";
     private static final Cloudinary cloudinary;
     private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
+    private static final String CLOUD_NAME;
+    private static final String API_KEY;
+    private static final String API_SECRET;
     
     static {
+        // Load environment variables using System.getenv()
+        CLOUD_NAME = System.getenv("CLOUDINARY_CLOUD_NAME");
+        API_KEY = System.getenv("CLOUDINARY_API_KEY");
+        API_SECRET = System.getenv("CLOUDINARY_API_SECRET");
+        
+        // Configure Cloudinary
         Map<String, String> config = new HashMap<>();
         config.put("cloud_name", CLOUD_NAME);
         config.put("api_key", API_KEY);
@@ -58,7 +62,6 @@ public class CloudinaryUtil {
         sha256_HMAC.init(secret_key);
         
         byte[] hash = sha256_HMAC.doFinal(stringToSign.toString().getBytes(StandardCharsets.UTF_8));
-        // Use hex encoding instead of Base64
         return bytesToHex(hash);
     }
     
