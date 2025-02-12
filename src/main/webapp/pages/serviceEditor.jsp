@@ -6,6 +6,39 @@
     <meta charset="UTF-8">
     <title>Edit Service</title>
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/serviceManagement.css">
+    
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('previewContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function validateImage(input) {
+            const file = input.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (file) {
+                if (file.size > maxSize) {
+                    alert('File is too large. Maximum size is 5MB.');
+                    input.value = '';
+                    return false;
+                }
+                
+                if (!file.type.match('image.*')) {
+                    alert('Only image files are allowed.');
+                    input.value = '';
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
     <%
@@ -28,18 +61,8 @@
     String servicePrice = request.getParameter("servicePrice");
     String serviceDuration = request.getParameter("serviceDuration");
     String serviceDescription = request.getParameter("serviceDescription");
+    String serviceImage = request.getParameter("serviceImage");
     String categoryId = request.getParameter("categoryId");
-
-    // Validate input parameters
-    if (serviceIdStr == null || serviceIdStr.trim().isEmpty() || 
-        serviceName == null || serviceName.trim().isEmpty() || 
-        servicePrice == null || servicePrice.trim().isEmpty() || 
-        serviceDuration == null || serviceDuration.trim().isEmpty() || 
-        serviceDescription == null || serviceDescription.trim().isEmpty() ||
-        categoryId == null || categoryId.trim().isEmpty()) {
-        response.sendRedirect(request.getContextPath() + "/pages/error.jsp");
-        return;
-    }
     %>
 
     <div class="container">
@@ -67,48 +90,54 @@
         }  
         %>
         
-        <form action="<%= request.getContextPath() %>/ServiceController/update" method="post">
-		    <input type="hidden" name="serviceId" value="<%= serviceIdStr %>" />
-		    <input type="hidden" name="categoryId" value="<%= categoryId %>" />
-		    
-		    <div class="form-group">
-		        <label for="serviceName">Service Name:</label>
-		        <div class="input-wrapper">
-		            <span class="current-value">Current: <%= serviceName %></span>
-		            <input type="text" name="serviceName" value="<%= serviceName %>" required />
-		        </div>
-		    </div>
-		    
-		    <div class="form-group">
-		        <label for="servicePrice">Service Price:</label>
-		        <div class="input-wrapper">
-		            <span class="current-value">Current: $<%= servicePrice %></span>
-		            <input type="number" name="servicePrice" step="0.01" value="<%= servicePrice %>" required />
-		        </div>
-		    </div>
-		    
-		    <div class="form-group">
+        <form action="<%= request.getContextPath() %>/ServiceController/update" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="serviceId" value="<%= serviceIdStr %>" />
+            <input type="hidden" name="categoryId" value="<%= categoryId %>" />
+            <input type="hidden" name="currentImageUrl" value="<%= serviceImage %>" />
+            
+            <div class="form-group">
+                <label for="serviceName">Service Name:</label>
+                <input type="text" name="serviceName" value="<%= serviceName %>" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="servicePrice">Service Price:</label>
+                <input type="number" name="servicePrice" step="0.01" value="<%= servicePrice %>" required />
+            </div>
+            
+            <div class="form-group">
                 <label for="serviceDuration">Service Duration (in hours):</label>
-                <div class="input-wrapper">
-                    <span class="current-value">Current: <%= serviceDuration %> hours</span>
-                    <input type="number" name="serviceDuration" value="<%= serviceDuration %>" required />
-                </div>
+                <input type="number" name="serviceDuration" value="<%= serviceDuration %>" required />
             </div>
             
             <div class="form-group">
                 <label for="serviceDescription">Service Description:</label>
-                <div class="input-wrapper">
-                    <span class="current-value">Current: <%= serviceDescription %></span>
-                    <input type="text" name="serviceDescription" value="<%= serviceDescription %>" required />
-                </div>
+                <input type="text" name="serviceDescription" value="<%= serviceDescription %>" required />
             </div>
-		    
-		    <div class="form-actions">
-		        <input type="submit" value="Update Service" class="btn btn-primary" />
-		        <a href="<%= request.getContextPath() %>/pages/editService.jsp?categoryId=<%= categoryId %>" 
-		           class="btn btn-secondary">Cancel</a>
-		    </div>
-		</form>
+            
+            <div class="form-group">
+                <label for="serviceImage">Service Image:</label>
+                <% if (serviceImage != null && !serviceImage.trim().isEmpty()) { %>
+                    <div class="image-container">
+                        <img src="<%= serviceImage %>" width="100" alt="Current Image" />
+                        <p>Current Image</p>
+                    </div>
+                <% } %>
+                <div id="previewContainer" style="display: none;">
+                    <img id="imagePreview" src="#" alt="Preview" style="max-width: 100px; margin-top: 10px;"/>
+                    <p>Preview</p>
+                </div>
+                <input type="file" name="serviceImage" accept="image/*" 
+                       onchange="if(validateImage(this)) previewImage(this)" />
+                <p class="help-text">Leave empty to keep current image</p>
+            </div>
+            
+            <div class="form-actions">
+                <input type="submit" value="Update Service" class="btn btn-primary" />
+                <a href="<%= request.getContextPath() %>/pages/editService.jsp?categoryId=<%= categoryId %>" 
+                   class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
 </body>
 </html>
