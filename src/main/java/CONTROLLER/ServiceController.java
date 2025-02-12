@@ -1,6 +1,7 @@
 package CONTROLLER;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import utils.CloudinaryUtil;
 import utils.sessionUtils;
 
 public class ServiceController extends HttpServlet {
@@ -21,8 +24,6 @@ public class ServiceController extends HttpServlet {
     public ServiceController() {
         this.serviceDAO = new ServiceDAO();
     }
-    
-    
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -96,88 +97,103 @@ public class ServiceController extends HttpServlet {
     }
 
     private void handleCreate(HttpServletRequest request, HttpSession session) throws Exception {
-        // Adding validation to prevent null pointer exceptions
-        if (request == null || session == null) {
-            throw new IllegalArgumentException("Request or session cannot be null");
-        }
-
-        // Get and validate required parameters
         String serviceName = request.getParameter("serviceName");
         String categoryIdStr = request.getParameter("categoryId");
         String servicePriceStr = request.getParameter("servicePrice");
         String serviceDurationStr = request.getParameter("serviceDuration");
         String description = request.getParameter("serviceDescription");
 
-        // Validate all required fields are present
-        if (serviceName == null || categoryIdStr == null || servicePriceStr == null || 
-            serviceDurationStr == null || description == null) {
-            session.setAttribute("errorMessage", "All fields are required");
-            return;
+        // Handle image upload
+        Part filePart = request.getPart("serviceImage");
+        String imageUrl = null;
+        
+        if (filePart != null && filePart.getSize() > 0) {
+            try (InputStream inputStream = filePart.getInputStream()) {
+                byte[] imageData = inputStream.readAllBytes();
+                // Upload to Cloudinary
+                imageUrl = CloudinaryUtil.uploadImage(imageData, "services");
+            }
         }
 
         try {
             int categoryId = Integer.parseInt(categoryIdStr);
             double price = Double.parseDouble(servicePriceStr);
             int duration = Integer.parseInt(serviceDurationStr);
-            int status_id = 4;
+            int statusId = 4; // Default status
 
-            int generatedId = serviceDAO.createService(serviceName, categoryId, price, duration, description, status_id);
+            int generatedId = serviceDAO.createService(
+                serviceName, 
+                categoryId, 
+                price, 
+                duration, 
+                description, 
+                statusId, 
+                imageUrl
+            );
 
             if (generatedId > 0) {
                 updateSessionServiceMap(session, categoryId);
                 session.setAttribute("successMessage", "Service added successfully!");
-                session.setAttribute("categoryId", categoryId); // Store for redirect
             } else {
                 session.setAttribute("errorMessage", "Failed to add service");
             }
-        } catch (NumberFormatException e) {
-            session.setAttribute("errorMessage", "Invalid number format in input fields");
         } catch (Exception e) {
-            session.setAttribute("errorMessage", "Error creating service");
+            session.setAttribute("errorMessage", "Error creating service: " + e.getMessage());
+            throw e;
         }
     }
 
     private void handleUpdate(HttpServletRequest request, HttpSession session) throws Exception {
-        // Get and validate all parameters
         String serviceIdStr = request.getParameter("serviceId");
         String serviceName = request.getParameter("serviceName");
         String servicePriceStr = request.getParameter("servicePrice");
         String serviceDurationStr = request.getParameter("serviceDuration");
         String description = request.getParameter("serviceDescription");
         String categoryIdStr = request.getParameter("categoryId");
-
-        // Validate that all required fields are present
-        if (serviceIdStr == null || serviceName == null || servicePriceStr == null || 
-            serviceDurationStr == null || description == null || categoryIdStr == null) {
-            session.setAttribute("errorMessage", "All fields are required");
-            return;
-        }
+        String currentImageUrl = request.getParameter("currentImageUrl");
 
         try {
-            // Parse numeric values
             int serviceId = Integer.parseInt(serviceIdStr);
             double price = Double.parseDouble(servicePriceStr);
             int duration = Integer.parseInt(serviceDurationStr);
             int categoryId = Integer.parseInt(categoryIdStr);
 
-            // Attempt to update the service
-            boolean updated = serviceDAO.updateService(serviceId, serviceName, price, duration, description);
+            // Handle image update
+            Part filePart = request.getPart("serviceImage");
+            String newImageUrl = currentImageUrl;
+
+            if (filePart != null && filePart.getSize() > 0) {
+                // Delete old image from Cloudinary if it exists
+                if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
+                    String publicId = CloudinaryUtil.getPublicIdFromUrl(currentImageUrl);
+                    CloudinaryUtil.deleteImage(publicId);
+                }
+
+                // Upload new image
+                try (InputStream inputStream = filePart.getInputStream()) {
+                    byte[] imageData = inputStream.readAllBytes();
+                    newImageUrl = CloudinaryUtil.uploadImage(imageData, "services");
+                }
+            }
+
+            boolean updated = serviceDAO.updateService(
+                serviceId, 
+                serviceName, 
+                price, 
+                duration, 
+                description, 
+                newImageUrl
+            );
 
             if (updated) {
-                // Update the session's service map
                 updateSessionServiceMap(session, categoryId);
                 session.setAttribute("successMessage", "Service updated successfully!");
-                
-                // Store parameters for the redirect back to serviceEditor.jsp
-                session.setAttribute("editServiceId", serviceId);
-                session.setAttribute("editCategoryId", categoryId);
             } else {
                 session.setAttribute("errorMessage", "Failed to update service");
             }
-        } catch (NumberFormatException e) {
-            session.setAttribute("errorMessage", "Invalid number format in input fields");
         } catch (Exception e) {
             session.setAttribute("errorMessage", "Error updating service: " + e.getMessage());
+            throw e;
         }
     }
 

@@ -45,6 +45,7 @@ public class ServiceStatisticsController extends HttpServlet {
             List<ServiceStatistics> mostProfitable = statisticsDAO.getMostProfitableServices(timeframe);
             List<ServiceStatistics> leastProfitable = statisticsDAO.getLeastProfitableServices(timeframe);
             List<ServiceStatistics> bookingsPerService = statisticsDAO.getBookingsPerService(timeframe);
+            List<ServiceStatistics> serviceTrends = statisticsDAO.getServiceTrends();
 
             // Set legacy attributes
             request.setAttribute("totalServices", totalServices);
@@ -52,12 +53,14 @@ public class ServiceStatisticsController extends HttpServlet {
             request.setAttribute("totalBookings", totalBookings);
             request.setAttribute("mostBookedServices", mostBookedServices);
             request.setAttribute("bookingsByDate", bookingsByDate);
+            
 
             // Set new statistics attributes
             request.setAttribute("timeframe", timeframe);
             request.setAttribute("mostProfitableServices", mostProfitable);
             request.setAttribute("leastProfitableServices", leastProfitable);
             request.setAttribute("bookingsPerService", bookingsPerService);
+            request.setAttribute("serviceTrends", serviceTrends);
 
             // Debug output
             System.out.println("Total Services: " + totalServices);
@@ -65,6 +68,8 @@ public class ServiceStatisticsController extends HttpServlet {
             System.out.println("Most Profitable Services: " + (mostProfitable != null ? mostProfitable.size() : "null"));
             System.out.println("Least Profitable Services: " + (leastProfitable != null ? leastProfitable.size() : "null"));
             System.out.println("Bookings Per Service: " + (bookingsPerService != null ? bookingsPerService.size() : "null"));
+            
+  
 
             // Forward to JSP
             request.getRequestDispatcher("/pages/statsDashboard.jsp").forward(request, response);

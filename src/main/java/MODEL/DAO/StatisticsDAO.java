@@ -147,7 +147,7 @@ public class StatisticsDAO {
     }
 
     public List<ServiceStatistics> getMostProfitableServices(String timeframe) throws SQLException {
-        System.out.println("Fetching most profitable services for timeframe: " + timeframe);
+        System.out.println("--- getMostProfitableServices ---");
         LocalDate startDate = getStartDate(timeframe);
         LocalDate endDate = LocalDate.now();
         
@@ -163,19 +163,20 @@ public class StatisticsDAO {
                     ELSE 0 
                 END as profit_per_booking
             FROM service s
-            LEFT JOIN booking b ON s.service_id = b.service_id AND b.booked_date >= ? AND b.booked_date <= ?
+            LEFT JOIN booking b ON s.service_id = b.service_id
             LEFT JOIN payment p ON b.booking_id = p.booking_id
+            WHERE b.booked_date >= ? AND b.booked_date <= ?
             GROUP BY s.service_id, s.service_name
             HAVING COUNT(DISTINCT b.booking_id) > 0
             ORDER BY total_revenue DESC
             LIMIT 5
         """;
         
-        return getServiceStatistics(sql, startDate, endDate, timeframe);
+        return getServiceStatistics(sql, startDate, endDate, timeframe, "Most Profitable");
     }
 
     public List<ServiceStatistics> getLeastProfitableServices(String timeframe) throws SQLException {
-        System.out.println("Fetching least profitable services for timeframe: " + timeframe);
+        System.out.println("--- getLeastProfitableServices ---");
         LocalDate startDate = getStartDate(timeframe);
         LocalDate endDate = LocalDate.now();
         
@@ -191,19 +192,21 @@ public class StatisticsDAO {
                     ELSE 0 
                 END as profit_per_booking
             FROM service s
-            LEFT JOIN booking b ON s.service_id = b.service_id AND b.booked_date >= ? AND b.booked_date <= ?
+            LEFT JOIN booking b ON s.service_id = b.service_id
             LEFT JOIN payment p ON b.booking_id = p.booking_id
+            WHERE b.booked_date >= ? AND b.booked_date <= ?
             GROUP BY s.service_id, s.service_name
             HAVING COUNT(DISTINCT b.booking_id) > 0
             ORDER BY total_revenue ASC
             LIMIT 5
         """;
         
-        return getServiceStatistics(sql, startDate, endDate, timeframe);
+        System.out.println("Current timeframe selected: " + timeframe);
+        return getServiceStatistics(sql, startDate, endDate, timeframe, "Least Profitable");
     }
 
     private List<ServiceStatistics> getServiceStatistics(String sql, LocalDate startDate, 
-            LocalDate endDate, String timeframe) throws SQLException {
+            LocalDate endDate, String timeframe, String type) throws SQLException {
         List<ServiceStatistics> statistics = new ArrayList<>();
         
         try (Connection conn = DBConnection.getConnection();
@@ -212,7 +215,7 @@ public class StatisticsDAO {
             ps.setDate(1, java.sql.Date.valueOf(startDate));
             ps.setDate(2, java.sql.Date.valueOf(endDate));
             
-            System.out.println("Date range: " + startDate + " to " + endDate);
+            System.out.println(type + " query date range: " + startDate + " to " + endDate);
             
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -225,16 +228,17 @@ public class StatisticsDAO {
                         timeframe
                     );
                     statistics.add(stat);
-                    System.out.println("Found service: " + stat.getServiceName() + 
-                                     ", Revenue: " + stat.getTotalRevenue());
+                    System.out.println("Found " + type.toLowerCase() + " service: " + 
+                        stat.getServiceName() + ", Revenue: " + stat.getTotalRevenue() + 
+                        ", Bookings: " + stat.getTotalBookings());
                 }
             }
         }
         
-        System.out.println("Retrieved " + statistics.size() + " services");
+        System.out.println("Retrieved " + statistics.size() + " " + type.toLowerCase() + " services");
         return statistics;
     }
-    
+
     public List<ServiceStatistics> getBookingsPerService(String timeframe) throws SQLException {
         System.out.println("--- getBookingsPerService ---");
         LocalDate startDate = getStartDate(timeframe);
@@ -287,6 +291,85 @@ public class StatisticsDAO {
         
         System.out.println("Retrieved booking stats for " + statistics.size() + " services");
         return statistics;
+    }
+    
+    public List<ServiceStatistics> getServiceTrends() throws SQLException {
+        System.out.println("--- getServiceTrends ---");
+        LocalDate currentMonthStart = LocalDate.now().withDayOfMonth(1);
+        LocalDate previousMonthStart = currentMonthStart.minusMonths(1);
+        
+        String sql = """
+            WITH CurrentMonth AS (
+                SELECT 
+                    s.service_id,
+                    s.service_name,
+                    COUNT(DISTINCT b.booking_id) as total_bookings,
+                    COALESCE(SUM(p.product_price), 0) as total_revenue
+                FROM service s
+                LEFT JOIN booking b ON s.service_id = b.service_id
+                LEFT JOIN payment p ON b.booking_id = p.booking_id
+                WHERE b.booked_date >= ? AND b.booked_date < ?
+                GROUP BY s.service_id, s.service_name
+            ),
+            PreviousMonth AS (
+                SELECT 
+                    s.service_id,
+                    COUNT(DISTINCT b.booking_id) as prev_bookings,
+                    COALESCE(SUM(p.product_price), 0) as prev_revenue
+                FROM service s
+                LEFT JOIN booking b ON s.service_id = b.service_id
+                LEFT JOIN payment p ON b.booking_id = p.booking_id
+                WHERE b.booked_date >= ? AND b.booked_date < ?
+                GROUP BY s.service_id
+            )
+            SELECT 
+                c.service_id,
+                c.service_name,
+                c.total_bookings,
+                c.total_revenue,
+                COALESCE(p.prev_bookings, 0) as prev_bookings,
+                COALESCE(p.prev_revenue, 0) as prev_revenue,
+                CASE 
+                    WHEN COALESCE(p.prev_bookings, 0) = 0 THEN 100
+                    ELSE ((c.total_bookings - p.prev_bookings) * 100.0 / p.prev_bookings)
+                END as booking_growth,
+                CASE 
+                    WHEN COALESCE(p.prev_revenue, 0) = 0 THEN 100
+                    ELSE ((c.total_revenue - p.prev_revenue) * 100.0 / p.prev_revenue)
+                END as revenue_growth
+            FROM CurrentMonth c
+            LEFT JOIN PreviousMonth p ON c.service_id = p.service_id
+            ORDER BY revenue_growth DESC
+        """;
+        
+        List<ServiceStatistics> trends = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+                
+            ps.setDate(1, java.sql.Date.valueOf(currentMonthStart));
+            ps.setDate(2, java.sql.Date.valueOf(currentMonthStart.plusMonths(1)));
+            ps.setDate(3, java.sql.Date.valueOf(previousMonthStart));
+            ps.setDate(4, java.sql.Date.valueOf(currentMonthStart));
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ServiceStatistics stat = new ServiceStatistics(
+                        rs.getInt("service_id"),
+                        rs.getString("service_name"),
+                        rs.getDouble("total_revenue"),
+                        rs.getInt("total_bookings"),
+                        0, // Not using profit margin here
+                        "current"
+                    );
+                    stat.setPreviousRevenue(rs.getDouble("prev_revenue"));
+                    stat.setPreviousBookings(rs.getInt("prev_bookings"));
+                    stat.setRevenueGrowth(rs.getDouble("revenue_growth"));
+                    stat.setBookingGrowth(rs.getDouble("booking_growth"));
+                    trends.add(stat);
+                }
+            }
+        }
+        return trends;
     }
 
     private LocalDate getStartDate(String timeframe) {
