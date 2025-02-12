@@ -44,11 +44,6 @@ public class AcknowledgeController extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 
-		Client client = ClientBuilder.newClient();
-		String restUrl = "https://jad-wapi-wapi-ca2.onrender.com/wapi-wapi/payments/checkout";
-		WebTarget target = client.target(restUrl);
-		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-
 		HttpSession session = request.getSession(false);
 		if (session == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -57,22 +52,24 @@ public class AcknowledgeController extends HttpServlet {
 			return;
 		}
 
-		Map<String, Integer> booking_service_status_id;
 		BookingDAO bookingDAO = new BookingDAO();
+		Map<String, Integer> bookingServiceStatusId;
 		Map<String, Object> bookingDetails;
 
 		try {
-			booking_service_status_id = (Map<String, Integer>) session.getAttribute("currentTrackedService");
-			if (booking_service_status_id == null || !booking_service_status_id.containsKey("service_id")
-					|| !booking_service_status_id.containsKey("booking_id")) {
+			// Retrieve the tracked service from session
+			bookingServiceStatusId = (Map<String, Integer>) session.getAttribute("currentTrackedService");
+			if (bookingServiceStatusId == null || !bookingServiceStatusId.containsKey("service_id")
+					|| !bookingServiceStatusId.containsKey("booking_id")) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				out.print("{\"error\": \"Invalid session data.\"}");
 				out.flush();
 				return;
 			}
 
-			bookingDetails = bookingDAO.getBookingDetails(booking_service_status_id.get("service_id"),
-					booking_service_status_id.get("booking_id"));
+			// Fetch booking details
+			bookingDetails = bookingDAO.getBookingDetails(bookingServiceStatusId.get("service_id"),
+					bookingServiceStatusId.get("booking_id"));
 
 			if (bookingDetails == null || !bookingDetails.containsKey("price")
 					|| !bookingDetails.containsKey("username") || !bookingDetails.containsKey("password")) {
@@ -87,36 +84,46 @@ public class AcknowledgeController extends HttpServlet {
 			// Create request body as a list
 			List<Map<String, Object>> requestBodyList = new ArrayList<>();
 			Map<String, Object> requestBody = new HashMap<>();
-			requestBody.put("bookingId", booking_service_status_id.get("booking_id"));
+			requestBody.put("bookingId", bookingServiceStatusId.get("booking_id"));
 			requestBody.put("amount", bookingDetails.get("price"));
 			requestBody.put("currency", "SGD");
 			requestBody.put("quantity", 1);
 			requestBodyList.add(requestBody);
+
+			// Set up HTTP client
+			Client client = ClientBuilder.newClient();
+			String restUrl = "https://jad-wapi-wapi-ca2.onrender.com/wapi-wapi/payments/checkout";
+			WebTarget target = client.target(restUrl);
+			Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
 			// Set headers
 			invocationBuilder.header("X-Username", bookingDetails.get("username"));
 			invocationBuilder.header("X-Secret", bookingDetails.get("password"));
 			invocationBuilder.header("X-third-party", "false");
 
-			// Send request with a list
+			// Send request
 			Response resp = invocationBuilder.post(Entity.entity(requestBodyList, MediaType.APPLICATION_JSON));
 
-			// Read entity only once
+			// Read API response
 			String jsonResponse = resp.readEntity(String.class);
 			System.out.println("Status: " + resp.getStatus());
 			System.out.println("Response Body: " + jsonResponse);
 
-			// Convert JSON string to a Map
+			// Convert JSON response into a map
 			ObjectMapper objectMapper = new ObjectMapper();
 			Map<String, Object> responseMap = objectMapper.readValue(jsonResponse,
 					new TypeReference<Map<String, Object>>() {
 					});
 
 			if (resp.getStatus() == Response.Status.OK.getStatusCode()) {
-				System.out.println("Success");
+				System.out.println("Payment session created successfully.");
 
 				if (responseMap.containsKey("sessionUrl")) {
 					String paymentUrl = (String) responseMap.get("sessionUrl");
+
+					// Clear tracked service after checkout starts
+					session.removeAttribute("currentTrackedService");
+
 					System.out.println("Returning redirect URL to client: " + paymentUrl);
 					response.setStatus(HttpServletResponse.SC_OK);
 					out.print("{\"redirectUrl\": \"" + paymentUrl + "\"}");
@@ -127,7 +134,7 @@ public class AcknowledgeController extends HttpServlet {
 					out.flush();
 				}
 			} else {
-				System.out.println("Failed");
+				System.out.println("Payment processing failed.");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				out.print("{\"error\": \"Payment processing failed.\"}");
 				out.flush();

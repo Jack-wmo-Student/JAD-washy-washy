@@ -111,34 +111,38 @@ public class BookingDAO {
 		return resultList;
 	}
 
-	public Map<String, Integer> getClosestFutureBooking(int userId) {
+	public List<Map<String, Integer>> getClosestFutureBookings(int userId) {
 		String query = """
-				    SELECT booking_id, service_id, status_id
-				    FROM booking
-				    WHERE booked_by_user_id = ? AND booked_date > NOW()
-				    ORDER BY booked_date ASC
-				    LIMIT 1
+				    SELECT b.booking_id, b.service_id, b.status_id,
+				           COALESCE(p.payment_status, 10) AS payment_status_id
+				    FROM booking b
+				    LEFT JOIN payment p ON b.booking_id = p.booking_id
+				    WHERE b.booked_by_user_id = ?
+				          AND b.booked_date > NOW()
+				    ORDER BY b.booked_date ASC
 				""";
+
+		List<Map<String, Integer>> bookings = new ArrayList<>();
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
 			stmt.setInt(1, userId);
 
 			try (ResultSet rs = stmt.executeQuery()) {
-				if (rs.next()) {
-					// Return a map containing service_id and status_id
-					Map<String, Integer> result = new HashMap<>();
-					result.put("booking_id", rs.getInt("booking_id"));
-					result.put("service_id", rs.getInt("service_id"));
-					result.put("status_id", rs.getInt("status_id"));
-					return result;
+				while (rs.next()) {
+					Map<String, Integer> booking = new HashMap<>();
+					booking.put("booking_id", rs.getInt("booking_id"));
+					booking.put("service_id", rs.getInt("service_id"));
+					booking.put("status_id", rs.getInt("status_id"));
+					booking.put("payment_status_id", rs.getInt("payment_status_id")); // Store payment status
+					bookings.add(booking);
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return null; // Return null if no future bookings are found
+		return bookings;
 	}
 
 	public Map<String, Object> getBookingDetails(int serviceId, int bookingId) throws SQLException {
@@ -226,6 +230,36 @@ public class BookingDAO {
 		}
 
 		return resultMap;
+	}
+
+	public Map<String, Integer> getBookingById(int bookingId) {
+		String query = """
+				SELECT b.booking_id, b.service_id, b.status_id,
+				       COALESCE(p.payment_status, 10) AS payment_status_id
+				FROM booking b
+				LEFT JOIN payment p ON b.booking_id = p.booking_id
+				WHERE b.booking_id = ?
+				""";
+
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+			stmt.setInt(1, bookingId);
+
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					Map<String, Integer> booking = new HashMap<>();
+					booking.put("booking_id", rs.getInt("booking_id"));
+					booking.put("service_id", rs.getInt("service_id"));
+					booking.put("status_id", rs.getInt("status_id"));
+					booking.put("payment_status_id", rs.getInt("payment_status_id")); // Defaults to 10 if no payment
+																						// record exists
+					return booking;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null; // Return null if booking is not found
 	}
 
 	// Utility method to close resources
