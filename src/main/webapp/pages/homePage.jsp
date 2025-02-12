@@ -13,6 +13,88 @@
     <link rel="icon" href="<%=request.getContextPath()%>/assets/icons/favicon.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/carousel.css">
+	<style>
+		.service-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 0;
+            margin: 15px;
+            width: 300px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .service-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .service-content {
+            padding: 20px;
+        }
+
+        .service-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .service-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .service-price {
+            font-size: 1.1rem;
+            color: #2c5282;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .service-duration {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .book-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .book-button:hover {
+            background-color: #3182ce;
+        }
+
+        .services {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px 0;
+        }
+        
+	</style>
 </head>
 <body>
     <!-- Include the Navbar -->
