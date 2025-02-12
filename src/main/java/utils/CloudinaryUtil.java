@@ -11,13 +11,13 @@ import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 public class CloudinaryUtil {
     private static final String CLOUD_NAME = "djq1slhwp";
     private static final String API_KEY = "291691227825547";
-    private static final String API_SECRET = "EznEyZx1XyoHk_zgbbEUNp";
+    private static final String API_SECRET = "EznEyZx1XyoHk_zgbbEUNpG8BHA";
     private static final Cloudinary cloudinary;
+    private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
     
     static {
         Map<String, String> config = new HashMap<>();
@@ -27,27 +27,39 @@ public class CloudinaryUtil {
         
         cloudinary = new Cloudinary(config);
     }
+
+    private static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
     
     private static String generateSignature(Map<String, Object> params) throws Exception {
         // Sort parameters alphabetically
         TreeMap<String, Object> sortedParams = new TreeMap<>(params);
         
-        // Build string to sign
+        // Build string to sign according to Cloudinary's specification
         StringBuilder stringToSign = new StringBuilder();
         for (Map.Entry<String, Object> entry : sortedParams.entrySet()) {
-            if (stringToSign.length() > 0) stringToSign.append("&");
-            stringToSign.append(entry.getKey()).append("=").append(entry.getValue());
+            if (entry.getValue() == null) continue;
+            if (stringToSign.length() > 0) stringToSign.append('&');
+            stringToSign.append(entry.getKey()).append('=').append(entry.getValue().toString());
         }
         
         System.out.println("String to sign: " + stringToSign.toString());
         
-        // Generate signature
+        // Generate signature using SHA-256
         Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
         SecretKeySpec secret_key = new SecretKeySpec(API_SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         sha256_HMAC.init(secret_key);
         
         byte[] hash = sha256_HMAC.doFinal(stringToSign.toString().getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(hash);
+        // Use hex encoding instead of Base64
+        return bytesToHex(hash);
     }
     
     public static String uploadImage(byte[] imageData, String folderName) throws IOException {
