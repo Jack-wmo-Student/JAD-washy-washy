@@ -1,49 +1,83 @@
 package CONTROLLER;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.util.Map;
-
-import MODEL.DAO.BookingDAO;
-
-/**
- * Servlet implementation class SetTrackedService
- */
 public class SetTrackedService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private BookingDAO bookingDAO = new BookingDAO();
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+
 		HttpSession session = request.getSession(false);
-		if (session == null) {
+		if (session == null || session.getAttribute("currentUser") == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.getWriter().write("{\"error\": \"Session Expired. Please log in again.\"}");
 			return;
 		}
 
-		String bookingIdStr = request.getParameter("bookingId");
-		if (bookingIdStr == null) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		}
+		// Read JSON data from request body
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
+			JsonReader jsonReader = Json.createReader(reader);
+			JsonObject jsonData = jsonReader.readObject();
 
-		int bookingId = Integer.parseInt(bookingIdStr);
-		Map<String, Integer> trackedService = bookingDAO.getBookingById(bookingId);
+			// Extract values
+			String bookingIdStr = jsonData.getString("bookingId", "").trim();
+			String userIdStr = jsonData.getString("userId", "").trim();
+			String serviceIdStr = jsonData.getString("serviceId", "").trim();
 
-		if (trackedService != null) {
-			// Store the tracked service in the session
-			session.setAttribute("currentTrackedService", trackedService);
+			// Debugging logs
+			System.out.println("Received JSON Parameters - bookingId: " + bookingIdStr + ", userId: " + userIdStr
+					+ ", serviceId: " + serviceIdStr);
 
-			// Redirect to AcknowledgeController after setting the session
-			response.sendRedirect(request.getContextPath() + "/AcknowledgeServlet");
-		} else {
+			if (bookingIdStr.isEmpty() || userIdStr.isEmpty() || serviceIdStr.isEmpty()) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().write(
+						"{\"error\": \"Invalid request parameters: bookingId, userId, or serviceId is missing.\"}");
+				return;
+			}
+
+			try {
+				int bookingId = Integer.parseInt(bookingIdStr);
+				int userId = Integer.parseInt(userIdStr);
+				int serviceId = Integer.parseInt(serviceIdStr);
+
+				// Store tracked service in session
+				Map<String, Integer> trackedService = new HashMap<>();
+				trackedService.put("booking_id", bookingId);
+				trackedService.put("user_id", userId);
+				trackedService.put("service_id", serviceId);
+				session.setAttribute("currentTrackedService", trackedService);
+
+				// Forward the request to AcknowledgeServlet
+				RequestDispatcher dispatcher = request.getRequestDispatcher("/AcknowledgeServlet");
+				dispatcher.forward(request, response);
+
+			} catch (NumberFormatException e) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().write("{\"error\": \"Invalid number format for request parameters.\"}");
+				e.printStackTrace();
+			}
+
+		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().write("{\"error\": \"Error processing JSON request.\"}");
+			e.printStackTrace();
 		}
 	}
 }

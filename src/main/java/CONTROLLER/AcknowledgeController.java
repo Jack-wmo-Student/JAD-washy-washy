@@ -61,6 +61,7 @@ public class AcknowledgeController extends HttpServlet {
 			bookingServiceStatusId = (Map<String, Integer>) session.getAttribute("currentTrackedService");
 			if (bookingServiceStatusId == null || !bookingServiceStatusId.containsKey("service_id")
 					|| !bookingServiceStatusId.containsKey("booking_id")) {
+				System.out.println(bookingServiceStatusId);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				out.print("{\"error\": \"Invalid session data.\"}");
 				out.flush();

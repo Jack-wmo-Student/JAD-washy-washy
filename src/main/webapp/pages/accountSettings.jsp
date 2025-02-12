@@ -33,6 +33,7 @@
 
 	User user = (User) session.getAttribute("currentUser");
 	String username = user.getUsername();
+	int userId = user.getUserId();
 	%>
 
 	<div class="container">
@@ -90,9 +91,15 @@
 								for (Map<String, Integer> booking : bookingList) {
 									int statusId = booking.get("status_id");
 									int bookingId = booking.get("booking_id");
+									int serviceId = booking.get("service_id");
+
+									/* 	System.out.println("serviceId: " + serviceId);
+									System.out.println("statusId: " + statusId);
+									System.out.println("bookingId: " + bookingId); */
 
 									request.setAttribute("statusId", statusId);
 									request.setAttribute("bookingId", bookingId);
+									request.setAttribute("serviceId", serviceId);
 							%>
 
 							<!-- Booking Progress Section (Paginated) -->
@@ -103,7 +110,9 @@
 									DEBUG: Rendering Booking ID:
 									<%=bookingId%>
 									- Status:
-									<%=statusId%></p>
+									<%=statusId%>
+									- User:
+									<%=userId%></p>
 
 								<%@include file="/component/bookingProgress.jsp"%>
 
@@ -118,14 +127,11 @@
 									if (statusId == 8) {
 									%>
 									<!-- Acknowledge Button -->
-									<form action="<%=request.getContextPath()%>/AcknowledgeServlet"
-										method="post">
-										<input type="hidden" name="userId"
-											value="<%=user.getUserId()%>"> <input type="hidden"
-											name="bookingId" value="<%=bookingId%>">
-										<button type="submit" class="btn btn-success">Acknowledge
-											Completion</button>
-									</form>
+									<!-- Acknowledge Button (Replaced Form with Button) -->
+									<button type="button" class="btn btn-success acknowledge-btn"
+										data-booking-id="<%=bookingId%>" data-user-id="<%=userId%>"
+										data-service-id="<%=serviceId%>">Acknowledge
+										Completion</button>
 									<%
 									}
 									%>
@@ -250,51 +256,60 @@
         });
     });
 
-    // Acknowledge Completion button click (Optional AJAX-based handling)
-    document.getElementById("acknowledgeBtn")?.addEventListener("click", function(event) {
-    event.preventDefault();
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".acknowledge-btn").forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
 
-    fetch('<%=request.getContextPath()%>/AcknowledgeServlet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `userId=<%=user.getUserId()%>`
-    })
-    .then(response => response.json()) // Convert response to JSON
-    .then(data => {
-        if (data.redirectUrl) {
-            window.location.href = data.redirectUrl; // Redirect to Stripe Checkout
-        } else {
-            alert("Error acknowledging completion.");
-        }
-    })
-    .catch(error => {
-        console.error("Request Failed:", error);
-        alert("Network error, please try again.");
+                // ✅ Retrieve values
+                const bookingId = button.getAttribute("data-booking-id")?.trim();
+                let userId = button.getAttribute("data-user-id")?.trim();
+                const serviceId = button.getAttribute("data-service-id")?.trim();
+
+                console.log("DEBUG: Booking ID:", bookingId);
+                console.log("DEBUG: User ID (Before Processing):", userId || "MISSING");
+                console.log("DEBUG: Service ID:", serviceId);
+
+                // 🚨 Validate values
+                if (!bookingId || !userId || !serviceId) {
+                    alert(`Error: Missing parameters. Booking ID: ${bookingId}, User ID: ${userId}, Service ID: ${serviceId}`);
+                    return;
+                }
+
+//                 userId = Number(userId); // Convert to number
+                if (isNaN(userId) || userId <= 0) {
+                    alert("Error: Invalid User ID.");
+                    return;
+                }
+
+                // ✅ Construct JSON payload
+                const jsonData = JSON.stringify({ bookingId, userId, serviceId });
+
+                console.log("DEBUG: Final Payload:", jsonData);
+
+                fetch('<%=request.getContextPath()%>/SetTrackedService', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error("Request Failed:", error);
+                    alert("Network error, please try again.");
+                });
+            });
+        });
     });
-});
 
-    </script>
-
-		<!-- JavaScript to set session variable and submit the form -->
-		<script>
-function setTrackedService(bookingId) {
-    // Send an AJAX request to set session attribute
-    fetch('<%=request.getContextPath()%>/SetTrackedService', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'bookingId=' + bookingId
-    }).then(response => {
-        if (response.ok) {
-            // After setting session attribute, submit the form
-            document.getElementById("acknowledgeForm_" + bookingId).submit();
-        } else {
-            alert("Error setting session data. Please try again.");
-        }
-    });
-}
 </script>
+		--%>
 		<script>
     let currentPage = 1;
     let totalPages = document.querySelectorAll('.pagination .page-item').length - 2; // Excluding "Prev" & "Next"
