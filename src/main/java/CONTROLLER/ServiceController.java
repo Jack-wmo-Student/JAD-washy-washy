@@ -24,8 +24,6 @@ public class ServiceController extends HttpServlet {
     public ServiceController() {
         this.serviceDAO = new ServiceDAO();
     }
-    
-    
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
