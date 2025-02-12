@@ -73,88 +73,154 @@
 
 			<!-- Right Panel: Status & Transactions -->
 			<div class="col-md-8">
-				<div class="status-section mb-3 p-3 bg-white shadow-sm rounded">
-					<%
-					Integer status_id = (Integer) request.getAttribute("statusId");
-					%>
+				<div class="col-md-8">
+					<div class="status-section mb-3 p-3 bg-white shadow-sm rounded">
+						<%
+						List<Map<String, Integer>> bookingList = (List<Map<String, Integer>>) request.getAttribute("bookingList");
+						int itemsPerPage = 3; // Number of status bars per page
+						int totalBookings = (bookingList != null) ? bookingList.size() : 0;
+						int totalPages = (int) Math.ceil((double) totalBookings / itemsPerPage);
+						%>
 
-					<%@include file="/component/bookingProgress.jsp"%>
-					<%
-					status_id = (Integer) request.getAttribute("statusId");
-					boolean hasPendingAcknowledgment = status_id != null && status_id == 8;
-					if (hasPendingAcknowledgment) {
-					%>
-					<p>Your booking has been completed.</p>
-					<form action="<%=request.getContextPath()%>/AcknowledgeServlet"
-						method="post">
-						<input type="hidden" name="userId" value="<%=user.getUserId()%>">
-						<button type="submit" id="acknowledgeBtn" class="btn btn-success">Acknowledge
-							Completion</button>
-					</form>
-					<%
-					} else {
-					%>
-					<p>No pending acknowledgements.</p>
-					<%
-					}
-					%>
-				</div>
-
-				<div class="transaction-section p-3 bg-white shadow-sm rounded">
-					<%
-					TransactionHistoryDAO transactionDAO = new TransactionHistoryDAO();
-					List<TransactionHistory> transactions = transactionDAO.getUserTransactions(user.getUserId());
-					%>
-					<h3>Transaction History</h3>
-					<%
-					if (!transactions.isEmpty()) {
-					%>
-					<table class="table table-bordered transaction-table">
-						<thead class="table-light">
-							<tr>
-								<th>Booking ID</th>
-								<th>Service</th>
-								<th>Date</th>
-								<th>Amount</th>
-								<th>Payment Method</th>
-								<th>Status</th>
-							</tr>
-						</thead>
-						<tbody>
+						<!-- Booking Status List -->
+						<div id="booking-status-list">
 							<%
-							for (TransactionHistory transaction : transactions) {
+							if (bookingList != null && !bookingList.isEmpty()) {
+								int index = 0;
+								for (Map<String, Integer> booking : bookingList) {
+									int statusId = booking.get("status_id");
+									int bookingId = booking.get("booking_id");
+
+									request.setAttribute("statusId", statusId);
+									request.setAttribute("bookingId", bookingId);
 							%>
-							<tr>
-								<td>#<%=transaction.getBookingId()%></td>
-								<td><%=transaction.getServiceName()%></td>
-								<td><%=new java.text.SimpleDateFormat("dd MMM yyyy").format(transaction.getBookedDate())%></td>
-								<td>$<%=String.format("%.2f", transaction.getPrice())%></td>
-								<td><%=transaction.getPaymentMethod()%></td>
-								<td class="status-badge"><%=transaction.getBookingStatus()%></td>
-							</tr>
+
+							<!-- Booking Progress Section (Paginated) -->
+							<div
+								class="booking-status-box page-<%=(index / itemsPerPage) + 1%>"
+								style="<%=(index / itemsPerPage) == 0 ? "" : "display: none;"%>">
+								<p style='color: green;'>
+									DEBUG: Rendering Booking ID:
+									<%=bookingId%>
+									- Status:
+									<%=statusId%></p>
+
+								<%@include file="/component/bookingProgress.jsp"%>
+
+								<div class="d-flex justify-content-between align-items-center">
+									<p>
+										Booking ID:
+										<%=bookingId%>
+										- Status:
+										<%=statusId%></p>
+
+									<%
+									if (statusId == 8) {
+									%>
+									<!-- Acknowledge Button -->
+									<form action="<%=request.getContextPath()%>/AcknowledgeServlet"
+										method="post">
+										<input type="hidden" name="userId"
+											value="<%=user.getUserId()%>"> <input type="hidden"
+											name="bookingId" value="<%=bookingId%>">
+										<button type="submit" class="btn btn-success">Acknowledge
+											Completion</button>
+									</form>
+									<%
+									}
+									%>
+								</div>
+								<hr>
+							</div>
+							<%
+							index++;
+							}
+							} else {
+							%>
+							<p>No pending acknowledgements.</p>
 							<%
 							}
 							%>
-						</tbody>
-					</table>
-					<%
-					} else {
-					%>
-					<p class="text-center text-muted">No transactions available.</p>
-					<%
-					}
-					%>
+						</div>
+
+						<!-- Pagination Controls -->
+						<div class="pagination-container mt-3">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled" id="prevPage"><a
+									class="page-link" href="javascript:void(0);"
+									onclick="changePage(-1)">Previous</a></li>
+								<%
+								for (int i = 1; i <= totalPages; i++) {
+								%>
+								<li class="page-item <%=(i == 1) ? "active" : ""%>"><a
+									class="page-link" href="javascript:void(0);"
+									onclick="goToPage(<%=i%>)"><%=i%></a></li>
+								<%
+								}
+								%>
+								<li class="page-item <%=(totalPages <= 1) ? "disabled" : ""%>"
+									id="nextPage"><a class="page-link"
+									href="javascript:void(0);" onclick="changePage(1)">Next</a></li>
+							</ul>
+						</div>
+					</div>
+
+
+					<div class="transaction-section p-3 bg-white shadow-sm rounded">
+						<%
+						TransactionHistoryDAO transactionDAO = new TransactionHistoryDAO();
+						List<TransactionHistory> transactions = transactionDAO.getUserTransactions(user.getUserId());
+						%>
+						<h3>Transaction History</h3>
+						<%
+						if (!transactions.isEmpty()) {
+						%>
+						<table class="table table-bordered transaction-table">
+							<thead class="table-light">
+								<tr>
+									<th>Booking ID</th>
+									<th>Service</th>
+									<th>Date</th>
+									<th>Amount</th>
+									<th>Payment Method</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								<%
+								for (TransactionHistory transaction : transactions) {
+								%>
+								<tr>
+									<td>#<%=transaction.getBookingId()%></td>
+									<td><%=transaction.getServiceName()%></td>
+									<td><%=new java.text.SimpleDateFormat("dd MMM yyyy").format(transaction.getBookedDate())%></td>
+									<td>$<%=String.format("%.2f", transaction.getPrice())%></td>
+									<td><%=transaction.getPaymentMethod()%></td>
+									<td class="status-badge"><%=transaction.getBookingStatus()%></td>
+								</tr>
+								<%
+								}
+								%>
+							</tbody>
+						</table>
+						<%
+						} else {
+						%>
+						<p class="text-center text-muted">No transactions available.</p>
+						<%
+						}
+						%>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<!-- Bootstrap Bundle (for dropdowns, modals, etc.) -->
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+		<!-- Bootstrap Bundle (for dropdowns, modals, etc.) -->
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-	<!-- Form Submission Script -->
-	<script>
+		<!-- Form Submission Script -->
+		<script>
 
     if (performance.navigation.type === 1) {
         window.location.href = "<%=request.getContextPath()%>/bookingStatus";
@@ -208,5 +274,64 @@
 });
 
     </script>
+
+		<!-- JavaScript to set session variable and submit the form -->
+		<script>
+function setTrackedService(bookingId) {
+    // Send an AJAX request to set session attribute
+    fetch('<%=request.getContextPath()%>/SetTrackedService', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'bookingId=' + bookingId
+    }).then(response => {
+        if (response.ok) {
+            // After setting session attribute, submit the form
+            document.getElementById("acknowledgeForm_" + bookingId).submit();
+        } else {
+            alert("Error setting session data. Please try again.");
+        }
+    });
+}
+</script>
+		<script>
+    let currentPage = 1;
+    let totalPages = document.querySelectorAll('.pagination .page-item').length - 2; // Excluding "Prev" & "Next"
+
+    function changePage(direction) {
+        let newPage = currentPage + direction;
+        if (newPage < 1 || newPage > totalPages) return;
+        goToPage(newPage);
+    }
+
+    function goToPage(pageNumber) {
+        document.querySelectorAll(".booking-status-box").forEach(box => {
+            box.style.display = "none";
+        });
+
+        document.querySelectorAll(".page-" + pageNumber).forEach(box => {
+            box.style.display = "block";
+        });
+
+        document.querySelectorAll(".pagination .page-item").forEach(item => {
+            item.classList.remove("active");
+        });
+
+        // Ensure the active page is highlighted
+        document.querySelector(`.pagination .page-item:nth-child(${pageNumber + 1})`).classList.add("active");
+
+        // Enable/Disable prev/next buttons
+        document.getElementById("prevPage").classList.toggle("disabled", pageNumber === 1);
+        document.getElementById("nextPage").classList.toggle("disabled", pageNumber === totalPages);
+
+        currentPage = pageNumber;
+    }
+
+    // Ensure first page is loaded correctly
+    document.addEventListener("DOMContentLoaded", function () {
+        goToPage(1);
+    });
+</script>
 </body>
 </html>

@@ -124,4 +124,12 @@
 		<servlet-name>AcknowledgeController</servlet-name>
 		<url-pattern>/AcknowledgeServlet</url-pattern>
 	</servlet-mapping>
+			<servlet>
+		<servlet-name>SetTrackedService</servlet-name>
+		<servlet-class>CONTROLLER.SetTrackedService</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SetTrackedService</servlet-name>
+		<url-pattern>/SetTrackedService</url-pattern>
+	</servlet-mapping>
 </web-app>
